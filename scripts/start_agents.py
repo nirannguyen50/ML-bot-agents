@@ -349,139 +349,204 @@ class ProjectManager:
         logger.info("All agents shut down")
 
     async def assign_initial_tasks(self):
-        """Assign tasks from backlog to agents in a pipeline"""
-        logger.info("=" * 50)
-        logger.info("STARTING BACKLOG-DRIVEN TASK PIPELINE")
-        logger.info("=" * 50)
-        
+        """Populate backlog if empty"""
         from utils.backlog_manager import BacklogManager
         backlog = BacklogManager()
         
-        # Pre-populate backlog with trading strategy pipeline
         if not backlog.get_all_tasks():
             logger.info("Populating backlog with trading strategy tasks...")
             
-            # Stage 1: Data Scientist — Get data
             t1 = backlog.add_task(
                 title="Download EURUSD market data",
-                description="Download 3 months of EURUSD daily data using yfinance. Save as CSV. Report row count and date range.",
+                description="Download 3 months of EURUSD daily data using yfinance. Save as CSV in workspace/. Report row count and date range.",
                 assigned_to="data_scientist",
                 priority="critical"
             )
-            
-            # Stage 2: Data Scientist — Feature engineering
             t2 = backlog.add_task(
                 title="Calculate technical indicators",
-                description="Write a Python script that reads the EURUSD CSV and calculates: SMA(20), SMA(50), RSI(14), MACD. Save results to eurusd_features.csv.",
+                description="Write a Python script (calculate_features.py) that reads the EURUSD CSV and calculates: SMA(20), SMA(50), RSI(14), MACD. Save results to eurusd_features.csv in workspace/.",
                 assigned_to="data_scientist",
                 priority="high",
                 depends_on=t1["id"]
             )
-            
-            # Stage 3: Quant Analyst — Strategy design
             t3 = backlog.add_task(
                 title="Design SMA crossover strategy",
-                description="Write a trading strategy document: entry when SMA20 crosses above SMA50, exit when crosses below. Define position sizing (1% risk per trade), stop loss (ATR-based), and expected Sharpe ratio. Save as strategy_sma_crossover.py.",
+                description="Write a trading strategy (strategy_sma_crossover.py) in workspace/: entry when SMA20 crosses above SMA50, exit when crosses below. Define position sizing (1% risk), stop loss (ATR-based), expected Sharpe ratio.",
                 assigned_to="quant_analyst",
                 priority="high",
                 depends_on=t2["id"]
             )
-            
-            # Stage 4: Engineer — Backtest
             t4 = backlog.add_task(
                 title="Write backtest engine",
-                description="Write a Python backtest script (backtest_sma.py) that reads eurusd_features.csv and tests the SMA crossover strategy. Output: total trades, win rate, profit factor, max drawdown.",
+                description="Write backtest_sma.py in workspace/ that reads eurusd_features.csv and tests the SMA crossover strategy. Output: total trades, win rate, profit factor, max drawdown.",
                 assigned_to="engineer",
                 priority="high",
                 depends_on=t3["id"]
             )
-            
-            # Stage 5: DevOps — Monitoring
             t5 = backlog.add_task(
                 title="Create system health monitor",
-                description="Write a health_check.py script that checks: disk space, memory usage, data freshness (last CSV modified time), and number of agent log files. Output a JSON health report.",
+                description="Write health_check.py in workspace/ that checks: disk space, memory usage, data freshness, log files count. Output a JSON report.",
                 assigned_to="devops",
                 priority="medium",
-                depends_on=None  # Can run independently
+                depends_on=None
             )
             
             log_agent_message(self.my_id, "ALL", f"Backlog loaded: {backlog.get_summary()}", "task")
-
-        # PM evaluates backlog state with AI
+    
+    async def run_continuous_pipeline(self):
+        """
+        Continuous pipeline: keep processing backlog until all tasks are done.
+        Handles dependency chains and agent-to-agent handoffs.
+        """
+        from utils.backlog_manager import BacklogManager
+        backlog = BacklogManager()
+        
+        logger.info("=" * 60)
+        logger.info("CONTINUOUS PIPELINE STARTED")
+        logger.info("=" * 60)
+        
+        # PM analyzes the backlog first
         pm_analysis = self.pm_think(
-            "Review current backlog and decide task priorities",
-            f"Backlog: {backlog.get_summary()}"
+            "Review current backlog and plan execution order",
+            f"Backlog: {backlog.get_summary()}\nTasks: {[t['title'] + ' (' + t['status'] + ')' for t in backlog.get_all_tasks()]}"
         )
-        log_agent_message(self.my_id, "ALL", f"📊 PM Analysis: {pm_analysis}", "status")
-
-        # Process backlog — assign tasks to each agent
-        for agent_name, agent in self.agents.items():
-            task = backlog.get_next_task(agent_name)
-            if not task:
-                logger.info(f"No pending tasks for {agent_name}")
-                continue
+        log_agent_message(self.my_id, "ALL", f"📊 PM Strategy: {pm_analysis}", "status")
+        
+        max_pipeline_rounds = 10  # Safety limit
+        
+        for pipeline_round in range(1, max_pipeline_rounds + 1):
+            # Check if all tasks are done
+            tasks = backlog.get_all_tasks()
+            pending = [t for t in tasks if t["status"] in ("todo", "in_progress")]
+            done = [t for t in tasks if t["status"] == "done"]
             
-            task_id = task["id"]
-            agent_id = self.agent_ids.get(agent_name)
+            if not pending:
+                logger.info(f"🎉 ALL TASKS COMPLETE! ({len(done)}/{len(tasks)} done)")
+                log_agent_message(self.my_id, "ALL", f"🎉 Pipeline complete! All {len(done)} tasks finished!", "status")
+                break
             
-            # PM announces task
-            logger.info(f"Assigning task #{task_id} to {agent_name}: {task['title']}")
-            log_agent_message(
-                self.my_id, agent_id,
-                f"📋 Task #{task_id}: {task['title']}\n{task['description']}",
-                "task"
-            )
+            logger.info(f"\n--- Pipeline Round {pipeline_round} | {len(done)}/{len(tasks)} done, {len(pending)} pending ---")
             
-            # Mark as in progress
-            backlog.update_status(task_id, "in_progress")
-            
-            # Agent thinks about the task
-            thought = await agent.think(
-                f"You have been assigned task #{task_id}: {task['title']}",
-                task['description']
-            )
-            log_agent_message(agent_id, self.my_id, thought, "status")
-            
-            # Agent acts on its thought
-            action_result = await agent.act(thought)
-            if action_result:
-                log_agent_message(agent_id, self.my_id, f"Action result: {action_result[:500]}", "status")
-            
-            # Execute the task
-            result = await agent.execute_task({
-                'type': task['title'],
-                'description': task['description']
-            })
-            
-            if result.get('status') == 'success':
-                backlog.update_status(task_id, "done")
-                report = f"✅ Task #{task_id} Complete: {result.get('output', '')[:300]}"
-                log_agent_message(agent_id, self.my_id, report, "status")
+            # Find tasks that can be executed NOW (deps satisfied)
+            executed_any = False
+            for agent_name, agent in self.agents.items():
+                task = backlog.get_next_task(agent_name)
+                if not task:
+                    continue
                 
-                # Agent learns what it did
-                if agent.memory:
-                    agent.memory.remember_fact(
-                        f"task_{task_id}_result",
-                        f"Completed: {task['title']}"
-                    )
-            else:
-                backlog.update_status(task_id, "blocked")
-                error = f"❌ Task #{task_id} Failed: {result.get('error', 'Unknown error')}"
-                log_agent_message(agent_id, self.my_id, error, "error")
+                executed_any = True
+                await self._execute_agent_task(agent, agent_name, task, backlog)
+                await asyncio.sleep(self.config.get('pipeline', {}).get('pause_between_tasks', 3))
             
-            logger.info(f"Task #{task_id} result: {result.get('status', 'unknown')}")
+            if not executed_any:
+                blocked_tasks = [t for t in pending if t["status"] == "todo"]
+                if blocked_tasks:
+                    logger.info(f"All remaining tasks blocked by dependencies. Waiting...")
+                    # Check if we're stuck (all remaining have unmet deps)
+                    all_blocked = True
+                    for t in blocked_tasks:
+                        if not t.get("depends_on"):
+                            all_blocked = False
+                    if all_blocked:
+                        logger.warning("Pipeline deadlocked — all remaining tasks have unmet dependencies")
+                        break
+                await asyncio.sleep(5)
+            
+            # Auto git commit after each round
+            if self.config.get('pipeline', {}).get('auto_git_commit', True):
+                tools = None
+                for a in self.agents.values():
+                    if a.tools:
+                        tools = a.tools
+                        break
+                if tools:
+                    tools.git_commit(f"pipeline round {pipeline_round}: {backlog.get_summary()}")
         
-        # Git commit after all tasks
-        logger.info("Committing task results to git...")
-        if 'engineer' in self.agents and self.agents['engineer'].tools:
-            commit_result = self.agents['engineer'].tools.git_commit(
-                f"feat: backlog tasks completed at {datetime.now().strftime('%Y-%m-%d %H:%M')}"
-            )
-            logger.info(f"Git commit: {commit_result}")
-            push_result = self.agents['engineer'].tools.git_push()
-            logger.info(f"Git push: {push_result}")
+        # Final git push
+        if self.config.get('pipeline', {}).get('auto_git_push', True):
+            for a in self.agents.values():
+                if a.tools:
+                    push_result = a.tools.git_push()
+                    logger.info(f"Final push: {push_result}")
+                    break
+    
+    async def _execute_agent_task(self, agent, agent_name: str, task: Dict, backlog):
+        """Execute a single task with self-correction and agent handoff"""
+        from utils.backlog_manager import BacklogManager
         
-        log_agent_message(self.my_id, "ALL", f"Pipeline complete. {backlog.get_summary()}", "status")
+        task_id = task["id"]
+        agent_id = self.agent_ids.get(agent_name)
+        max_retries = self.config.get('agents', {}).get(agent_name, {}).get('max_retries', 3)
+        
+        # PM announces task
+        logger.info(f"📋 Assigning task #{task_id} to {agent_name}: {task['title']}")
+        log_agent_message(
+            self.my_id, agent_id,
+            f"📋 Task #{task_id}: {task['title']}\n{task['description']}",
+            "task"
+        )
+        backlog.update_status(task_id, "in_progress")
+        
+        # Use multi-round self-correction
+        result = await agent.execute_with_retry(task['description'], max_rounds=max_retries)
+        
+        rounds_used = result.get('rounds', 1)
+        
+        if result.get('status') in ('success', 'partial'):
+            backlog.update_status(task_id, "done")
+            
+            status_emoji = "✅" if result['status'] == 'success' else "⚠️"
+            report = f"{status_emoji} Task #{task_id} ({task['title']}) — {result['status']} in {rounds_used} round(s)"
+            log_agent_message(agent_id, self.my_id, report, "status")
+            
+            # Agent learns the result
+            if agent.memory:
+                agent.memory.remember_fact(
+                    f"task_{task_id}_result",
+                    f"Completed: {task['title']} in {rounds_used} rounds"
+                )
+            
+            # Agent-to-Agent handoff: notify the next agent in the chain
+            await self._notify_next_agent(task, backlog)
+            
+            # PM reviews the result with AI
+            if rounds_used > 1:
+                pm_review = self.pm_think(
+                    f"Agent {agent_name} completed task '{task['title']}' but needed {rounds_used} retries. Assess quality.",
+                    f"Result: {result.get('output', '')[:300]}"
+                )
+                log_agent_message(self.my_id, agent_id, f"📝 PM Review: {pm_review}", "status")
+        else:
+            backlog.update_status(task_id, "blocked")
+            error = f"❌ Task #{task_id} Failed after {rounds_used} rounds: {result.get('error', 'Unknown')}"
+            log_agent_message(agent_id, self.my_id, error, "error")
+            logger.error(error)
+    
+    async def _notify_next_agent(self, completed_task: Dict, backlog):
+        """Find and notify agents whose tasks depend on the completed task"""
+        completed_id = completed_task["id"]
+        
+        for task in backlog.get_all_tasks():
+            if task.get("depends_on") == completed_id and task["status"] == "todo":
+                next_agent_name = task["assigned_to"]
+                next_agent = self.agents.get(next_agent_name)
+                
+                if next_agent:
+                    handoff_msg = (
+                        f"🔔 Dependency satisfied! Task #{completed_task['id']} ({completed_task['title']}) "
+                        f"is DONE. Your task #{task['id']} ({task['title']}) is now READY."
+                    )
+                    # Send to the next agent
+                    next_agent.send_message("project_manager", f"Ready for task: {task['title']}")
+                    await next_agent.receive_message("project_manager", handoff_msg)
+                    
+                    log_agent_message(
+                        self.my_id,
+                        self.agent_ids.get(next_agent_name),
+                        handoff_msg,
+                        "task"
+                    )
+                    logger.info(f"🔗 Handoff: {completed_task['assigned_to']} → {next_agent_name}")
 
 
 async def main():
@@ -496,17 +561,21 @@ async def main():
         await project_manager.run_daily_standup()
         
         # Wait for agents to settle
-        logger.info("Waiting for agents to initialize memory...")
-        await asyncio.sleep(5)
+        logger.info("Waiting for agents to initialize...")
+        await asyncio.sleep(3)
         
-        # Assign initial real tasks
+        # Populate backlog
         await project_manager.assign_initial_tasks()
         
         # Start monitoring in background
         monitor_task = asyncio.create_task(project_manager.monitor_agents_intelligent())
         
-        # Keep running until interrupted
-        logger.info("\nML Trading Bot Agents are now running! (AI Mode)")
+        # Run continuous pipeline (replaces one-shot execution)
+        logger.info("\n🚀 Starting Continuous Pipeline...")
+        await project_manager.run_continuous_pipeline()
+        
+        # Pipeline complete — keep monitoring
+        logger.info("\nML Trading Bot Agents — Pipeline complete! Monitoring active.")
         logger.info("Press Ctrl+C to shutdown gracefully\n")
         
         while True:
@@ -516,6 +585,8 @@ async def main():
         logger.info("\nShutdown requested by user")
     except Exception as e:
         logger.error(f"Unexpected error: {e}")
+        import traceback
+        traceback.print_exc()
     finally:
         await project_manager.shutdown()
         logger.info("ML Trading Bot shutdown complete")
@@ -525,3 +596,4 @@ if __name__ == "__main__":
     os.makedirs('logs', exist_ok=True)
     os.makedirs('reports', exist_ok=True)
     asyncio.run(main())
+

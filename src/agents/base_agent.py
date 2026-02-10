@@ -291,14 +291,98 @@ class BaseAgent(ABC):
                 
         except Exception as e:
             return f"Error executing {cmd_name}: {e}"
+
+    async def execute_with_retry(self, task_description: str, max_rounds: int = 3) -> Dict[str, Any]:
+        """
+        Multi-round execution loop with self-correction.
+        Think → Act → Verify → Fix (if error) → Retry
+        """
+        last_error = None
+        all_outputs = []
+        
+        for round_num in range(1, max_rounds + 1):
+            self.logger.info(f"{self.name}: Round {round_num}/{max_rounds} for: {task_description[:60]}...")
+            
+            # Build context with error history
+            context = task_description
+            if last_error:
+                context += f"\n\nPREVIOUS ATTEMPT FAILED with error:\n{last_error}\nPlease fix the issue and try again."
+            
+            # Think
+            thought = await self.think(context, task_description)
+            if not thought or "Error thinking" in thought:
+                last_error = f"Thinking failed: {thought}"
+                continue
+            
+            # Act
+            action_result = await self.act(thought)
+            if action_result:
+                all_outputs.append(action_result)
+            
+            # Check for errors in action results
+            if action_result and "Error" in action_result:
+                last_error = action_result
+                self.logger.warning(f"{self.name}: Round {round_num} had errors, retrying...")
+                continue
+            
+            # Validate — check if expected files were created
+            validation = await self.validate_output(thought, action_result)
+            if validation["valid"]:
+                return {
+                    "status": "success",
+                    "output": "\n".join(all_outputs) if all_outputs else thought[:500],
+                    "rounds": round_num
+                }
+            else:
+                last_error = validation["reason"]
+                self.logger.warning(f"{self.name}: Validation failed: {last_error}")
+                continue
+        
+        # All rounds exhausted
         return {
-            'agent_name': self.name,
-            'is_initialized': self.is_initialized,
-            'status': self.status,
-            'active_tasks': len(self.tasks),
-            'config_section': self.config.get(self.name, {})
+            "status": "partial",
+            "output": "\n".join(all_outputs) if all_outputs else f"Completed with issues after {max_rounds} rounds",
+            "error": last_error,
+            "rounds": max_rounds
         }
     
+    async def validate_output(self, thought: str, action_result: str) -> Dict:
+        """Verify that expected output files were actually created"""
+        import re
+        
+        # Extract filenames mentioned in thought
+        file_patterns = re.findall(r'[\w_]+\.(?:py|csv|json|txt|yaml|md)', thought or "")
+        
+        if not file_patterns or not self.tools:
+            return {"valid": True, "reason": "No files to validate"}
+        
+        missing = []
+        for filename in set(file_patterns):
+            filepath = self.tools._get_safe_path(filename)
+            if not os.path.exists(filepath):
+                # Also check repo root
+                root_path = os.path.join(self.tools.repo_dir, filename)
+                if not os.path.exists(root_path):
+                    missing.append(filename)
+        
+        if missing:
+            return {"valid": False, "reason": f"Expected files not found: {', '.join(missing)}"}
+        return {"valid": True, "reason": "All expected files exist"}
+    
+    def send_message(self, to_agent: str, message: str, msg_type: str = "message"):
+        """Send a direct message to another agent"""
+        to_id = self.agent_ids.get(to_agent, to_agent)
+        try:
+            log_agent_message(
+                from_agent=self.my_id,
+                to_agent=to_id,
+                message=message,
+                message_type=msg_type
+            )
+            self.logger.info(f"{self.name} -> {to_agent}: {message[:80]}...")
+        except Exception as e:
+            self.logger.error(f"Failed to send message to {to_agent}: {e}")
+
     async def log_activity(self, activity: str, level: str = "INFO"):
         # 1. Standard file logging
         log_method = getattr(self.logger, level.lower(), self.logger.info)

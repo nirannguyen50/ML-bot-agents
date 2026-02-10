@@ -1,0 +1,60 @@
+# ML Bot Agents Configuration
+# All settings for the multi-agent trading system
+
+project:
+  name: "ML Bot Agents"
+  version: "1.0.0"
+  description: "AI-powered multi-agent trading system"
+
+agents:
+  data_scientist:
+    role: "Data Pipeline & Feature Engineering"
+    max_retries: 3
+    timeout: 120
+  quant_analyst:
+    role: "Strategy Design & Risk Analysis"
+    max_retries: 3
+    timeout: 120
+  engineer:
+    role: "System Architecture & Backtest Engine"
+    max_retries: 3
+    timeout: 120
+  devops:
+    role: "Monitoring & Deployment"
+    max_retries: 3
+    timeout: 120
+
+pipeline:
+  auto_continue: true          # Continue to next task after completion
+  max_rounds_per_task: 3       # Self-correction retry limit
+  pause_between_tasks: 5       # Seconds between task assignments
+  auto_git_commit: true        # Auto commit after task completion
+  auto_git_push: true          # Auto push after commit
+
+llm:
+  provider: "deepseek"
+  model: "deepseek-chat"
+  temperature: 0.7
+  max_tokens: 4096
+
+monitoring:
+  dashboard_port: 8080
+  health_check_interval: 300   # Seconds between health checks
+
+security:
+  allowed_commands:
+    - "python"
+    - "pip"
+    - "git"
+    - "dir"
+    - "ls"
+  blocked_patterns:
+    - "rm -rf"
+    - "del /s"
+    - "format"
+    - "shutdown"
+    - "&&"
+    - "||"
+    - "|"
+    - ">"
+    - ">>"

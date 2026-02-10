@@ -73,10 +73,17 @@ class AgentTools:
         Returns:
             Combined stdout/stderr output
         """
-        # Security: Allow only python execution or listing dir for now
+        # Security: Whitelist allowed commands
         allowed_cmds = ["python", "dir", "ls", "pip", "git"]
         if not any(command.strip().startswith(cmd) for cmd in allowed_cmds):
             return "Error: Command not allowed. Only python, dir, ls, pip, git are permitted."
+        
+        # Security: Block dangerous patterns
+        blocked_patterns = ["rm -rf", "del /s", "format", "shutdown", "&&", "||", "|", ">>", "curl", "wget", "powershell", "cmd /c"]
+        cmd_lower = command.lower()
+        for pattern in blocked_patterns:
+            if pattern in cmd_lower:
+                return f"Error: Blocked pattern '{pattern}' detected in command."
             
         try:
             # Run in workspace dir
