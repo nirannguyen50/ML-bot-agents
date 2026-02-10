@@ -91,6 +91,41 @@ class ProjectManager:
         else:
             self.llm = None
         
+        # Load project context
+        self.project_context = ""
+        context_path = os.path.join(os.path.dirname(__file__), '..', 'project_context.md')
+        if os.path.exists(context_path):
+            try:
+                with open(context_path, 'r', encoding='utf-8') as f:
+                    self.project_context = f.read()
+                logger.info(f"PM loaded project context ({len(self.project_context)} chars)")
+            except Exception:
+                pass
+    
+    def pm_think(self, task: str, context: str = "") -> str:
+        """PM uses LLM to make decisions with full project awareness"""
+        if not self.llm:
+            return "PM thinking unavailable (no LLM)."
+        try:
+            prompt = [
+                {"role": "system", "content": f"""You are the Project Manager of an AI Trading Bot team.
+                You coordinate 4 agents: Data Scientist, Quant Analyst, Engineer, DevOps.
+                
+                {self.project_context}
+                
+                Your responsibilities:
+                - Assign tasks based on backlog priority and dependencies
+                - Monitor progress and resolve blockers
+                - Make decisions about project direction
+                - Ensure quality and deadlines are met
+                
+                Reply in Vietnamese. Be concise and action-oriented."""},
+                {"role": "user", "content": f"Context: {context}\n\nTask: {task}"}
+            ]
+            return self.llm.chat_completion(prompt)
+        except Exception as e:
+            return f"Error: {e}"
+        
     def load_config(self, config_path: str) -> Dict:
         """Load configuration from YAML file"""
         try:
@@ -371,6 +406,13 @@ class ProjectManager:
             )
             
             log_agent_message(self.my_id, "ALL", f"Backlog loaded: {backlog.get_summary()}", "task")
+
+        # PM evaluates backlog state with AI
+        pm_analysis = self.pm_think(
+            "Review current backlog and decide task priorities",
+            f"Backlog: {backlog.get_summary()}"
+        )
+        log_agent_message(self.my_id, "ALL", f"📊 PM Analysis: {pm_analysis}", "status")
 
         # Process backlog — assign tasks to each agent
         for agent_name, agent in self.agents.items():

@@ -52,6 +52,17 @@ class BaseAgent(ABC):
         self.tools = None
         self.memory = None
         self.role_instruction = ""  # Override in subclass for role-specific behavior
+        self.project_context = ""  # Loaded from project_context.md
+        
+        # Load project context
+        context_path = os.path.join(os.path.dirname(__file__), '..', '..', 'project_context.md')
+        if os.path.exists(context_path):
+            try:
+                with open(context_path, 'r', encoding='utf-8') as f:
+                    self.project_context = f.read()
+                self.logger.info(f"Loaded project context ({len(self.project_context)} chars)")
+            except Exception as e:
+                self.logger.warning(f"Failed to load project context: {e}")
         
         if AgentTools:
             self.tools = AgentTools(workspace_dir=os.path.join(os.path.dirname(__file__), '..', '..', 'workspace'))
@@ -110,11 +121,13 @@ class BaseAgent(ABC):
             
         try:
             role_context = f"\n\nYOUR ROLE INSTRUCTIONS:\n{self.role_instruction}" if self.role_instruction else ""
+            project_ctx = f"\n\nPROJECT CONTEXT:\n{self.project_context}" if self.project_context else ""
             
             prompt = [
                 {"role": "system", "content": f"""You are the {self.name} of an advanced AI Trading System. 
                 Your role is detailed, professional, and proactive. Respond as if you are a real expert in your field.
                 {role_context}
+                {project_ctx}
                 
                 You have access to the following TOOLS to perform actions.
                 IMPORTANT: To use a tool, you MUST use the following JSON format:
