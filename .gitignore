@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs & Reports
+logs/
+reports/
+
+# Data (too large for git)
+data/raw/*.csv
+data/processed/*.csv
+data/raw/*.parquet
+
+# Memory (agent state - regenerated at runtime)
+memory/*.json
+
+# Workspace (agent-generated files)
+workspace/
+
+# Sensitive
+.env
+*.key
+sk-*
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Test artifacts
+test_*.txt
+debug_*.py
+reproduce_*.py
