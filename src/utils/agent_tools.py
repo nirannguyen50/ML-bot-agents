@@ -15,6 +15,7 @@ class AgentTools:
     
     def __init__(self, workspace_dir: str):
         self.workspace_dir = workspace_dir
+        self.repo_dir = os.path.abspath(os.path.join(workspace_dir, '..'))
         os.makedirs(self.workspace_dir, exist_ok=True)
         
     def _get_safe_path(self, filename: str) -> str:
@@ -73,9 +74,9 @@ class AgentTools:
             Combined stdout/stderr output
         """
         # Security: Allow only python execution or listing dir for now
-        allowed_cmds = ["python", "dir", "ls", "pip"]
+        allowed_cmds = ["python", "dir", "ls", "pip", "git"]
         if not any(command.strip().startswith(cmd) for cmd in allowed_cmds):
-            return "Error: Command not allowed. Only python, dir, ls, pip are permitted."
+            return "Error: Command not allowed. Only python, dir, ls, pip, git are permitted."
             
         try:
             # Run in workspace dir
@@ -95,3 +96,42 @@ class AgentTools:
             return "Error: Command timed out."
         except Exception as e:
             return f"Error running command: {e}"
+
+    def git_status(self) -> str:
+        """Check git status of the repo"""
+        try:
+            result = subprocess.run(
+                "git status --short",
+                cwd=self.repo_dir, shell=True,
+                capture_output=True, text=True, timeout=10
+            )
+            return result.stdout.strip() or "Working tree clean."
+        except Exception as e:
+            return f"Error: {e}"
+
+    def git_commit(self, message: str) -> str:
+        """Stage all changes and commit"""
+        try:
+            subprocess.run("git add -A", cwd=self.repo_dir, shell=True, capture_output=True, timeout=10)
+            result = subprocess.run(
+                f'git commit -m "{message}"',
+                cwd=self.repo_dir, shell=True,
+                capture_output=True, text=True, timeout=10
+            )
+            output = result.stdout + result.stderr
+            return output.strip() or "Nothing to commit."
+        except Exception as e:
+            return f"Error: {e}"
+
+    def git_push(self) -> str:
+        """Push commits to origin/main"""
+        try:
+            result = subprocess.run(
+                "git push origin main",
+                cwd=self.repo_dir, shell=True,
+                capture_output=True, text=True, timeout=30
+            )
+            output = result.stdout + result.stderr
+            return output.strip() or "Push completed."
+        except Exception as e:
+            return f"Error: {e}"

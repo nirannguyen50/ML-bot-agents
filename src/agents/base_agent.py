@@ -141,8 +141,18 @@ class BaseAgent(ABC):
                 5. RECALL: Retrieve knowledge from long-term memory.
                    Usage: [JSON_CMD: {{"tool": "RECALL", "args": {{"key": "concept_name"}}}}]
                 
+                6. GIT_COMMIT: Stage and commit all changes to git.
+                   Usage: [JSON_CMD: {{"tool": "GIT_COMMIT", "args": {{"message": "commit message"}}}}]
+                   
+                7. GIT_PUSH: Push commits to GitHub.
+                   Usage: [JSON_CMD: {{"tool": "GIT_PUSH", "args": {{}}}}]
+                   
+                8. GIT_STATUS: Check current git status.
+                   Usage: [JSON_CMD: {{"tool": "GIT_STATUS", "args": {{}}}}]
+                
                 CRITICAL: When assigned a task to "learn" or "remember" something, you MUST use the LEARN tool immediately.
                 When asked to "recall" or "check" if you know something, use the RECALL tool.
+                After completing significant work, use GIT_COMMIT to save your changes.
                 
                 When you need to perform an action, include the command in your response.
                 Reply in Vietnamese mainly, but use English for code and technical terms."""},
@@ -252,6 +262,16 @@ class BaseAgent(ABC):
                     else:
                         return self.memory.get_all_facts()
                 return "Error: Memory not initialized."
+                
+            elif cmd_name == "GIT_COMMIT":
+                message = args.get('message', 'Auto-commit by agent')
+                return self.tools.git_commit(message)
+                
+            elif cmd_name == "GIT_PUSH":
+                return self.tools.git_push()
+                
+            elif cmd_name == "GIT_STATUS":
+                return self.tools.git_status()
                 
             else:
                 return f"Error: Unknown command {cmd_name}"

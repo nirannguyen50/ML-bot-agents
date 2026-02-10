@@ -314,49 +314,132 @@ class ProjectManager:
         logger.info("All agents shut down")
 
     async def assign_initial_tasks(self):
-        """Assign initial real-world tasks to agents"""
-        logger.info("Assigning initial tasks...")
+        """Assign tasks from backlog to agents in a pipeline"""
+        logger.info("=" * 50)
+        logger.info("STARTING BACKLOG-DRIVEN TASK PIPELINE")
+        logger.info("=" * 50)
         
-        # 1. Data Scientist: Download Market Data
-        if 'data_scientist' in self.agents:
-            ds_agent = self.agents['data_scientist']
-            ds_id = self.agent_ids.get('data_scientist')
+        from utils.backlog_manager import BacklogManager
+        backlog = BacklogManager()
+        
+        # Pre-populate backlog with trading strategy pipeline
+        if not backlog.get_all_tasks():
+            logger.info("Populating backlog with trading strategy tasks...")
             
-            # Manager Instruction
-            instruction = "We need a utility script to calculate SMA. Please write and test it immediately."
-            log_agent_message(
-                from_agent=self.my_id,
-                to_agent=ds_id,
-                message=f"Task Assignment: {instruction}",
-                message_type="task"
+            # Stage 1: Data Scientist — Get data
+            t1 = backlog.add_task(
+                title="Download EURUSD market data",
+                description="Download 3 months of EURUSD daily data using yfinance. Save as CSV. Report row count and date range.",
+                assigned_to="data_scientist",
+                priority="critical"
             )
             
-            # Execute Task
-            # We explicitly trigger a memory test task here
-            task_payload = {
-                'type': 'memory_test',
-                'description': 'Please learn that "The project started in 2026". Then recall this fact to confirm you remember it.'
-            }
+            # Stage 2: Data Scientist — Feature engineering
+            t2 = backlog.add_task(
+                title="Calculate technical indicators",
+                description="Write a Python script that reads the EURUSD CSV and calculates: SMA(20), SMA(50), RSI(14), MACD. Save results to eurusd_features.csv.",
+                assigned_to="data_scientist",
+                priority="high",
+                depends_on=t1["id"]
+            )
             
-            # Agent confirms receipt
-            confirm_msg = await ds_agent.think(f"Project Manager assigned task: {instruction}", "Confirm you are starting the download.")
-            log_agent_message(ds_id, self.my_id, confirm_msg, "status")
+            # Stage 3: Quant Analyst — Strategy design
+            t3 = backlog.add_task(
+                title="Design SMA crossover strategy",
+                description="Write a trading strategy document: entry when SMA20 crosses above SMA50, exit when crosses below. Define position sizing (1% risk per trade), stop loss (ATR-based), and expected Sharpe ratio. Save as strategy_sma_crossover.py.",
+                assigned_to="quant_analyst",
+                priority="high",
+                depends_on=t2["id"]
+            )
             
-            # Agent executes
-            # Force a manual LEARN command to ensure it works
-            logger.info("Forcing manual LEARN command...")
-            learn_cmd = '[JSON_CMD: {"tool": "LEARN", "args": {"key": "project_start_date", "value": "2026-02-11"}}]'
-            await ds_agent.act(learn_cmd)
+            # Stage 4: Engineer — Backtest
+            t4 = backlog.add_task(
+                title="Write backtest engine",
+                description="Write a Python backtest script (backtest_sma.py) that reads eurusd_features.csv and tests the SMA crossover strategy. Output: total trades, win rate, profit factor, max drawdown.",
+                assigned_to="engineer",
+                priority="high",
+                depends_on=t3["id"]
+            )
             
-            result = await ds_agent.execute_task(task_payload)
+            # Stage 5: DevOps — Monitoring
+            t5 = backlog.add_task(
+                title="Create system health monitor",
+                description="Write a health_check.py script that checks: disk space, memory usage, data freshness (last CSV modified time), and number of agent log files. Output a JSON health report.",
+                assigned_to="devops",
+                priority="medium",
+                depends_on=None  # Can run independently
+            )
             
-            # Agent reports completion
+            log_agent_message(self.my_id, "ALL", f"Backlog loaded: {backlog.get_summary()}", "task")
+
+        # Process backlog — assign tasks to each agent
+        for agent_name, agent in self.agents.items():
+            task = backlog.get_next_task(agent_name)
+            if not task:
+                logger.info(f"No pending tasks for {agent_name}")
+                continue
+            
+            task_id = task["id"]
+            agent_id = self.agent_ids.get(agent_name)
+            
+            # PM announces task
+            logger.info(f"Assigning task #{task_id} to {agent_name}: {task['title']}")
+            log_agent_message(
+                self.my_id, agent_id,
+                f"📋 Task #{task_id}: {task['title']}\n{task['description']}",
+                "task"
+            )
+            
+            # Mark as in progress
+            backlog.update_status(task_id, "in_progress")
+            
+            # Agent thinks about the task
+            thought = await agent.think(
+                f"You have been assigned task #{task_id}: {task['title']}",
+                task['description']
+            )
+            log_agent_message(agent_id, self.my_id, thought, "status")
+            
+            # Agent acts on its thought
+            action_result = await agent.act(thought)
+            if action_result:
+                log_agent_message(agent_id, self.my_id, f"Action result: {action_result[:500]}", "status")
+            
+            # Execute the task
+            result = await agent.execute_task({
+                'type': task['title'],
+                'description': task['description']
+            })
+            
             if result.get('status') == 'success':
-                report_msg = f"Task Complete: {result.get('output')}"
-                log_agent_message(ds_id, self.my_id, report_msg, "status")
+                backlog.update_status(task_id, "done")
+                report = f"✅ Task #{task_id} Complete: {result.get('output', '')[:300]}"
+                log_agent_message(agent_id, self.my_id, report, "status")
+                
+                # Agent learns what it did
+                if agent.memory:
+                    agent.memory.remember_fact(
+                        f"task_{task_id}_result",
+                        f"Completed: {task['title']}"
+                    )
             else:
-                error_msg = f"Task Failed: {result.get('error')}"
-                log_agent_message(ds_id, self.my_id, error_msg, "error")
+                backlog.update_status(task_id, "blocked")
+                error = f"❌ Task #{task_id} Failed: {result.get('error', 'Unknown error')}"
+                log_agent_message(agent_id, self.my_id, error, "error")
+            
+            logger.info(f"Task #{task_id} result: {result.get('status', 'unknown')}")
+        
+        # Git commit after all tasks
+        logger.info("Committing task results to git...")
+        if 'engineer' in self.agents and self.agents['engineer'].tools:
+            commit_result = self.agents['engineer'].tools.git_commit(
+                f"feat: backlog tasks completed at {datetime.now().strftime('%Y-%m-%d %H:%M')}"
+            )
+            logger.info(f"Git commit: {commit_result}")
+            push_result = self.agents['engineer'].tools.git_push()
+            logger.info(f"Git push: {push_result}")
+        
+        log_agent_message(self.my_id, "ALL", f"Pipeline complete. {backlog.get_summary()}", "status")
 
 
 async def main():
