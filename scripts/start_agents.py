@@ -63,7 +63,9 @@ if not API_KEY:
 class ProjectManager:
     """Project Manager Agent - Coordinates all other agents"""
     
-    def __init__(self, config_path: str = '../config/settings.yaml'):
+    def __init__(self, config_path: str = None):
+        if config_path is None:
+            config_path = os.path.join(os.path.dirname(__file__), '..', 'config', 'settings.yaml')
         self.config = self.load_config(config_path)
         self.agents = {}
         self.project_status = {
