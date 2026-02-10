@@ -16,33 +16,33 @@
       "title": "Calculate technical indicators",
       "description": "Write a Python script (calculate_features.py) that reads the EURUSD CSV and calculates: SMA(20), SMA(50), RSI(14), MACD. Save results to eurusd_features.csv in workspace/.",
       "assigned_to": "data_scientist",
-      "status": "in_progress",
+      "status": "done",
       "priority": "high",
       "depends_on": 1,
       "created_at": "2026-02-11T03:03:50.373582",
-      "completed_at": null
+      "completed_at": "2026-02-11T03:07:46.636490"
     },
     {
       "id": 3,
       "title": "Design SMA crossover strategy",
       "description": "Write a trading strategy (strategy_sma_crossover.py) in workspace/: entry when SMA20 crosses above SMA50, exit when crosses below. Define position sizing (1% risk), stop loss (ATR-based), expected Sharpe ratio.",
       "assigned_to": "quant_analyst",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "depends_on": 2,
       "created_at": "2026-02-11T03:03:50.380290",
-      "completed_at": null
+      "completed_at": "2026-02-11T03:09:41.910879"
     },
     {
       "id": 4,
       "title": "Write backtest engine",
       "description": "Write backtest_sma.py in workspace/ that reads eurusd_features.csv and tests the SMA crossover strategy. Output: total trades, win rate, profit factor, max drawdown.",
       "assigned_to": "engineer",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "depends_on": 3,
       "created_at": "2026-02-11T03:03:50.388836",
-      "completed_at": null
+      "completed_at": "2026-02-11T03:10:07.350122"
     },
     {
       "id": 5,
