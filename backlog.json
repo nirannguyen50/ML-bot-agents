@@ -5,11 +5,11 @@
       "title": "Download EURUSD market data",
       "description": "Download 3 months of EURUSD daily data using yfinance. Save as CSV in workspace/. Report row count and date range.",
       "assigned_to": "data_scientist",
-      "status": "in_progress",
+      "status": "done",
       "priority": "critical",
       "depends_on": null,
       "created_at": "2026-02-11T08:51:59.092860",
-      "completed_at": null
+      "completed_at": "2026-02-11T08:53:21.760145"
     },
     {
       "id": 2,
@@ -49,7 +49,7 @@
       "title": "Create system health monitor",
       "description": "Write health_check.py in workspace/ that checks: disk space, memory usage, data freshness, log files count. Output a JSON report.",
       "assigned_to": "devops",
-      "status": "todo",
+      "status": "in_progress",
       "priority": "medium",
       "depends_on": null,
       "created_at": "2026-02-11T08:51:59.145483",
