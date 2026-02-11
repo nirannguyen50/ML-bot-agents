@@ -16,7 +16,7 @@
       "title": "Calculate technical indicators",
       "description": "Write a Python script (calculate_features.py) that reads the EURUSD CSV and calculates: SMA(20), SMA(50), RSI(14), MACD. Save results to eurusd_features.csv in workspace/.",
       "assigned_to": "data_scientist",
-      "status": "todo",
+      "status": "in_progress",
       "priority": "high",
       "depends_on": 1,
       "created_at": "2026-02-11T08:14:25.942294",
