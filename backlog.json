@@ -54,7 +54,71 @@
       "depends_on": null,
       "created_at": "2026-02-11T08:14:25.964731",
       "completed_at": "2026-02-11T08:15:11.561147"
+    },
+    {
+      "id": 6,
+      "title": "Integrate SMA strategy into backtest engine",
+      "description": "Sử dụng chiến lược SMA crossover từ task #3 và tích hợp vào backtest engine từ task #4. Viết script backtest cụ thể trong workspace/ để kiểm tra hiệu suất chiến lược trên dữ liệu EURUSD đã có.",
+      "assigned_to": "engineer",
+      "status": "todo",
+      "priority": "high",
+      "depends_on": [
+        3,
+        4
+      ],
+      "created_at": "2026-02-11T08:20:53.494490",
+      "completed_at": null
+    },
+    {
+      "id": 7,
+      "title": "Calculate risk metrics for SMA strategy",
+      "description": "Sau khi backtest chạy, phân tích kết quả để tính các chỉ số rủi ro: Sharpe ratio, max drawdown, win rate. Lưu kết quả vào file CSV trong data/processed/ và báo cáo đánh giá sơ bộ.",
+      "assigned_to": "quant_analyst",
+      "status": "todo",
+      "priority": "high",
+      "depends_on": 6,
+      "created_at": "2026-02-11T08:20:53.511096",
+      "completed_at": null
+    },
+    {
+      "id": 8,
+      "title": "Optimize feature calculation pipeline",
+      "description": "Xem xét code tính features hiện tại (calculate_features.py, test_features.py). Tối ưu hóa tốc độ tính toán, thêm logging, và đảm bảo xử lý missing data. Viết test để xác nhận tính đúng đắn sau tối ưu.",
+      "assigned_to": "data_scientist",
+      "status": "todo",
+      "priority": "medium",
+      "depends_on": [
+        1,
+        2
+      ],
+      "created_at": "2026-02-11T08:20:53.525894",
+      "completed_at": null
+    },
+    {
+      "id": 9,
+      "title": "Set up automated backtest execution",
+      "description": "Tạo script hoặc cron job tự động chạy backtest hàng ngày/tuần trên dữ liệu mới. Script này cần gọi backtest engine, lưu kết quả vào thư mục logs/ hoặc data/backtest_results/, và tích hợp với health monitor từ task #5 để báo cáo trạng thái.",
+      "assigned_to": "devops",
+      "status": "todo",
+      "priority": "medium",
+      "depends_on": [
+        5,
+        6
+      ],
+      "created_at": "2026-02-11T08:20:53.541144",
+      "completed_at": null
+    },
+    {
+      "id": 10,
+      "title": "Design and implement a second trading strategy (RSI-based)",
+      "description": "Nghiên cứu và thiết kế chiến lược giao dịch mới dựa trên chỉ báo RSI (ví dụ: RSI oversold/overbought). Viết code chiến lược rõ ràng, mô tả logic entry/exit, và chuẩn bị để tích hợp vào backtest engine sau này.",
+      "assigned_to": "quant_analyst",
+      "status": "todo",
+      "priority": "medium",
+      "depends_on": null,
+      "created_at": "2026-02-11T08:20:53.555942",
+      "completed_at": null
     }
   ],
-  "next_id": 6
+  "next_id": 11
 }
