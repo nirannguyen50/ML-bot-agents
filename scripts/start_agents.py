@@ -53,6 +53,48 @@ try:
 except ImportError:
     VotingSystem = None
 
+# Feature 9: Shared Memory
+try:
+    from utils.shared_memory import SharedMemory
+except ImportError:
+    SharedMemory = None
+
+# Feature 13: Walk-Forward Optimization
+try:
+    from utils.walk_forward import WalkForwardOptimizer
+except ImportError:
+    WalkForwardOptimizer = None
+
+# Feature 15: Paper Trading
+try:
+    from utils.paper_trading import PaperTrader
+except ImportError:
+    PaperTrader = None
+
+# Feature 16: Performance Leaderboard
+try:
+    from utils.leaderboard import Leaderboard
+except ImportError:
+    Leaderboard = None
+
+# Feature 17: Auto-Recovery
+try:
+    from utils.auto_recovery import AutoRecovery
+except ImportError:
+    AutoRecovery = None
+
+# Feature 18: Agent Health Monitor
+try:
+    from utils.agent_health import AgentHealthMonitor
+except ImportError:
+    AgentHealthMonitor = None
+
+# Feature 23: Daily Summary Report
+try:
+    from utils.daily_report import DailyReporter
+except ImportError:
+    DailyReporter = None
+
 # Configure logging
 # Configure logging with UTF-8
 sys.stdout.reconfigure(encoding='utf-8')
@@ -101,6 +143,7 @@ class ProjectManager:
             "quant_analyst": "agent:main:subagent:003e337a-e6fe-4035-b8e5-0d754a447f6c",
             "engineer": "agent:main:subagent:875988ba-7250-4c5b-883b-7b226735e4e0",
             "devops": "agent:main:subagent:9bd475bd-9f19-4bff-83b7-b1ee2ab962be",
+            "risk_manager": "agent:main:subagent:f4a12b3c-7890-4def-abcd-1234567890ab",
             "trading_assistant": "agent:main:subagent:88c8ab35-081f-4567-8f12-cd92dafaa755",
             "main_system": "agent:main:main"
         }
@@ -131,6 +174,27 @@ class ProjectManager:
         
         # Feature 8: Voting System
         self.voting = VotingSystem() if VotingSystem else None
+        
+        # Feature 9: Shared Memory
+        self.shared_memory = SharedMemory() if SharedMemory else None
+        
+        # Feature 13: Walk-Forward Optimizer
+        self.walk_forward = WalkForwardOptimizer() if WalkForwardOptimizer else None
+        
+        # Feature 15: Paper Trading
+        self.paper_trader = PaperTrader() if PaperTrader else None
+        
+        # Feature 16: Performance Leaderboard
+        self.leaderboard = Leaderboard() if Leaderboard else None
+        
+        # Feature 17: Auto-Recovery
+        self.recovery = AutoRecovery() if AutoRecovery else None
+        
+        # Feature 18: Agent Health Monitor
+        self.health_monitor = AgentHealthMonitor() if AgentHealthMonitor else None
+        
+        # Feature 23: Daily Summary Report
+        self.daily_reporter = DailyReporter(telegram_notifier=self.telegram) if DailyReporter else None
     
     def pm_think(self, task: str, context: str = "") -> str:
         """PM uses LLM to make decisions with full project awareness"""
@@ -227,8 +291,18 @@ class ProjectManager:
                 'devops': DevOps
             }
             
+            # Feature 14: Risk Manager Agent
+            try:
+                from src.agents.risk_manager import RiskManagerAgent
+                agents_to_start['risk_manager'] = RiskManagerAgent
+            except ImportError:
+                logger.warning("Risk Manager agent not available")
+            
             for agent_name, agent_class in agents_to_start.items():
                 await self.start_agent(agent_name, agent_class)
+                # Feature 18: Register agent in health monitor
+                if self.health_monitor:
+                    self.health_monitor.register_agent(agent_name)
                 await asyncio.sleep(1)
             
         except ImportError as e:
@@ -522,12 +596,29 @@ class ProjectManager:
             self.dashboard.add_log(f"📋 Task #{task_id} → {agent_name}: {task['title']}")
             self.dashboard.update_backlog(backlog.get_all_tasks())
         
+        # Feature 18: Health monitor — task started
+        if self.health_monitor:
+            self.health_monitor.task_started(agent_name, task['title'])
+        
+        # Feature 17: Auto-Recovery checkpoint
+        if self.recovery:
+            self.recovery.task_completed(task_id, task['title'])  # checkpoint before execution
+        
         # Use multi-round self-correction (Feature 1: code auto-run built into this)
         result = await agent.execute_with_retry(task['description'], max_rounds=max_retries)
         
         rounds_used = result.get('rounds', 1)
+        task_success = result.get('status') in ('success', 'partial')
         
-        if result.get('status') in ('success', 'partial'):
+        # Feature 18: Health monitor — task completed
+        if self.health_monitor:
+            self.health_monitor.task_completed(agent_name, success=task_success)
+        
+        # Feature 23: Daily report tracking
+        if self.daily_reporter:
+            self.daily_reporter.record_task(task['title'], task_success)
+        
+        if task_success:
             backlog.update_status(task_id, "done")
             
             status_emoji = "✅" if result['status'] == 'success' else "⚠️"
@@ -539,6 +630,14 @@ class ProjectManager:
                 agent.memory.remember_fact(
                     f"task_{task_id}_result",
                     f"Completed: {task['title']} in {rounds_used} rounds"
+                )
+            
+            # Feature 9: Share insights via shared memory
+            if self.shared_memory and result.get('output'):
+                self.shared_memory.share_insight(
+                    agent_name,
+                    f"task_{task_id}_{task['title'][:30]}",
+                    result.get('output', '')[:300]
                 )
             
             # Feature 2: Telegram notification
@@ -565,6 +664,10 @@ class ProjectManager:
                 )
                 log_agent_message(self.my_id, agent_id, f"📝 PM Review: {pm_review}", "status")
         else:
+            # Feature 23: Record error
+            if self.daily_reporter:
+                self.daily_reporter.record_error(f"Task #{task_id} ({task['title']}) failed: {result.get('error', '')[:100]}")
+            
             # Feature 6: Error Escalation — PM decides what to do
             await self._escalate_failure(agent, agent_name, task, backlog, result)
     
@@ -752,6 +855,22 @@ Reply with: SKIP, REASSIGN, or SPLIT"""
                 )
                 if self.dashboard:
                     self.dashboard.add_log(f"🔍 Code review: {pyfile} ✅")
+                
+                # Feature 10: Auto-Fix from Code Review
+                review_text = review.get('review', '').lower()
+                has_bugs = any(word in review_text for word in ['bug', 'error', 'lỗi', 'fix', 'critical', 'security'])
+                if has_bugs:
+                    from utils.backlog_manager import BacklogManager
+                    fix_backlog = BacklogManager()
+                    fix_backlog.add_task(
+                        title=f"Auto-Fix: {pyfile}",
+                        description=f"Fix issues found in code review of {pyfile}:\n{review['review'][:500]}",
+                        assigned_to="engineer",
+                        priority=2
+                    )
+                    logger.info(f"🔧 Feature 10: Auto-created fix task for {pyfile}")
+                    if self.telegram:
+                        self.telegram.send_message(f"🔧 Auto-Fix: Code review found issues in {pyfile}, fix task created")
 
     async def _run_voting_phase(self, backlog):
         """Feature 8: QA proposes strategy and agents vote"""
@@ -984,13 +1103,23 @@ RESPOND IN THIS EXACT JSON FORMAT ONLY:
 
 
 async def main():
-    """Main entry point — Fully autonomous scheduler"""
+    """Main entry point — Fully autonomous scheduler with all v2 features"""
     project_manager = ProjectManager()
     cycle_interval = project_manager.config.get('pipeline', {}).get('cycle_interval', 60)
     max_cycles = project_manager.config.get('pipeline', {}).get('max_cycles', 0)  # 0 = infinite
     
     try:
-        # Start all agents
+        # Feature 17: Check for crash recovery
+        if project_manager.recovery and project_manager.recovery.should_resume():
+            resume = project_manager.recovery.get_resume_info()
+            logger.info(f"🔄 RESUMING from checkpoint: cycle={resume['cycle']}, phase={resume['phase']}, crashes={resume['crash_count']}")
+            if project_manager.telegram:
+                project_manager.telegram.send_message(
+                    f"🔄 Auto-Recovery: Resuming from cycle {resume['cycle']}, phase {resume['phase']}\n"
+                    f"Crash count: {resume['crash_count']}"
+                )
+        
+        # Start all agents (now includes risk_manager — Feature 14)
         await project_manager.start_all_agents()
         
         # Run initial standup
@@ -1012,7 +1141,7 @@ async def main():
         monitor_task = asyncio.create_task(project_manager.monitor_agents_intelligent())
         
         # ============================================
-        # AUTONOMOUS CYCLE LOOP
+        # AUTONOMOUS CYCLE LOOP (v2 — 9 Phases)
         # ============================================
         cycle = 0
         while True:
@@ -1025,6 +1154,14 @@ async def main():
             logger.info(f"AUTONOMOUS CYCLE #{cycle}")
             logger.info(f"{'🔄' * 20}\n")
             
+            # Feature 17: Checkpoint cycle start
+            if project_manager.recovery:
+                project_manager.recovery.start_cycle(cycle)
+            
+            # Feature 23: Record cycle
+            if project_manager.daily_reporter:
+                project_manager.daily_reporter.record_cycle(cycle)
+            
             # Feature 2: Telegram cycle start
             if project_manager.telegram:
                 project_manager.telegram.send_cycle_start(cycle)
@@ -1034,28 +1171,55 @@ async def main():
                 project_manager.dashboard.set_cycle(cycle)
                 project_manager.dashboard.set_pipeline_status("running")
             
-            # Phase 1: Run pipeline until all tasks done
+            # Feature 19: Git branch per cycle
+            import subprocess
+            branch_name = f"cycle-{cycle}"
+            try:
+                subprocess.run(["git", "checkout", "-b", branch_name], capture_output=True,
+                            cwd=os.path.join(os.path.dirname(__file__), '..'), timeout=10)
+                logger.info(f"🌿 Created branch: {branch_name}")
+            except:
+                pass
+            
+            # ---- Phase 1: Pipeline ----
             logger.info("📌 Phase 1: Running pipeline...")
+            if project_manager.recovery:
+                project_manager.recovery.set_phase("pipeline")
             await project_manager.run_continuous_pipeline()
             
-            # Phase 2: Code Review (Feature 4)
+            # ---- Phase 2: Code Review (Feature 4) ----
             logger.info("📌 Phase 2: Code Review...")
+            if project_manager.recovery:
+                project_manager.recovery.set_phase("code_review")
             await project_manager._run_code_reviews()
             
-            # Phase 3: Voting (Feature 8)
+            # ---- Phase 3: Voting (Feature 8) ----
             logger.info("📌 Phase 3: Voting Phase...")
+            if project_manager.recovery:
+                project_manager.recovery.set_phase("voting")
             from utils.backlog_manager import BacklogManager
             backlog_for_vote = BacklogManager()
             await project_manager._run_voting_phase(backlog_for_vote)
             
-            # Phase 4: PM plans next wave of tasks
+            # ---- Phase 4: PM Auto-Planning ----
             logger.info("📌 Phase 4: PM Auto-Planning...")
+            if project_manager.recovery:
+                project_manager.recovery.set_phase("planning")
             new_tasks = await project_manager.pm_auto_plan()
             
-            # Phase 5: Cost Report (Feature 3)
+            # ---- Phase 5: Cost Report (Feature 3) ----
             if project_manager.llm:
                 cost_summary = project_manager.llm.get_cost_summary()
                 logger.info(f"📌 Phase 5: {cost_summary}")
+                
+                # Feature 23: Record cost
+                if project_manager.daily_reporter:
+                    usage = project_manager.llm.get_usage_report()
+                    project_manager.daily_reporter.record_cost(
+                        usage.get('total_cost_usd', 0),
+                        usage.get('total_tokens', 0),
+                        usage.get('total_calls', 0)
+                    )
                 
                 if project_manager.dashboard:
                     project_manager.dashboard.update_cost(project_manager.llm.get_usage_report())
@@ -1064,7 +1228,21 @@ async def main():
                 if project_manager.telegram:
                     project_manager.telegram.send_cost_report(cost_summary)
             
-            # Feature 2: Telegram pipeline done
+            # ---- Phase 6: Health Check (Feature 18) ----
+            if project_manager.health_monitor:
+                logger.info("📌 Phase 6: Agent Health Check...")
+                warnings = project_manager.health_monitor.check_health()
+                for w in warnings:
+                    logger.warning(w["message"])
+                    if project_manager.telegram and w.get("severity") == "high":
+                        project_manager.telegram.send_error(w["message"])
+                logger.info(project_manager.health_monitor.get_summary_text())
+            
+            # ---- Phase 7: Leaderboard Update (Feature 16) ----
+            if project_manager.leaderboard:
+                logger.info(f"📌 Phase 7: {project_manager.leaderboard.get_leaderboard_text()}")
+            
+            # ---- Phase 8: Telegram pipeline done + notifications ----
             if project_manager.telegram:
                 backlog_summary = BacklogManager()
                 done_count = len([t for t in backlog_summary.get_all_tasks() if t['status'] == 'done'])
@@ -1089,11 +1267,40 @@ async def main():
                     "status"
                 )
             
+            # Feature 19: Merge branch back to main
+            try:
+                subprocess.run(["git", "add", "-A"], capture_output=True,
+                            cwd=os.path.join(os.path.dirname(__file__), '..'), timeout=10)
+                subprocess.run(["git", "commit", "-m", f"Cycle #{cycle} complete"],
+                            capture_output=True, cwd=os.path.join(os.path.dirname(__file__), '..'), timeout=10)
+                subprocess.run(["git", "checkout", "main"], capture_output=True,
+                            cwd=os.path.join(os.path.dirname(__file__), '..'), timeout=10)
+                subprocess.run(["git", "merge", branch_name, "--no-edit"], capture_output=True,
+                            cwd=os.path.join(os.path.dirname(__file__), '..'), timeout=10)
+                logger.info(f"🌿 Merged {branch_name} → main")
+            except:
+                pass
+            
             # Feature 7: Dashboard cooldown
             if project_manager.dashboard:
                 project_manager.dashboard.set_pipeline_status("cooldown")
             
-            # Phase 6: Cooldown
+            # Feature 17: Checkpoint before cooldown
+            if project_manager.recovery:
+                project_manager.recovery.set_phase("cooldown")
+            
+            # ---- Phase 9: Daily Report (Feature 23) ----
+            # Send daily report every 5 cycles or on demand
+            if project_manager.daily_reporter and cycle % 5 == 0:
+                logger.info("📌 Phase 9: Sending Daily Report...")
+                project_manager.daily_reporter.send_report(
+                    agent_health_text=project_manager.health_monitor.get_summary_text() if project_manager.health_monitor else "",
+                    leaderboard_text=project_manager.leaderboard.get_leaderboard_text() if project_manager.leaderboard else "",
+                    paper_trading_text=project_manager.paper_trader.get_summary_text() if project_manager.paper_trader else "",
+                    recovery_text=project_manager.recovery.get_status_text() if project_manager.recovery else ""
+                )
+            
+            # Cooldown
             logger.info(f"⏳ Cooldown: {cycle_interval} seconds until next cycle...")
             await asyncio.sleep(cycle_interval)
             
@@ -1103,9 +1310,22 @@ async def main():
         logger.error(f"Unexpected error: {e}")
         import traceback
         traceback.print_exc()
+        
+        # Feature 17: Record crash for recovery
+        if hasattr(project_manager, 'recovery') and project_manager.recovery:
+            project_manager.recovery.record_crash(str(e)[:500])
+        
         if hasattr(project_manager, 'telegram') and project_manager.telegram:
             project_manager.telegram.send_error(f"System crash: {str(e)[:300]}")
     finally:
+        # Feature 23: Send final daily report
+        if hasattr(project_manager, 'daily_reporter') and project_manager.daily_reporter:
+            project_manager.daily_reporter.send_report(
+                agent_health_text=project_manager.health_monitor.get_summary_text() if project_manager.health_monitor else "",
+                leaderboard_text=project_manager.leaderboard.get_leaderboard_text() if project_manager.leaderboard else "",
+                recovery_text=project_manager.recovery.get_status_text() if project_manager.recovery else ""
+            )
+        
         # Final cost report
         if project_manager.llm:
             logger.info(f"📊 FINAL {project_manager.llm.get_cost_summary()}")
