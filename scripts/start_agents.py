@@ -6,6 +6,7 @@ This script initializes and coordinates all project agents using DeepSeek LLM
 
 import asyncio
 import logging
+import json
 from datetime import datetime
 from typing import Dict, List
 import yaml
@@ -538,7 +539,6 @@ class ProjectManager:
                         f"🔔 Dependency satisfied! Task #{completed_task['id']} ({completed_task['title']}) "
                         f"is DONE. Your task #{task['id']} ({task['title']}) is now READY."
                     )
-                    # Send to the next agent
                     next_agent.send_message("project_manager", f"Ready for task: {task['title']}")
                     await next_agent.receive_message("project_manager", handoff_msg)
                     
@@ -550,10 +550,183 @@ class ProjectManager:
                     )
                     logger.info(f"🔗 Handoff: {completed_task['assigned_to']} → {next_agent_name}")
 
+    async def pm_auto_plan(self) -> int:
+        """
+        PM Auto-Planning: Analyze completed tasks and generate next wave of work.
+        Returns number of new tasks created.
+        """
+        from utils.backlog_manager import BacklogManager
+        backlog = BacklogManager()
+        
+        tasks = backlog.get_all_tasks()
+        done_tasks = [t for t in tasks if t["status"] == "done"]
+        pending_tasks = [t for t in tasks if t["status"] in ("todo", "in_progress")]
+        
+        if pending_tasks:
+            logger.info(f"Auto-plan skipped: {len(pending_tasks)} tasks still pending")
+            return 0
+        
+        logger.info("\n" + "=" * 60)
+        logger.info("🧠 PM AUTO-PLANNING: Generating next wave of tasks...")
+        logger.info("=" * 60)
+        
+        # Gather context: completed tasks + workspace files
+        workspace_files = []
+        workspace_dir = os.path.join(os.path.dirname(__file__), '..', 'workspace')
+        if os.path.exists(workspace_dir):
+            for f in os.listdir(workspace_dir):
+                filepath = os.path.join(workspace_dir, f)
+                if os.path.isfile(filepath):
+                    size = os.path.getsize(filepath)
+                    workspace_files.append(f"{f} ({size} bytes)")
+        
+        # Gather agent memories
+        agent_knowledge = {}
+        for agent_name, agent in self.agents.items():
+            if agent.memory:
+                facts = agent.memory.recall_fact("all")
+                agent_knowledge[agent_name] = facts if facts else "No memory"
+        
+        # Ask PM AI to plan next tasks
+        planning_prompt = f"""Analyze completed work and plan the NEXT wave of tasks.
+
+COMPLETED TASKS ({len(done_tasks)}):
+{chr(10).join(f"- #{t['id']} [{t['assigned_to']}]: {t['title']}" for t in done_tasks)}
+
+WORKSPACE FILES:
+{chr(10).join(f"- {f}" for f in workspace_files) if workspace_files else "No files yet"}
+
+AGENT KNOWLEDGE:
+{json.dumps(agent_knowledge, indent=2, default=str)[:1000]}
+
+AVAILABLE AGENTS:
+- data_scientist: Data analysis, ML, feature engineering
+- quant_analyst: Strategy design, risk analysis, backtesting rules
+- engineer: Code quality, system architecture, optimization
+- devops: Monitoring, deployment, CI/CD
+
+RULES:
+1. Create 3-5 NEW tasks that build on completed work
+2. Each task MUST be actionable and specific
+3. Assign to the most appropriate agent
+4. Set correct dependencies (use task IDs from completed tasks)
+5. Focus on IMPROVING the existing trading system
+
+RESPOND IN THIS EXACT JSON FORMAT ONLY:
+[
+  {{"title": "task title", "description": "detailed description of what to do", "assigned_to": "agent_name", "priority": "high", "depends_on": null}},
+  ...
+]"""
+
+        ai_response = self.pm_think("Generate next wave of tasks", planning_prompt)
+        
+        # Parse AI response to extract tasks
+        new_tasks = self._parse_planned_tasks(ai_response)
+        
+        if not new_tasks:
+            logger.warning("PM could not generate new tasks. Using fallback plan.")
+            new_tasks = self._fallback_tasks(done_tasks)
+        
+        # Add tasks to backlog
+        created_count = 0
+        last_task_id = max(t["id"] for t in done_tasks) if done_tasks else 0
+        
+        for task_spec in new_tasks:
+            try:
+                # Resolve depends_on
+                dep = task_spec.get("depends_on")
+                
+                new_task = backlog.add_task(
+                    title=task_spec["title"],
+                    description=task_spec.get("description", task_spec["title"]),
+                    assigned_to=task_spec["assigned_to"],
+                    priority=task_spec.get("priority", "medium"),
+                    depends_on=dep
+                )
+                created_count += 1
+                log_agent_message(
+                    self.my_id, "ALL",
+                    f"📝 New task #{new_task['id']}: {new_task['title']} → {new_task['assigned_to']}",
+                    "task"
+                )
+            except Exception as e:
+                logger.error(f"Failed to create task: {e}")
+        
+        logger.info(f"✅ PM Auto-Plan complete: {created_count} new tasks created")
+        log_agent_message(self.my_id, "ALL", f"🧠 Auto-planned {created_count} new tasks. {backlog.get_summary()}", "status")
+        
+        return created_count
+    
+    def _parse_planned_tasks(self, ai_response: str) -> List[Dict]:
+        """Parse AI-generated task list from PM response"""
+        import re
+        
+        # Try to extract JSON array from response
+        try:
+            # Find JSON array in response
+            match = re.search(r'\[[\s\S]*\]', ai_response)
+            if match:
+                tasks = json.loads(match.group())
+                valid_agents = {"data_scientist", "quant_analyst", "engineer", "devops"}
+                valid_tasks = []
+                for t in tasks:
+                    if isinstance(t, dict) and "title" in t and "assigned_to" in t:
+                        if t["assigned_to"] in valid_agents:
+                            valid_tasks.append(t)
+                if valid_tasks:
+                    return valid_tasks[:5]  # Max 5 tasks per wave
+        except (json.JSONDecodeError, Exception) as e:
+            logger.warning(f"Failed to parse AI tasks: {e}")
+        
+        return []
+    
+    def _fallback_tasks(self, done_tasks: List[Dict]) -> List[Dict]:
+        """Generate fallback tasks if AI planning fails"""
+        done_titles = {t["title"].lower() for t in done_tasks}
+        
+        fallback_pool = [
+            {
+                "title": "Optimize strategy parameters",
+                "description": "Use grid search to find optimal SMA periods and RSI thresholds. Test SMA(10,30), SMA(15,45), SMA(20,50) combinations. Report best Sharpe ratio.",
+                "assigned_to": "quant_analyst",
+                "priority": "high"
+            },
+            {
+                "title": "Add risk management module",
+                "description": "Write risk_manager.py in workspace/: implement position sizing (Kelly criterion), drawdown limits (max 5%), and portfolio heat tracking.",
+                "assigned_to": "engineer",
+                "priority": "high"
+            },
+            {
+                "title": "Download additional currency pairs",
+                "description": "Download 3 months data for GBPUSD, USDJPY, AUDUSD using yfinance. Save each as CSV in workspace/. Report statistics.",
+                "assigned_to": "data_scientist",
+                "priority": "medium"
+            },
+            {
+                "title": "Create performance report generator",
+                "description": "Write report_generator.py in workspace/: read backtest results and generate a summary report with equity curve data, drawdown chart data, and monthly returns.",
+                "assigned_to": "data_scientist",
+                "priority": "medium"
+            },
+            {
+                "title": "Setup automated deployment script",
+                "description": "Write deploy.py in workspace/: automated deployment script that validates all workspace files, runs health checks, and generates deployment report.",
+                "assigned_to": "devops",
+                "priority": "medium"
+            }
+        ]
+        
+        # Filter out already completed tasks
+        new_tasks = [t for t in fallback_pool if t["title"].lower() not in done_titles]
+        return new_tasks[:4]
+
 
 async def main():
-    """Main entry point"""
+    """Main entry point — Fully autonomous scheduler"""
     project_manager = ProjectManager()
+    cycle_interval = project_manager.config.get('pipeline', {}).get('cycle_interval', 60)
+    max_cycles = project_manager.config.get('pipeline', {}).get('max_cycles', 0)  # 0 = infinite
     
     try:
         # Start all agents
@@ -566,22 +739,52 @@ async def main():
         logger.info("Waiting for agents to initialize...")
         await asyncio.sleep(3)
         
-        # Populate backlog
+        # Populate initial backlog
         await project_manager.assign_initial_tasks()
         
         # Start monitoring in background
         monitor_task = asyncio.create_task(project_manager.monitor_agents_intelligent())
         
-        # Run continuous pipeline (replaces one-shot execution)
-        logger.info("\n🚀 Starting Continuous Pipeline...")
-        await project_manager.run_continuous_pipeline()
-        
-        # Pipeline complete — keep monitoring
-        logger.info("\nML Trading Bot Agents — Pipeline complete! Monitoring active.")
-        logger.info("Press Ctrl+C to shutdown gracefully\n")
-        
+        # ============================================
+        # AUTONOMOUS CYCLE LOOP
+        # ============================================
+        cycle = 0
         while True:
-            await asyncio.sleep(1)
+            cycle += 1
+            if max_cycles > 0 and cycle > max_cycles:
+                logger.info(f"Reached max cycles ({max_cycles}). Stopping.")
+                break
+            
+            logger.info(f"\n{'🔄' * 20}")
+            logger.info(f"AUTONOMOUS CYCLE #{cycle}")
+            logger.info(f"{'🔄' * 20}\n")
+            
+            # Phase 1: Run pipeline until all tasks done
+            logger.info("📌 Phase 1: Running pipeline...")
+            await project_manager.run_continuous_pipeline()
+            
+            # Phase 2: PM plans next wave of tasks
+            logger.info("📌 Phase 2: PM Auto-Planning...")
+            new_tasks = await project_manager.pm_auto_plan()
+            
+            if new_tasks == 0:
+                logger.info(f"No new tasks generated. Cooldown {cycle_interval}s before retry...")
+                log_agent_message(
+                    project_manager.my_id, "ALL",
+                    f"💤 Cycle #{cycle} complete. No new tasks. Cooling down {cycle_interval}s...",
+                    "status"
+                )
+            else:
+                logger.info(f"🚀 {new_tasks} new tasks planned! Starting next pipeline immediately...")
+                log_agent_message(
+                    project_manager.my_id, "ALL",
+                    f"🚀 Cycle #{cycle} complete. {new_tasks} new tasks → starting next cycle!",
+                    "status"
+                )
+            
+            # Phase 3: Cooldown
+            logger.info(f"⏳ Cooldown: {cycle_interval} seconds until next cycle...")
+            await asyncio.sleep(cycle_interval)
             
     except KeyboardInterrupt:
         logger.info("\nShutdown requested by user")
@@ -598,4 +801,5 @@ if __name__ == "__main__":
     os.makedirs('logs', exist_ok=True)
     os.makedirs('reports', exist_ok=True)
     asyncio.run(main())
+
 

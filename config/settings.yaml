@@ -30,6 +30,8 @@ pipeline:
   pause_between_tasks: 5       # Seconds between task assignments
   auto_git_commit: true        # Auto commit after task completion
   auto_git_push: true          # Auto push after commit
+  cycle_interval: 60           # Seconds between autonomous cycles
+  max_cycles: 0                # 0 = infinite cycles (fully autonomous)
 
 llm:
   provider: "deepseek"
