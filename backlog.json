@@ -1,0 +1,60 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "title": "Download EURUSD market data",
+      "description": "Download 3 months of EURUSD daily data using yfinance. Save as CSV in workspace/. Report row count and date range.",
+      "assigned_to": "data_scientist",
+      "status": "done",
+      "priority": "critical",
+      "depends_on": null,
+      "created_at": "2026-02-11T08:14:25.933447",
+      "completed_at": "2026-02-11T08:14:43.932956"
+    },
+    {
+      "id": 2,
+      "title": "Calculate technical indicators",
+      "description": "Write a Python script (calculate_features.py) that reads the EURUSD CSV and calculates: SMA(20), SMA(50), RSI(14), MACD. Save results to eurusd_features.csv in workspace/.",
+      "assigned_to": "data_scientist",
+      "status": "todo",
+      "priority": "high",
+      "depends_on": 1,
+      "created_at": "2026-02-11T08:14:25.942294",
+      "completed_at": null
+    },
+    {
+      "id": 3,
+      "title": "Design SMA crossover strategy",
+      "description": "Write a trading strategy (strategy_sma_crossover.py) in workspace/: entry when SMA20 crosses above SMA50, exit when crosses below. Define position sizing (1% risk), stop loss (ATR-based), expected Sharpe ratio.",
+      "assigned_to": "quant_analyst",
+      "status": "todo",
+      "priority": "high",
+      "depends_on": 2,
+      "created_at": "2026-02-11T08:14:25.949388",
+      "completed_at": null
+    },
+    {
+      "id": 4,
+      "title": "Write backtest engine",
+      "description": "Write backtest_sma.py in workspace/ that reads eurusd_features.csv and tests the SMA crossover strategy. Output: total trades, win rate, profit factor, max drawdown.",
+      "assigned_to": "engineer",
+      "status": "todo",
+      "priority": "high",
+      "depends_on": 3,
+      "created_at": "2026-02-11T08:14:25.957228",
+      "completed_at": null
+    },
+    {
+      "id": 5,
+      "title": "Create system health monitor",
+      "description": "Write health_check.py in workspace/ that checks: disk space, memory usage, data freshness, log files count. Output a JSON report.",
+      "assigned_to": "devops",
+      "status": "done",
+      "priority": "medium",
+      "depends_on": null,
+      "created_at": "2026-02-11T08:14:25.964731",
+      "completed_at": "2026-02-11T08:15:11.561147"
+    }
+  ],
+  "next_id": 6
+}
