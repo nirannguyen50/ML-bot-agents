@@ -21,10 +21,12 @@ try:
     from utils.llm_client import DeepSeekClient
     from utils.agent_tools import AgentTools
     from utils.memory import AgentMemory
+    from utils.shared_memory import SharedMemory
 except ImportError:
     DeepSeekClient = None
     AgentTools = None
     AgentMemory = None
+    SharedMemory = None
 import re
 
 
@@ -69,6 +71,11 @@ class BaseAgent(ABC):
 
         if AgentMemory:
             self.memory = AgentMemory(agent_name=agent_name, memory_dir=os.path.join(os.path.dirname(__file__), '..', '..', 'memory'))
+        
+        # Feature 9: Shared memory
+        self.shared_memory = None
+        if SharedMemory:
+            self.shared_memory = SharedMemory(os.path.join(os.path.dirname(__file__), '..', '..', 'shared_memory.json'))
             
         if self.api_key and DeepSeekClient:
             try:
@@ -123,11 +130,19 @@ class BaseAgent(ABC):
             role_context = f"\n\nYOUR ROLE INSTRUCTIONS:\n{self.role_instruction}" if self.role_instruction else ""
             project_ctx = f"\n\nPROJECT CONTEXT:\n{self.project_context}" if self.project_context else ""
             
+            # Feature 9: Inject shared memory context
+            shared_ctx = ""
+            if self.shared_memory:
+                shared_ctx = self.shared_memory.get_context_for_agent(self.name)
+                if shared_ctx:
+                    shared_ctx = f"\n\nSHARED KNOWLEDGE FROM OTHER AGENTS:\n{shared_ctx}"
+            
             prompt = [
                 {"role": "system", "content": f"""You are the {self.name} of an advanced AI Trading System. 
                 Your role is detailed, professional, and proactive. Respond as if you are a real expert in your field.
                 {role_context}
                 {project_ctx}
+                {shared_ctx}
                 
                 You have access to the following TOOLS to perform actions.
                 IMPORTANT: To use a tool, you MUST use the following JSON format:
@@ -300,11 +315,21 @@ class BaseAgent(ABC):
         last_error = None
         all_outputs = []
         
+        # Feature 11: Inject failure history
+        failure_context = ""
+        if self.memory:
+            keywords = task_description.split()[:3]
+            for kw in keywords:
+                fh = self.memory.get_failure_history(kw)
+                if fh:
+                    failure_context = f"\n\n{fh}"
+                    break
+        
         for round_num in range(1, max_rounds + 1):
             self.logger.info(f"{self.name}: Round {round_num}/{max_rounds} for: {task_description[:60]}...")
             
             # Build context with error history
-            context = task_description
+            context = task_description + failure_context
             if last_error:
                 context += f"\n\nPREVIOUS ATTEMPT FAILED with error:\n{last_error}\nPlease fix the issue and try again."
             
@@ -348,6 +373,10 @@ class BaseAgent(ABC):
                 continue
         
         # All rounds exhausted
+        # Feature 11: Remember this failure
+        if self.memory and last_error:
+            self.memory.remember_failure(task_description[:100], last_error[:300], max_rounds)
+        
         return {
             "status": "partial",
             "output": "\n".join(all_outputs) if all_outputs else f"Completed with issues after {max_rounds} rounds",

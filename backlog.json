@@ -54,7 +54,73 @@
       "depends_on": null,
       "created_at": "2026-02-11T08:51:59.145483",
       "completed_at": "2026-02-11T08:55:25.287767"
+    },
+    {
+      "id": 6,
+      "title": "Backtest SMA strategy with historical data",
+      "description": "Run the SMA crossover strategy through the backtest engine using the downloaded EURUSD data and calculated features. Generate performance metrics (returns, Sharpe ratio, max drawdown) and visualize equity curve.",
+      "assigned_to": "quant_analyst",
+      "status": "done",
+      "priority": "high",
+      "depends_on": [
+        3,
+        4
+      ],
+      "created_at": "2026-02-11T09:02:48.411883",
+      "completed_at": "2026-02-11T09:04:54.536236"
+    },
+    {
+      "id": 7,
+      "title": "Optimize backtest engine for speed and memory",
+      "description": "Profile the current backtest engine (backtest_sma.py) for bottlenecks. Implement vectorized operations using pandas/numpy and optimize data structures to improve execution speed and reduce memory usage.",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": "medium",
+      "depends_on": [
+        4
+      ],
+      "created_at": "2026-02-11T09:02:48.427699",
+      "completed_at": "2026-02-11T09:07:19.014792"
+    },
+    {
+      "id": 8,
+      "title": "Add risk management module to strategy",
+      "description": "Enhance the SMA crossover strategy by integrating stop-loss, take-profit, and position sizing rules. Implement a risk management class that calculates position size based on account balance and risk per trade (e.g., 1-2%).",
+      "assigned_to": "quant_analyst",
+      "status": "todo",
+      "priority": "high",
+      "depends_on": [
+        3
+      ],
+      "created_at": "2026-02-11T09:02:48.448587",
+      "completed_at": null
+    },
+    {
+      "id": 9,
+      "title": "Create automated data validation pipeline",
+      "description": "Build a script that automatically validates new market data downloads. Check for missing values, outliers, and data integrity. Generate a validation report and alert if issues are found.",
+      "assigned_to": "data_scientist",
+      "status": "done",
+      "priority": "medium",
+      "depends_on": [
+        1
+      ],
+      "created_at": "2026-02-11T09:02:48.466856",
+      "completed_at": "2026-02-11T09:04:23.677051"
+    },
+    {
+      "id": 10,
+      "title": "Set up basic CI/CD pipeline for code changes",
+      "description": "Create a GitHub Actions workflow that runs automated tests (e.g., pytest) on pull requests to the main branch. Ensure the backtest engine and feature calculations pass basic unit tests before merging.",
+      "assigned_to": "devops",
+      "status": "in_progress",
+      "priority": "medium",
+      "depends_on": [
+        5
+      ],
+      "created_at": "2026-02-11T09:02:48.482767",
+      "completed_at": null
     }
   ],
-  "next_id": 6
+  "next_id": 11
 }

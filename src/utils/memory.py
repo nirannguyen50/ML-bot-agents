@@ -69,3 +69,38 @@ class AgentMemory:
         for k, v in self.data["facts"].items():
             summary += f"- {k}: {v}\n"
         return summary
+
+    def remember_failure(self, task_title: str, error: str, round_failed: int = 0):
+        """Feature 11: Store a failure to learn from"""
+        if "failures" not in self.data:
+            self.data["failures"] = []
+        
+        self.data["failures"].append({
+            "task": task_title,
+            "error": error[:500],
+            "round": round_failed,
+            "timestamp": __import__('datetime').datetime.now().isoformat()
+        })
+        # Keep last 30 failures
+        self.data["failures"] = self.data["failures"][-30:]
+        self.save()
+    
+    def get_failure_history(self, keyword: str = None) -> str:
+        """Feature 11: Get past failures, optionally filtered by keyword"""
+        failures = self.data.get("failures", [])
+        if not failures:
+            return ""
+        
+        if keyword:
+            failures = [f for f in failures if keyword.lower() in f.get("task", "").lower()]
+        
+        if not failures:
+            return ""
+        
+        lines = ["=== PAST FAILURES (learn from these) ==="]
+        for f in failures[-5:]:  # Last 5 relevant
+            lines.append(f"• Task: {f['task']}")
+            lines.append(f"  Error: {f['error'][:200]}")
+            lines.append(f"  Failed at round: {f['round']}")
+        
+        return "\n".join(lines)
