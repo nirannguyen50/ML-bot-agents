@@ -114,13 +114,13 @@
       "title": "Design and test risk management rules",
       "description": "Thiết kế các quy tắc quản lý rủi ro (stop-loss, position sizing, maximum drawdown limit) tích hợp vào chiến lược SMA crossover. Viết unit test cho các rules này và cập nhật vào backtest engine.",
       "assigned_to": "quant_analyst",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "depends_on": [
         3
       ],
       "created_at": "2026-02-11T08:39:39.297645",
-      "completed_at": null
+      "completed_at": "2026-02-11T08:44:54.890680"
     }
   ],
   "next_id": 11
