@@ -5,123 +5,56 @@
       "title": "Download EURUSD market data",
       "description": "Download 3 months of EURUSD daily data using yfinance. Save as CSV in workspace/. Report row count and date range.",
       "assigned_to": "data_scientist",
-      "status": "done",
+      "status": "in_progress",
       "priority": "critical",
       "depends_on": null,
-      "created_at": "2026-02-11T08:35:12.411175",
-      "completed_at": "2026-02-11T08:35:27.955449"
+      "created_at": "2026-02-11T08:51:59.092860",
+      "completed_at": null
     },
     {
       "id": 2,
       "title": "Calculate technical indicators",
       "description": "Write a Python script (calculate_features.py) that reads the EURUSD CSV and calculates: SMA(20), SMA(50), RSI(14), MACD. Save results to eurusd_features.csv in workspace/.",
       "assigned_to": "data_scientist",
-      "status": "done",
+      "status": "todo",
       "priority": "high",
       "depends_on": 1,
-      "created_at": "2026-02-11T08:35:12.421716",
-      "completed_at": "2026-02-11T08:36:15.907626"
+      "created_at": "2026-02-11T08:51:59.112009",
+      "completed_at": null
     },
     {
       "id": 3,
       "title": "Design SMA crossover strategy",
       "description": "Write a trading strategy (strategy_sma_crossover.py) in workspace/: entry when SMA20 crosses above SMA50, exit when crosses below. Define position sizing (1% risk), stop loss (ATR-based), expected Sharpe ratio.",
       "assigned_to": "quant_analyst",
-      "status": "done",
+      "status": "todo",
       "priority": "high",
       "depends_on": 2,
-      "created_at": "2026-02-11T08:35:12.428073",
-      "completed_at": "2026-02-11T08:36:51.242928"
+      "created_at": "2026-02-11T08:51:59.124899",
+      "completed_at": null
     },
     {
       "id": 4,
       "title": "Write backtest engine",
       "description": "Write backtest_sma.py in workspace/ that reads eurusd_features.csv and tests the SMA crossover strategy. Output: total trades, win rate, profit factor, max drawdown.",
       "assigned_to": "engineer",
-      "status": "done",
+      "status": "todo",
       "priority": "high",
       "depends_on": 3,
-      "created_at": "2026-02-11T08:35:12.436823",
-      "completed_at": "2026-02-11T08:37:24.046491"
+      "created_at": "2026-02-11T08:51:59.136356",
+      "completed_at": null
     },
     {
       "id": 5,
       "title": "Create system health monitor",
       "description": "Write health_check.py in workspace/ that checks: disk space, memory usage, data freshness, log files count. Output a JSON report.",
       "assigned_to": "devops",
-      "status": "done",
+      "status": "todo",
       "priority": "medium",
       "depends_on": null,
-      "created_at": "2026-02-11T08:35:12.444671",
-      "completed_at": "2026-02-11T08:35:51.351737"
-    },
-    {
-      "id": 6,
-      "title": "Backtest SMA crossover strategy",
-      "description": "Sử dụng backtest engine đã có (#4) để chạy backtest chiến lược SMA crossover (#3) trên dữ liệu đã tính features (#2). Xuất kết quả P&L, Sharpe ratio, drawdown. Lưu kết quả vào file workspace/backtest_results.json.",
-      "assigned_to": "quant_analyst",
-      "status": "done",
-      "priority": "high",
-      "depends_on": [
-        3,
-        4,
-        2
-      ],
-      "created_at": "2026-02-11T08:39:39.240499",
-      "completed_at": "2026-02-11T08:41:42.369087"
-    },
-    {
-      "id": 7,
-      "title": "Optimize backtest engine performance",
-      "description": "Phân tích và tối ưu code backtest engine hiện tại (workspace/). Tập trung vào tốc độ xử lý dữ liệu lớn, sử dụng vectorization hoặc parallel processing nếu có thể. Đảm bảo engine có logging và error handling đầy đủ.",
-      "assigned_to": "engineer",
-      "status": "done",
-      "priority": "medium",
-      "depends_on": [
-        4
-      ],
-      "created_at": "2026-02-11T08:39:39.256822",
-      "completed_at": "2026-02-11T08:44:03.453181"
-    },
-    {
-      "id": 8,
-      "title": "Add advanced technical indicators",
-      "description": "Mở rộng feature engineering bằng cách thêm các chỉ báo kỹ thuật nâng cao (RSI, MACD, Bollinger Bands) vào pipeline hiện có. Đảm bảo tính toán chính xác và lưu vào data/processed/. Cập nhật script calculate_features_optimized.py.",
-      "assigned_to": "data_scientist",
-      "status": "done",
-      "priority": "medium",
-      "depends_on": [
-        2
-      ],
-      "created_at": "2026-02-11T08:39:39.270234",
-      "completed_at": "2026-02-11T08:41:04.454939"
-    },
-    {
-      "id": 9,
-      "title": "Implement live trading monitor dashboard",
-      "description": "Phát triển dashboard đơn giản (dùng Flask/Streamlit) hiển thị real-time health check metrics từ health_check.py (#5) và trạng thái backtest. Dashboard chạy tại port 8081, hiển thị system status, P&L, và alerts.",
-      "assigned_to": "devops",
-      "status": "done",
-      "priority": "medium",
-      "depends_on": [
-        5
-      ],
-      "created_at": "2026-02-11T08:39:39.283569",
-      "completed_at": "2026-02-11T08:44:29.245720"
-    },
-    {
-      "id": 10,
-      "title": "Design and test risk management rules",
-      "description": "Thiết kế các quy tắc quản lý rủi ro (stop-loss, position sizing, maximum drawdown limit) tích hợp vào chiến lược SMA crossover. Viết unit test cho các rules này và cập nhật vào backtest engine.",
-      "assigned_to": "quant_analyst",
-      "status": "done",
-      "priority": "high",
-      "depends_on": [
-        3
-      ],
-      "created_at": "2026-02-11T08:39:39.297645",
-      "completed_at": "2026-02-11T08:44:54.890680"
+      "created_at": "2026-02-11T08:51:59.145483",
+      "completed_at": null
     }
   ],
-  "next_id": 11
+  "next_id": 6
 }

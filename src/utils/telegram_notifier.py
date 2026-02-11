@@ -43,7 +43,7 @@ class TelegramNotifier:
         else:
             logger.info("Telegram notifications disabled (no token/chat_id configured)")
     
-    def send_message(self, text: str, parse_mode: str = "Markdown") -> bool:
+    def send_message(self, text: str, parse_mode: str = None) -> bool:
         """Send a text message to Telegram"""
         if not self.enabled or not requests:
             return False
@@ -53,13 +53,17 @@ class TelegramNotifier:
             if len(text) > 4000:
                 text = text[:4000] + "\n..."
             
-            response = requests.post(
+            # Use GET with params (more reliable across network configs)
+            params = {
+                "chat_id": self.chat_id,
+                "text": text,
+            }
+            if parse_mode:
+                params["parse_mode"] = parse_mode
+            
+            response = requests.get(
                 f"{self.base_url}/sendMessage",
-                json={
-                    "chat_id": self.chat_id,
-                    "text": text,
-                    "parse_mode": parse_mode
-                },
+                params=params,
                 timeout=10
             )
             
