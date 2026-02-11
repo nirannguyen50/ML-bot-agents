@@ -54,7 +54,74 @@
       "depends_on": null,
       "created_at": "2026-02-11T08:35:12.444671",
       "completed_at": "2026-02-11T08:35:51.351737"
+    },
+    {
+      "id": 6,
+      "title": "Backtest SMA crossover strategy",
+      "description": "Sử dụng backtest engine đã có (#4) để chạy backtest chiến lược SMA crossover (#3) trên dữ liệu đã tính features (#2). Xuất kết quả P&L, Sharpe ratio, drawdown. Lưu kết quả vào file workspace/backtest_results.json.",
+      "assigned_to": "quant_analyst",
+      "status": "done",
+      "priority": "high",
+      "depends_on": [
+        3,
+        4,
+        2
+      ],
+      "created_at": "2026-02-11T08:39:39.240499",
+      "completed_at": "2026-02-11T08:41:42.369087"
+    },
+    {
+      "id": 7,
+      "title": "Optimize backtest engine performance",
+      "description": "Phân tích và tối ưu code backtest engine hiện tại (workspace/). Tập trung vào tốc độ xử lý dữ liệu lớn, sử dụng vectorization hoặc parallel processing nếu có thể. Đảm bảo engine có logging và error handling đầy đủ.",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": "medium",
+      "depends_on": [
+        4
+      ],
+      "created_at": "2026-02-11T08:39:39.256822",
+      "completed_at": "2026-02-11T08:44:03.453181"
+    },
+    {
+      "id": 8,
+      "title": "Add advanced technical indicators",
+      "description": "Mở rộng feature engineering bằng cách thêm các chỉ báo kỹ thuật nâng cao (RSI, MACD, Bollinger Bands) vào pipeline hiện có. Đảm bảo tính toán chính xác và lưu vào data/processed/. Cập nhật script calculate_features_optimized.py.",
+      "assigned_to": "data_scientist",
+      "status": "done",
+      "priority": "medium",
+      "depends_on": [
+        2
+      ],
+      "created_at": "2026-02-11T08:39:39.270234",
+      "completed_at": "2026-02-11T08:41:04.454939"
+    },
+    {
+      "id": 9,
+      "title": "Implement live trading monitor dashboard",
+      "description": "Phát triển dashboard đơn giản (dùng Flask/Streamlit) hiển thị real-time health check metrics từ health_check.py (#5) và trạng thái backtest. Dashboard chạy tại port 8081, hiển thị system status, P&L, và alerts.",
+      "assigned_to": "devops",
+      "status": "done",
+      "priority": "medium",
+      "depends_on": [
+        5
+      ],
+      "created_at": "2026-02-11T08:39:39.283569",
+      "completed_at": "2026-02-11T08:44:29.245720"
+    },
+    {
+      "id": 10,
+      "title": "Design and test risk management rules",
+      "description": "Thiết kế các quy tắc quản lý rủi ro (stop-loss, position sizing, maximum drawdown limit) tích hợp vào chiến lược SMA crossover. Viết unit test cho các rules này và cập nhật vào backtest engine.",
+      "assigned_to": "quant_analyst",
+      "status": "todo",
+      "priority": "high",
+      "depends_on": [
+        3
+      ],
+      "created_at": "2026-02-11T08:39:39.297645",
+      "completed_at": null
     }
   ],
-  "next_id": 6
+  "next_id": 11
 }

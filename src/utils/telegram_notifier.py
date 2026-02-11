@@ -19,13 +19,28 @@ class TelegramNotifier:
     """Send notifications to Telegram chat"""
     
     def __init__(self, bot_token: str = None, chat_id: str = None):
-        # Load from env if not provided
+        # Load from env vars first
         self.bot_token = bot_token or os.environ.get("TELEGRAM_BOT_TOKEN", "")
         self.chat_id = chat_id or os.environ.get("TELEGRAM_CHAT_ID", "")
+        
+        # Fallback: load from .env file
+        if not self.bot_token or not self.chat_id:
+            env_path = os.path.join(os.path.dirname(__file__), '..', '..', '.env')
+            if os.path.exists(env_path):
+                with open(env_path, 'r') as f:
+                    for line in f:
+                        line = line.strip()
+                        if line.startswith('TELEGRAM_BOT_TOKEN=') and not self.bot_token:
+                            self.bot_token = line.split('=', 1)[1].strip('"').strip("'")
+                        elif line.startswith('TELEGRAM_CHAT_ID=') and not self.chat_id:
+                            self.chat_id = line.split('=', 1)[1].strip('"').strip("'")
+        
         self.enabled = bool(self.bot_token and self.chat_id)
         self.base_url = f"https://api.telegram.org/bot{self.bot_token}" if self.bot_token else ""
         
-        if not self.enabled:
+        if self.enabled:
+            logger.info(f"✅ Telegram notifications enabled (chat_id: {self.chat_id})")
+        else:
             logger.info("Telegram notifications disabled (no token/chat_id configured)")
     
     def send_message(self, text: str, parse_mode: str = "Markdown") -> bool:
