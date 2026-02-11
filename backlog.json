@@ -120,7 +120,62 @@
       ],
       "created_at": "2026-02-11T09:02:48.482767",
       "completed_at": null
+    },
+    {
+      "id": 11,
+      "title": "Auto-Fix: backtest_sma.py",
+      "description": "Fix issues found in code review of backtest_sma.py:\n**QUALITY SCORE: 5/10**\n\n**BUGS HOẶC ISSUES:**\n1. Hàm `_create_sample_data()` bị cắt đứt giữa chừng (thiếu phần kết thúc và gán vào `self.data`)\n2. Trong `load_data()`, khi tạo dữ liệu mẫu, không kiểm tra xem `self._create_sample_data()` có thành công không\n3. Thiếu xử lý khi dữ liệu không có cột 'Close' (cần cho tính SMA)\n4. Không có validation cho `fast_period` và `slow_period` (fast_period phải < slow_period)\n\n**GỢI Ý CẢI THIỆN:**\n1. Hoàn thiện hàm `_create_sample_data()` với DataFrame đầy đủ",
+      "assigned_to": "engineer",
+      "status": "todo",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T09:17:24.552420",
+      "completed_at": null
+    },
+    {
+      "id": 12,
+      "title": "Auto-Fix: calculate_features.py",
+      "description": "Fix issues found in code review of calculate_features.py:\n**1. ĐIỂM CHẤT LƯỢNG: 6/10**\n\n**2. LỖI HOẶC VẤN ĐỀ:**\n- **Lỗi cú pháp**: Hàm `calculate_features` bị thiếu dấu ngoặc đóng `)` ở dòng cuối (`df.to_csv(output_file, ind`).\n- **Xử lý giá trị NaN**: Các chỉ báo kỹ thuật (RSI, MACD) tạo ra giá trị NaN trong giai đoạn đầu (do cửa sổ tính toán), nhưng không được xử lý, có thể gây lỗi khi sử dụng sau này.\n- **Xử lý lỗi thiếu cột**: Không kiểm tra xem các cột bắt buộc như `'Close'`, `'Date'` có tồn tại trong file CSV đầu vào không.\n- **Hiệu suất**: Sắp x",
+      "assigned_to": "engineer",
+      "status": "todo",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T09:17:43.618520",
+      "completed_at": null
+    },
+    {
+      "id": 13,
+      "title": "Auto-Fix: calculate_features_optimized.py",
+      "description": "Fix issues found in code review of calculate_features_optimized.py:\n**1. QUALITY SCORE: 6/10**  \nCode có cấu trúc tương đối rõ ràng, sử dụng logging, xử lý missing values, nhưng còn thiếu hoàn chỉnh (hàm MACD bị cắt đột ngột) và có một số vấn đề cần cải thiện.\n\n**2. BUGS hoặc ISSUES:**  \n- Hàm `calculate_macd_optimized` bị thiếu code (chỉ có `exp2 = d` và không hoàn thành).\n- Trong `calculate_rsi_optimized`, nếu `avg_loss = 0` sẽ gây lỗi chia cho 0 khi tính `rs`.\n- `setup_data_quality_checks` giả định các cột `Open`, `High`, `Low`, `Close` luôn tồn tại, có thể g",
+      "assigned_to": "engineer",
+      "status": "todo",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T09:18:29.356369",
+      "completed_at": null
+    },
+    {
+      "id": 14,
+      "title": "Auto-Fix: calculate_sma.py",
+      "description": "Fix issues found in code review of calculate_sma.py:\n**CHẤT LƯỢNG CODE: 2/10**\n\n**LỖI/ VẤN ĐỀ:**\n1. Hàm chỉ có khai báo mà không có thân hàm\n2. Thiếu xử lý dữ liệu đầu vào (data validation)\n3. Không có xử lý ngoại lệ (exception handling)\n4. Thiếu docstring và type hints\n\n**ĐỀ XUẤT CẢI THIỆN:**\n1. Hoàn thiện logic tính SMA\n2. Thêm validation cho window size và data length\n3. Thêm docstring mô tả hàm\n4. Sử dụng type hints\n5. Xử lý trường hợp dữ liệu không đủ độ dài\n\n**VẤN ĐỀ BẢO MẬT:**\n1. Không có kiểm tra đầu vào - có thể gây lỗi nếu data không phả",
+      "assigned_to": "engineer",
+      "status": "todo",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T09:18:48.060383",
+      "completed_at": null
+    },
+    {
+      "id": 15,
+      "title": "Auto-Fix: health_check.py",
+      "description": "Fix issues found in code review of health_check.py:\n**ĐÁNH GIÁ MÃ NGUỒN: health_check.py**\n\n---\n\n**1. ĐIỂM CHẤT LƯỢNG: 6/10**  \n- Cấu trúc rõ ràng, có docstring và type hints.  \n- Xử lý lỗi cơ bản (try-except).  \n- **Trừ điểm vì mã chưa hoàn chỉnh** (thiếu phần thân hàm `check_data_freshness` và các phương thức khác).\n\n---\n\n**2. LỖI/ VẤN ĐỀ:**  \n- **Lỗi cú pháp**: Hàm `check_data_freshness()` thiếu phần thân (chỉ có `try:` và thiếu `return`).  \n- **Lỗi logic**:  \n  - Không kiểm tra sự tồn tại của `logs_dir`, `workspace_dir` trước khi sử dụng.  \n ",
+      "assigned_to": "engineer",
+      "status": "todo",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T09:19:11.094655",
+      "completed_at": null
     }
   ],
-  "next_id": 11
+  "next_id": 16
 }

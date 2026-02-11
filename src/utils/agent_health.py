@@ -44,6 +44,15 @@ class AgentHealthMonitor:
                 "restarts": 0
             }
     
+    def _save_state(self):
+        """Save current health state to JSON for dashboard"""
+        try:
+            with open("agent_health.json", "w") as f:
+                import json
+                json.dump(self.get_status_all(), f, indent=2, default=str)
+        except Exception as e:
+            logger.error(f"Failed to save agent health: {e}")
+
     def task_started(self, agent_name: str, task_title: str):
         """Mark that an agent has started a task"""
         with self.lock:
@@ -54,6 +63,7 @@ class AgentHealthMonitor:
             self.agents[agent_name]["task_start"] = time.time()
             self.agents[agent_name]["current_task"] = task_title
             self.agents[agent_name]["last_activity"] = datetime.now().isoformat()
+            self._save_state()
     
     def task_completed(self, agent_name: str, success: bool = True, tokens_used: int = 0):
         """Mark that an agent has completed a task"""
@@ -80,6 +90,7 @@ class AgentHealthMonitor:
             
             total = agent["tasks_completed"] + agent["tasks_failed"]
             agent["avg_task_time"] = agent["total_time"] / max(total, 1)
+            self._save_state()
     
     def check_health(self) -> List[Dict]:
         """Check all agents for health issues. Returns list of warnings."""
