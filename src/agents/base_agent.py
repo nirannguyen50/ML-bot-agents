@@ -295,7 +295,7 @@ class BaseAgent(ABC):
     async def execute_with_retry(self, task_description: str, max_rounds: int = 3) -> Dict[str, Any]:
         """
         Multi-round execution loop with self-correction.
-        Think → Act → Verify → Fix (if error) → Retry
+        Think → Act → Auto-Run Code → Verify → Fix (if error) → Retry
         """
         last_error = None
         all_outputs = []
@@ -314,7 +314,7 @@ class BaseAgent(ABC):
                 last_error = f"Thinking failed: {thought}"
                 continue
             
-            # Act
+            # Act (write files, execute commands)
             action_result = await self.act(thought)
             if action_result:
                 all_outputs.append(action_result)
@@ -324,6 +324,15 @@ class BaseAgent(ABC):
                 last_error = action_result
                 self.logger.warning(f"{self.name}: Round {round_num} had errors, retrying...")
                 continue
+            
+            # Auto-run any Python files that were written
+            code_run_result = await self._auto_run_code(action_result)
+            if code_run_result:
+                all_outputs.append(code_run_result)
+                if "Error" in code_run_result or "Traceback" in code_run_result:
+                    last_error = f"Code execution failed:\n{code_run_result}"
+                    self.logger.warning(f"{self.name}: Code run failed, retrying...")
+                    continue
             
             # Validate — check if expected files were created
             validation = await self.validate_output(thought, action_result)
@@ -368,6 +377,103 @@ class BaseAgent(ABC):
         if missing:
             return {"valid": False, "reason": f"Expected files not found: {', '.join(missing)}"}
         return {"valid": True, "reason": "All expected files exist"}
+    
+    async def _auto_run_code(self, action_result: str) -> Optional[str]:
+        """
+        Feature 1: Auto-run Python files that were just written.
+        Returns execution output or None if no files to run.
+        """
+        if not action_result or not self.tools:
+            return None
+        
+        # Extract filenames from WRITE_FILE results
+        written_files = re.findall(r'WRITE_FILE.*?(?:workspace[/\\])?(\w+\.py)', action_result)
+        if not written_files:
+            return None
+        
+        results = []
+        for filename in set(written_files):
+            filepath = self.tools._get_safe_path(filename)
+            if not os.path.exists(filepath):
+                # Check repo root too
+                filepath = os.path.join(self.tools.repo_dir, filename)
+            
+            if not os.path.exists(filepath):
+                continue
+            
+            self.logger.info(f"{self.name}: Auto-running {filename}...")
+            try:
+                import subprocess
+                result = subprocess.run(
+                    ["python", filepath],
+                    capture_output=True, text=True, timeout=30,
+                    cwd=self.tools.workspace_dir if self.tools else None
+                )
+                
+                output = result.stdout[:1000] if result.stdout else ""
+                errors = result.stderr[:1000] if result.stderr else ""
+                
+                if result.returncode != 0:
+                    results.append(f"❌ {filename} FAILED (exit {result.returncode}):\n{errors}")
+                    self.logger.warning(f"{self.name}: {filename} execution failed")
+                else:
+                    results.append(f"✅ {filename} OK: {output[:200]}")
+                    self.logger.info(f"{self.name}: {filename} executed successfully")
+                    
+            except subprocess.TimeoutExpired:
+                results.append(f"⏰ {filename} TIMEOUT (30s)")
+            except Exception as e:
+                results.append(f"❌ {filename} Error: {str(e)[:200]}")
+        
+        return "\n".join(results) if results else None
+    
+    async def review_code(self, filepath: str) -> Dict[str, Any]:
+        """
+        Feature 4: Cross-agent code review using LLM.
+        Reads a file and asks LLM to review code quality.
+        """
+        if not self.tools or not self.llm:
+            return {"reviewed": False, "reason": "Tools/LLM not available"}
+        
+        # Read the file
+        try:
+            if not os.path.isabs(filepath):
+                filepath = self.tools._get_safe_path(filepath)
+            
+            if not os.path.exists(filepath):
+                return {"reviewed": False, "reason": f"File not found: {filepath}"}
+            
+            with open(filepath, 'r', encoding='utf-8') as f:
+                code = f.read()
+        except Exception as e:
+            return {"reviewed": False, "reason": str(e)}
+        
+        filename = os.path.basename(filepath)
+        
+        review_prompt = [
+            {"role": "system", "content": f"""You are a senior code reviewer for an AI Trading System.
+Review the code and provide:
+1. QUALITY SCORE (1-10)
+2. BUGS or ISSUES found
+3. SUGGESTIONS for improvement
+4. SECURITY concerns
+Be concise. Reply in Vietnamese."""},
+            {"role": "user", "content": f"Review this file ({filename}):\n```python\n{code[:3000]}\n```"}
+        ]
+        
+        try:
+            review = self.llm.chat_completion(review_prompt)
+            self.logger.info(f"{self.name}: Code review completed for {filename}")
+            return {
+                "reviewed": True,
+                "file": filename,
+                "review": review,
+                "code_length": len(code)
+            }
+        except Exception as e:
+            return {"reviewed": False, "reason": str(e)}
+
+
     
     def send_message(self, to_agent: str, message: str, msg_type: str = "message"):
         """Send a direct message to another agent"""

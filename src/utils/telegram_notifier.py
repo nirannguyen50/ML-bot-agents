@@ -1,0 +1,88 @@
+"""
+Telegram Notifier — Feature 2
+Sends real-time reports from PM to Telegram chat.
+"""
+
+import logging
+import os
+import asyncio
+
+logger = logging.getLogger(__name__)
+
+try:
+    import requests
+except ImportError:
+    requests = None
+
+
+class TelegramNotifier:
+    """Send notifications to Telegram chat"""
+    
+    def __init__(self, bot_token: str = None, chat_id: str = None):
+        # Load from env if not provided
+        self.bot_token = bot_token or os.environ.get("TELEGRAM_BOT_TOKEN", "")
+        self.chat_id = chat_id or os.environ.get("TELEGRAM_CHAT_ID", "")
+        self.enabled = bool(self.bot_token and self.chat_id)
+        self.base_url = f"https://api.telegram.org/bot{self.bot_token}" if self.bot_token else ""
+        
+        if not self.enabled:
+            logger.info("Telegram notifications disabled (no token/chat_id configured)")
+    
+    def send_message(self, text: str, parse_mode: str = "Markdown") -> bool:
+        """Send a text message to Telegram"""
+        if not self.enabled or not requests:
+            return False
+        
+        try:
+            # Truncate long messages (Telegram limit: 4096 chars)
+            if len(text) > 4000:
+                text = text[:4000] + "\n..."
+            
+            response = requests.post(
+                f"{self.base_url}/sendMessage",
+                json={
+                    "chat_id": self.chat_id,
+                    "text": text,
+                    "parse_mode": parse_mode
+                },
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                return True
+            else:
+                logger.warning(f"Telegram send failed: {response.status_code}")
+                return False
+                
+        except Exception as e:
+            logger.warning(f"Telegram error: {e}")
+            return False
+    
+    def send_cycle_start(self, cycle_num: int):
+        """Notify cycle start"""
+        self.send_message(f"🔄 *Autonomous Cycle #{cycle_num}* started!")
+    
+    def send_task_complete(self, task_title: str, agent: str, rounds: int):
+        """Notify task completion"""
+        self.send_message(f"✅ *{task_title}*\n👤 Agent: `{agent}`\n🔁 Rounds: {rounds}")
+    
+    def send_pipeline_done(self, total_tasks: int, cycle_num: int):
+        """Notify pipeline completion"""
+        self.send_message(f"🎉 *Pipeline Complete!*\n📋 {total_tasks} tasks done\n🔄 Cycle #{cycle_num}")
+    
+    def send_auto_plan(self, new_tasks: list):
+        """Notify auto-planned tasks"""
+        task_list = "\n".join(f"• {t}" for t in new_tasks[:5])
+        self.send_message(f"🧠 *PM Auto-Plan:*\n{task_list}")
+    
+    def send_cost_report(self, cost_summary: str):
+        """Notify cost report"""
+        self.send_message(f"💰 *Cost Report:*\n`{cost_summary}`")
+    
+    def send_error(self, error_msg: str):
+        """Notify critical error"""
+        self.send_message(f"🚨 *ERROR:*\n```\n{error_msg[:500]}\n```")
+    
+    def send_vote_result(self, proposal: str, result: str):
+        """Notify vote result"""
+        self.send_message(f"🗳️ *Vote Result:*\n📝 {proposal}\n📊 {result}")

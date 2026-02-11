@@ -35,6 +35,24 @@ except ImportError:
     except ImportError:
         DeepSeekClient = None
 
+# Feature 2: Telegram Notifier
+try:
+    from utils.telegram_notifier import TelegramNotifier
+except ImportError:
+    TelegramNotifier = None
+
+# Feature 7: Web Dashboard
+try:
+    from utils.dashboard import Dashboard
+except ImportError:
+    Dashboard = None
+
+# Feature 8: Voting System
+try:
+    from utils.voting import VotingSystem
+except ImportError:
+    VotingSystem = None
+
 # Configure logging
 # Configure logging with UTF-8
 sys.stdout.reconfigure(encoding='utf-8')
@@ -104,6 +122,15 @@ class ProjectManager:
                 logger.info(f"PM loaded project context ({len(self.project_context)} chars)")
             except Exception:
                 pass
+        
+        # Feature 2: Telegram Notifier
+        self.telegram = TelegramNotifier() if TelegramNotifier else None
+        
+        # Feature 7: Web Dashboard
+        self.dashboard = Dashboard(port=self.config.get('dashboard', {}).get('port', 8080)) if Dashboard else None
+        
+        # Feature 8: Voting System
+        self.voting = VotingSystem() if VotingSystem else None
     
     def pm_think(self, task: str, context: str = "") -> str:
         """PM uses LLM to make decisions with full project awareness"""
@@ -474,7 +501,7 @@ class ProjectManager:
                     break
     
     async def _execute_agent_task(self, agent, agent_name: str, task: Dict, backlog):
-        """Execute a single task with self-correction and agent handoff"""
+        """Execute a single task with self-correction, error escalation, and notifications"""
         from utils.backlog_manager import BacklogManager
         
         task_id = task["id"]
@@ -490,7 +517,12 @@ class ProjectManager:
         )
         backlog.update_status(task_id, "in_progress")
         
-        # Use multi-round self-correction
+        # Dashboard update
+        if self.dashboard:
+            self.dashboard.add_log(f"📋 Task #{task_id} → {agent_name}: {task['title']}")
+            self.dashboard.update_backlog(backlog.get_all_tasks())
+        
+        # Use multi-round self-correction (Feature 1: code auto-run built into this)
         result = await agent.execute_with_retry(task['description'], max_rounds=max_retries)
         
         rounds_used = result.get('rounds', 1)
@@ -509,6 +541,19 @@ class ProjectManager:
                     f"Completed: {task['title']} in {rounds_used} rounds"
                 )
             
+            # Feature 2: Telegram notification
+            if self.telegram:
+                self.telegram.send_task_complete(task['title'], agent_name, rounds_used)
+            
+            # Feature 7: Dashboard update
+            if self.dashboard:
+                self.dashboard.add_log(report)
+                self.dashboard.update_backlog(backlog.get_all_tasks())
+            
+            # Feature 5: Auto-run backtest if task is a backtest task
+            if 'backtest' in task['title'].lower() and agent.tools:
+                await self._run_backtest(agent, task)
+            
             # Agent-to-Agent handoff: notify the next agent in the chain
             await self._notify_next_agent(task, backlog)
             
@@ -520,10 +565,8 @@ class ProjectManager:
                 )
                 log_agent_message(self.my_id, agent_id, f"📝 PM Review: {pm_review}", "status")
         else:
-            backlog.update_status(task_id, "blocked")
-            error = f"❌ Task #{task_id} Failed after {rounds_used} rounds: {result.get('error', 'Unknown')}"
-            log_agent_message(agent_id, self.my_id, error, "error")
-            logger.error(error)
+            # Feature 6: Error Escalation — PM decides what to do
+            await self._escalate_failure(agent, agent_name, task, backlog, result)
     
     async def _notify_next_agent(self, completed_task: Dict, backlog):
         """Find and notify agents whose tasks depend on the completed task"""
@@ -549,6 +592,224 @@ class ProjectManager:
                         "task"
                     )
                     logger.info(f"🔗 Handoff: {completed_task['assigned_to']} → {next_agent_name}")
+
+    async def _escalate_failure(self, agent, agent_name: str, task: Dict, backlog, result: Dict):
+        """
+        Feature 6: Error Escalation — PM uses AI to decide: skip / reassign / split
+        """
+        task_id = task["id"]
+        error = result.get('error', 'Unknown error')
+        rounds_used = result.get('rounds', 0)
+        
+        logger.warning(f"🚨 Task #{task_id} failed after {rounds_used} rounds. Escalating to PM...")
+        
+        if self.dashboard:
+            self.dashboard.add_log(f"🚨 ESCALATION: Task #{task_id} ({task['title']}) failed")
+        
+        if self.telegram:
+            self.telegram.send_error(f"Task #{task_id} ({task['title']}) failed: {error[:200]}")
+        
+        # Ask PM to decide
+        pm_decision = self.pm_think(
+            "A task has FAILED after all retries. Decide what to do.",
+            f"""Task: #{task_id} — {task['title']}
+Agent: {agent_name}
+Error: {error[:500]}
+Rounds attempted: {rounds_used}
+
+OPTIONS (reply with ONE keyword only):
+1. SKIP — Mark as blocked and continue to next task
+2. REASSIGN — Give the task to a different agent
+3. SPLIT — Break into 2 smaller sub-tasks
+
+Reply with: SKIP, REASSIGN, or SPLIT"""
+        )
+        
+        decision = "SKIP"  # Default
+        for keyword in ["REASSIGN", "SPLIT", "SKIP"]:
+            if keyword in pm_decision.upper():
+                decision = keyword
+                break
+        
+        logger.info(f"📋 PM Decision for task #{task_id}: {decision}")
+        log_agent_message(self.my_id, "ALL", f"📋 PM Escalation: Task #{task_id} → {decision}", "status")
+        
+        if decision == "SKIP":
+            backlog.update_status(task_id, "blocked")
+            logger.info(f"⏭️ Task #{task_id} skipped (blocked)")
+            
+        elif decision == "REASSIGN":
+            # Find a different agent
+            available_agents = [name for name in self.agents.keys() if name != agent_name]
+            if available_agents:
+                new_agent = random.choice(available_agents)
+                backlog.update_status(task_id, "blocked")
+                # Create a new reassigned task
+                from utils.backlog_manager import BacklogManager
+                bm = BacklogManager()
+                bm.add_task(
+                    title=f"[REASSIGNED] {task['title']}",
+                    description=f"[Reassigned from {agent_name}] {task['description']}",
+                    assigned_to=new_agent,
+                    priority="high"
+                )
+                logger.info(f"🔄 Task #{task_id} reassigned to {new_agent}")
+            else:
+                backlog.update_status(task_id, "blocked")
+                
+        elif decision == "SPLIT":
+            backlog.update_status(task_id, "blocked")
+            # PM generates subtasks using AI
+            split_response = self.pm_think(
+                "Split this failed task into 2 smaller, simpler sub-tasks.",
+                f"Task: {task['title']}\nDescription: {task['description']}\nAssigned to: {agent_name}\n\nReply with JSON: [{{\"title\": \"...\", \"description\": \"...\"}}]"
+            )
+            import re as escalation_re
+            try:
+                match = escalation_re.search(r'\[[\s\S]*\]', split_response)
+                if match:
+                    subtasks = json.loads(match.group())
+                    from utils.backlog_manager import BacklogManager
+                    bm = BacklogManager()
+                    for st in subtasks[:2]:
+                        bm.add_task(
+                            title=st.get("title", "Subtask"),
+                            description=st.get("description", task['description']),
+                            assigned_to=agent_name,
+                            priority="high"
+                        )
+                    logger.info(f"✂️ Task #{task_id} split into {len(subtasks[:2])} subtasks")
+            except Exception as e:
+                logger.error(f"Failed to split task: {e}")
+
+    async def _run_backtest(self, agent, task: Dict):
+        """Feature 5: Auto-run backtest scripts and capture real results"""
+        import subprocess
+        
+        workspace_dir = os.path.join(os.path.dirname(__file__), '..', 'workspace')
+        backtest_files = [f for f in os.listdir(workspace_dir) if 'backtest' in f.lower() and f.endswith('.py')]
+        
+        for bf in backtest_files:
+            filepath = os.path.join(workspace_dir, bf)
+            logger.info(f"📊 Running backtest: {bf}...")
+            
+            try:
+                result = subprocess.run(
+                    ["python", filepath],
+                    capture_output=True, text=True, timeout=60,
+                    cwd=workspace_dir
+                )
+                
+                output = result.stdout[:2000] if result.stdout else "No output"
+                errors = result.stderr[:500] if result.stderr else ""
+                
+                if result.returncode == 0:
+                    logger.info(f"📊 Backtest {bf} completed:\n{output[:300]}")
+                    log_agent_message(self.my_id, "ALL", f"📊 Backtest results:\n{output[:500]}", "status")
+                    
+                    if agent.memory:
+                        agent.memory.remember_fact(f"backtest_{bf}", output[:500])
+                    
+                    if self.dashboard:
+                        self.dashboard.add_log(f"📊 Backtest {bf}: SUCCESS")
+                    
+                    if self.telegram:
+                        self.telegram.send_message(f"📊 *Backtest {bf}:*\n```\n{output[:300]}\n```")
+                else:
+                    logger.warning(f"📊 Backtest {bf} failed: {errors[:200]}")
+                    
+            except subprocess.TimeoutExpired:
+                logger.warning(f"📊 Backtest {bf} timeout (60s)")
+            except Exception as e:
+                logger.error(f"📊 Backtest error: {e}")
+
+    async def _run_code_reviews(self):
+        """Feature 4: Engineer reviews all workspace Python files"""
+        engineer = self.agents.get("engineer")
+        if not engineer:
+            return
+        
+        workspace_dir = os.path.join(os.path.dirname(__file__), '..', 'workspace')
+        if not os.path.exists(workspace_dir):
+            return
+        
+        py_files = [f for f in os.listdir(workspace_dir) if f.endswith('.py')]
+        if not py_files:
+            return
+        
+        logger.info(f"🔍 Code Review Phase: {len(py_files)} files to review")
+        
+        for pyfile in py_files[:5]:  # Max 5 reviews per cycle
+            filepath = os.path.join(workspace_dir, pyfile)
+            review = await engineer.review_code(filepath)
+            
+            if review.get("reviewed"):
+                logger.info(f"🔍 Review of {pyfile}: {review['review'][:150]}...")
+                log_agent_message(
+                    self.agent_ids.get("engineer"), self.my_id,
+                    f"🔍 Code Review — {pyfile}:\n{review['review'][:300]}",
+                    "status"
+                )
+                if self.dashboard:
+                    self.dashboard.add_log(f"🔍 Code review: {pyfile} ✅")
+
+    async def _run_voting_phase(self, backlog):
+        """Feature 8: QA proposes strategy and agents vote"""
+        if not self.voting:
+            return
+        
+        quant = self.agents.get("quant_analyst")
+        if not quant or not quant.llm:
+            return
+        
+        # Check if there are strategy-related completed tasks
+        tasks = backlog.get_all_tasks()
+        strategy_tasks = [t for t in tasks if 'strategy' in t['title'].lower() and t['status'] == 'done']
+        
+        if not strategy_tasks:
+            return
+        
+        # QA proposes deploying the strategy
+        latest_strategy = strategy_tasks[-1]
+        proposal_title = f"Deploy strategy: {latest_strategy['title']}"
+        
+        # Check if already voted on this
+        existing = self.voting.get_open_proposals()
+        if any(p['title'] == proposal_title for p in existing):
+            return
+        
+        logger.info(f"🗳️ Voting Phase: QA proposes — {proposal_title}")
+        
+        proposal = self.voting.propose(
+            title=proposal_title,
+            description=f"Should we deploy {latest_strategy['title']}?",
+            proposer="quant_analyst",
+            voters=["data_scientist", "engineer", "devops"]
+        )
+        
+        # Each agent votes using AI
+        for voter_name in ["data_scientist", "engineer", "devops"]:
+            voter = self.agents.get(voter_name)
+            if voter and voter.llm:
+                vote_thought = await voter.think(
+                    f"Should we deploy this trading strategy? Consider quality, risk, and readiness.",
+                    f"Proposal: {proposal_title}\nYour expertise: {voter_name}\nReply with ONLY: approve or reject"
+                )
+                
+                decision = "approve" if "approve" in (vote_thought or "").lower() else "reject"
+                self.voting.vote(proposal['id'], voter_name, decision, vote_thought[:100] if vote_thought else "")
+        
+        # Tally
+        result = self.voting.tally(proposal['id'])
+        logger.info(f"🗳️ Vote result: {result}")
+        log_agent_message(self.my_id, "ALL", f"🗳️ {result}", "status")
+        
+        if self.telegram:
+            self.telegram.send_vote_result(proposal_title, result)
+        
+        if self.dashboard:
+            self.dashboard.update_votes(self.voting._load().get("proposals", []))
+            self.dashboard.add_log(f"🗳️ {result}")
 
     async def pm_auto_plan(self) -> int:
         """
@@ -739,6 +1000,11 @@ async def main():
         logger.info("Waiting for agents to initialize...")
         await asyncio.sleep(3)
         
+        # Feature 7: Start Dashboard
+        if project_manager.dashboard:
+            project_manager.dashboard.start()
+            project_manager.dashboard.update_agents(project_manager.agents)
+        
         # Populate initial backlog
         await project_manager.assign_initial_tasks()
         
@@ -759,13 +1025,54 @@ async def main():
             logger.info(f"AUTONOMOUS CYCLE #{cycle}")
             logger.info(f"{'🔄' * 20}\n")
             
+            # Feature 2: Telegram cycle start
+            if project_manager.telegram:
+                project_manager.telegram.send_cycle_start(cycle)
+            
+            # Feature 7: Dashboard cycle update
+            if project_manager.dashboard:
+                project_manager.dashboard.set_cycle(cycle)
+                project_manager.dashboard.set_pipeline_status("running")
+            
             # Phase 1: Run pipeline until all tasks done
             logger.info("📌 Phase 1: Running pipeline...")
             await project_manager.run_continuous_pipeline()
             
-            # Phase 2: PM plans next wave of tasks
-            logger.info("📌 Phase 2: PM Auto-Planning...")
+            # Phase 2: Code Review (Feature 4)
+            logger.info("📌 Phase 2: Code Review...")
+            await project_manager._run_code_reviews()
+            
+            # Phase 3: Voting (Feature 8)
+            logger.info("📌 Phase 3: Voting Phase...")
+            from utils.backlog_manager import BacklogManager
+            backlog_for_vote = BacklogManager()
+            await project_manager._run_voting_phase(backlog_for_vote)
+            
+            # Phase 4: PM plans next wave of tasks
+            logger.info("📌 Phase 4: PM Auto-Planning...")
             new_tasks = await project_manager.pm_auto_plan()
+            
+            # Phase 5: Cost Report (Feature 3)
+            if project_manager.llm:
+                cost_summary = project_manager.llm.get_cost_summary()
+                logger.info(f"📌 Phase 5: {cost_summary}")
+                
+                if project_manager.dashboard:
+                    project_manager.dashboard.update_cost(project_manager.llm.get_usage_report())
+                    project_manager.dashboard.add_log(cost_summary)
+                
+                if project_manager.telegram:
+                    project_manager.telegram.send_cost_report(cost_summary)
+            
+            # Feature 2: Telegram pipeline done
+            if project_manager.telegram:
+                backlog_summary = BacklogManager()
+                done_count = len([t for t in backlog_summary.get_all_tasks() if t['status'] == 'done'])
+                project_manager.telegram.send_pipeline_done(done_count, cycle)
+                
+                if new_tasks > 0:
+                    task_titles = [t['title'] for t in backlog_summary.get_all_tasks() if t['status'] == 'todo'][:5]
+                    project_manager.telegram.send_auto_plan(task_titles)
             
             if new_tasks == 0:
                 logger.info(f"No new tasks generated. Cooldown {cycle_interval}s before retry...")
@@ -782,7 +1089,11 @@ async def main():
                     "status"
                 )
             
-            # Phase 3: Cooldown
+            # Feature 7: Dashboard cooldown
+            if project_manager.dashboard:
+                project_manager.dashboard.set_pipeline_status("cooldown")
+            
+            # Phase 6: Cooldown
             logger.info(f"⏳ Cooldown: {cycle_interval} seconds until next cycle...")
             await asyncio.sleep(cycle_interval)
             
@@ -792,7 +1103,12 @@ async def main():
         logger.error(f"Unexpected error: {e}")
         import traceback
         traceback.print_exc()
+        if hasattr(project_manager, 'telegram') and project_manager.telegram:
+            project_manager.telegram.send_error(f"System crash: {str(e)[:300]}")
     finally:
+        # Final cost report
+        if project_manager.llm:
+            logger.info(f"📊 FINAL {project_manager.llm.get_cost_summary()}")
         await project_manager.shutdown()
         logger.info("ML Trading Bot shutdown complete")
 
