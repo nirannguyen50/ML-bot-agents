@@ -196,7 +196,74 @@
       "depends_on": "4,7,13",
       "created_at": "2026-02-12T10:58:01.856339",
       "completed_at": "2026-02-12T11:05:10.611106"
+    },
+    {
+      "id": 18,
+      "title": "Upgrade ML filter to ensemble or deep learning model",
+      "description": "Hiện tại ML filter có thể dùng model đơn giản. Nâng cấp lên ensemble model (Random Forest, Gradient Boosting) hoặc deep learning (LSTM) để cải thiện độ chính xác của tín hiệu. Thực hiện training, evaluation và tích hợp vào strategy.",
+      "assigned_to": "data_scientist",
+      "status": "todo",
+      "priority": "high",
+      "depends_on": [
+        12,
+        14
+      ],
+      "created_at": "2026-02-12T11:08:36.853553",
+      "completed_at": null
+    },
+    {
+      "id": 19,
+      "title": "Integrate live trading with real broker API",
+      "description": "Kết nối paper trading system với broker thật (ví dụ Oanda) để thực hiện giao dịch thực. Implement order execution, position management, và real-time P&L calculation. Đảm bảo risk management rules được áp dụng.",
+      "assigned_to": "quant_analyst",
+      "status": "todo",
+      "priority": "high",
+      "depends_on": [
+        10
+      ],
+      "created_at": "2026-02-12T11:08:36.872221",
+      "completed_at": null
+    },
+    {
+      "id": 20,
+      "title": "Implement automatic hyperparameter tuning for strategy and ML model",
+      "description": "Xây dựng hệ thống tự động tuning tham số cho strategy (như SMA periods, stop loss) và cho ML model (nếu có) sử dụng techniques như grid search hoặc Bayesian optimization kết hợp với walk-forward analysis để tránh overfitting.",
+      "assigned_to": "quant_analyst",
+      "status": "todo",
+      "priority": "high",
+      "depends_on": [
+        5
+      ],
+      "created_at": "2026-02-12T11:08:36.895560",
+      "completed_at": null
+    },
+    {
+      "id": 21,
+      "title": "Enhance monitoring with advanced alerts for drawdown and volatility spikes",
+      "description": "Mở rộng monitoring system để phát hiện các sự kiện rủi ro như drawdown vượt ngưỡng, biến động đột ngột (volatility spikes), và correlation breaks. Tích hợp alerts qua email/SMS/Telegram.",
+      "assigned_to": "devops",
+      "status": "todo",
+      "priority": "high",
+      "depends_on": [
+        4,
+        17
+      ],
+      "created_at": "2026-02-12T11:08:36.913320",
+      "completed_at": null
+    },
+    {
+      "id": 22,
+      "title": "Optimize data pipeline for real-time streaming processing",
+      "description": "Cải thiện data pipeline hiện tại (batch) để xử lý streaming data từ nguồn real-time (ví dụ: Kafka, WebSocket). Đảm bảo low latency và high throughput cho multiple forex pairs.",
+      "assigned_to": "data_scientist",
+      "status": "todo",
+      "priority": "high",
+      "depends_on": [
+        1
+      ],
+      "created_at": "2026-02-12T11:08:36.931996",
+      "completed_at": null
     }
   ],
-  "next_id": 18
+  "next_id": 23
 }

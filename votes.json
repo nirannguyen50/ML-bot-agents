@@ -255,7 +255,39 @@
       "created_at": "2026-02-12T10:56:29.142803",
       "closed_at": "2026-02-12T10:57:39.287234",
       "result": "REJECTED"
+    },
+    {
+      "id": 9,
+      "title": "Deploy strategy: Setup CI/CD pipeline for automated strategy deployment",
+      "description": "Should we deploy Setup CI/CD pipeline for automated strategy deployment?",
+      "proposer": "quant_analyst",
+      "voters": [
+        "data_scientist",
+        "engineer",
+        "devops"
+      ],
+      "votes": {
+        "data_scientist": {
+          "decision": "reject",
+          "reason": "reject",
+          "voted_at": "2026-02-12T11:07:16.943001"
+        },
+        "engineer": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T11:07:23.916117"
+        },
+        "devops": {
+          "decision": "reject",
+          "reason": "reject",
+          "voted_at": "2026-02-12T11:07:37.269625"
+        }
+      },
+      "status": "rejected",
+      "created_at": "2026-02-12T11:07:11.822454",
+      "closed_at": "2026-02-12T11:07:37.293759",
+      "result": "REJECTED"
     }
   ],
-  "next_id": 9
+  "next_id": 10
 }
