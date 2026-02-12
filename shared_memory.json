@@ -1,5 +1,6 @@
 {
   "insights": {
+<<<<<<< HEAD
     "task_1_Integrate multiple forex pairs": {
       "value": "JSON_CMD READ_FILE: \"\"\"\nData Pipeline Extension: Download Multiple Forex Pairs\nData Scientist: ML Trading Bot Team\nDate: 2024\n\nDownloads historical data for multiple forex pairs from Yahoo Finance.\nSaves raw data to data/raw/ directory.\n\"\"\"\n\nimport yfinance as yf\nimport pandas as pd\nimport os\nfrom d",
       "author": "data_scientist",
@@ -84,6 +85,158 @@
       "value": "JSON_CMD READ_FILE: Error: File monitor_agent_communications.py does not exist\nJSON_CMD READ_FILE: Error: File monitor_agent_communications.py does not exist\nJSON_CMD READ_FILE: Error: File monitor_agent_communications.py does not exist",
       "author": "devops",
       "timestamp": "2026-02-12T11:05:10.618913"
+=======
+    "task_1_Auto-Fix: backtest_sma.py": {
+      "value": "JSON_CMD READ_FILE: \"\"\"\nSMA Crossover Strategy Backtest Engine\nEngineer: ML Trading Bot Team\nDate: 2024\n\"\"\"\n\nimport pandas as pd\nimport numpy as np\nfrom typing import Tuple, Dict, Optional\nimport warnings\nwarnings.filterwarnings('ignore')\n\nclass SMABacktestEngine:\n    \"\"\"Backtest engine for SMA cros",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:05:13.667011"
+    },
+    "task_2_Auto-Fix: calculate_features.p": {
+      "value": "JSON_CMD READ_FILE: import pandas as pd\nimport numpy as np\nfrom datetime import datetime\nimport warnings\nwarnings.filterwarnings('ignore')\n\ndef calculate_sma(data, window):\n    \"\"\"Calculate Simple Moving Average\"\"\"\n    return data['Close'].rolling(window=window, min_periods=1).mean()\n\ndef calculate_",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:06:13.047786"
+    },
+    "task_3_Auto-Fix: calculate_features_o": {
+      "value": "JSON_CMD READ_FILE: import pandas as pd\nimport numpy as np\nfrom datetime import datetime\nimport logging\nimport warnings\nfrom typing import Tuple, Optional\nwarnings.filterwarnings('ignore')\n\n# Setup logging\nlogging.basicConfig(\n    level=logging.INFO,\n    format='%(asctime)s - %(name)s - %(levelname)",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:07:12.166960"
+    },
+    "task_4_Auto-Fix: calculate_sma.py": {
+      "value": "JSON_CMD READ_FILE: def calculate_sma(data, window=3):\n    ",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:07:51.004795"
+    },
+    "task_5_Auto-Fix: health_check.py": {
+      "value": "JSON_CMD READ_FILE: #!/usr/bin/env python3\n\"\"\"\nHealth Check Script for ML Trading Bot System\nChecks: Disk space, memory usage, data freshness, log files count\nOutputs: JSON report with metrics and status\n\"\"\"\n\nimport os\nimport sys\nimport json\nimport psutil\nimport datetime\nfrom pathlib import Path\nfro",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:08:13.086059"
+    },
+    "task_6_Auto-Fix: backtest_sma.py": {
+      "value": "JSON_CMD READ_FILE: \"\"\"\nSMA Crossover Strategy Backtest Engine\nEngineer: ML Trading Bot Team\nDate: 2024\n\"\"\"\n\nimport pandas as pd\nimport numpy as np\nfrom typing import Tuple, Dict, Optional\nimport warnings\nwarnings.filterwarnings('ignore')\n\nclass SMABacktestEngine:\n    \"\"\"Backtest engine for SMA cros",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:13:49.028766"
+    },
+    "task_7_Auto-Fix: calculate_features.p": {
+      "value": "JSON_CMD READ_FILE: import pandas as pd\nimport numpy as np\nfrom datetime import datetime\nimport warnings\nwarnings.filterwarnings('ignore')\n\ndef calculate_sma(data, window):\n    \"\"\"Calculate Simple Moving Average\"\"\"\n    return data['Close'].rolling(window=window, min_periods=1).mean()\n\ndef calculate_",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:14:52.454422"
+    },
+    "task_8_Auto-Fix: calculate_features_o": {
+      "value": "JSON_CMD READ_FILE: import pandas as pd\nimport numpy as np\nfrom datetime import datetime\nimport logging\nimport warnings\nfrom typing import Tuple, Optional\nwarnings.filterwarnings('ignore')\n\n# Setup logging\nlogging.basicConfig(\n    level=logging.INFO,\n    format='%(asctime)s - %(name)s - %(levelname)",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:15:59.539001"
+    },
+    "task_9_Auto-Fix: calculate_sma.py": {
+      "value": "JSON_CMD READ_FILE: def calculate_sma(data, window=3):\n    ",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:16:49.841383"
+    },
+    "task_10_Auto-Fix: health_check.py": {
+      "value": "JSON_CMD READ_FILE: #!/usr/bin/env python3\n\"\"\"\nHealth Check Script for ML Trading Bot System\nChecks: Disk space, memory usage, data freshness, log files count\nOutputs: JSON report with metrics and status\n\"\"\"\n\nimport os\nimport sys\nimport json\nimport psutil\nimport datetime\nfrom pathlib import Path\nfro",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:17:17.310835"
+    },
+    "task_11_Auto-Fix: backtest_sma.py": {
+      "value": "JSON_CMD READ_FILE: \"\"\"\nSMA Crossover Strategy Backtest Engine\nEngineer: ML Trading Bot Team\nDate: 2024\n\"\"\"\n\nimport pandas as pd\nimport numpy as np\nfrom typing import Tuple, Dict, Optional\nimport warnings\nwarnings.filterwarnings('ignore')\n\nclass SMABacktestEngine:\n    \"\"\"Backtest engine for SMA cros",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:23:19.353621"
+    },
+    "task_12_Auto-Fix: calculate_features.p": {
+      "value": "JSON_CMD READ_FILE: import pandas as pd\nimport numpy as np\nfrom datetime import datetime\nimport warnings\nwarnings.filterwarnings('ignore')\n\ndef calculate_sma(data, window):\n    \"\"\"Calculate Simple Moving Average\"\"\"\n    return data['Close'].rolling(window=window, min_periods=1).mean()\n\ndef calculate_",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:24:47.622691"
+    },
+    "task_13_Auto-Fix: calculate_features_o": {
+      "value": "JSON_CMD READ_FILE: import pandas as pd\nimport numpy as np\nfrom datetime import datetime\nimport logging\nimport warnings\nfrom typing import Tuple, Optional\nwarnings.filterwarnings('ignore')\n\n# Setup logging\nlogging.basicConfig(\n    level=logging.INFO,\n    format='%(asctime)s - %(name)s - %(levelname)",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:25:26.770500"
+    },
+    "task_14_Auto-Fix: calculate_sma.py": {
+      "value": "JSON_CMD READ_FILE: def calculate_sma(data, window=3):\n    ",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:26:31.582172"
+    },
+    "task_15_Auto-Fix: health_check.py": {
+      "value": "JSON_CMD READ_FILE: #!/usr/bin/env python3\n\"\"\"\nHealth Check Script for ML Trading Bot System\nChecks: Disk space, memory usage, data freshness, log files count\nOutputs: JSON report with metrics and status\n\"\"\"\n\nimport os\nimport sys\nimport json\nimport psutil\nimport datetime\nfrom pathlib import Path\nfro",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:27:25.628300"
+    },
+    "task_16_Auto-Fix: backtest_sma.py": {
+      "value": "JSON_CMD READ_FILE: \"\"\"\nSMA Crossover Strategy Backtest Engine\nEngineer: ML Trading Bot Team\nDate: 2024\n\"\"\"\n\nimport pandas as pd\nimport numpy as np\nfrom typing import Tuple, Dict, Optional\nimport warnings\nwarnings.filterwarnings('ignore')\n\nclass SMABacktestEngine:\n    \"\"\"Backtest engine for SMA cros",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:32:29.257804"
+    },
+    "task_17_Auto-Fix: calculate_features.p": {
+      "value": "JSON_CMD READ_FILE: import pandas as pd\nimport numpy as np\nfrom datetime import datetime\nimport warnings\nwarnings.filterwarnings('ignore')\n\ndef calculate_sma(data, window):\n    \"\"\"Calculate Simple Moving Average\"\"\"\n    return data['Close'].rolling(window=window, min_periods=1).mean()\n\ndef calculate_",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:33:45.145618"
+    },
+    "task_18_Auto-Fix: calculate_features_o": {
+      "value": "JSON_CMD READ_FILE: import pandas as pd\nimport numpy as np\nfrom datetime import datetime\nimport logging\nimport warnings\nfrom typing import Tuple, Optional\nwarnings.filterwarnings('ignore')\n\n# Setup logging\nlogging.basicConfig(\n    level=logging.INFO,\n    format='%(asctime)s - %(name)s - %(levelname)",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:36:24.335211"
+    },
+    "task_19_Auto-Fix: calculate_sma.py": {
+      "value": "JSON_CMD READ_FILE: def calculate_sma(data, window=3):\n    ",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:36:56.250287"
+    },
+    "task_20_Auto-Fix: health_check.py": {
+      "value": "Error parsing JSON_CMD: Extra data: line 6 column 2 (char 84)\nJSON_CMD READ_FILE: #!/usr/bin/env python3\n\"\"\"\nHealth Check Script for ML Trading Bot System\nChecks: Disk space, memory usage, data freshness, log files count\nOutputs: JSON report with metrics and status\n\"\"\"\n\nimport os\nimport sys\nimport j",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:37:29.116596"
+<<<<<<< HEAD
+>>>>>>> cycle-10
+=======
+    },
+    "task_21_Auto-Fix: backtest_sma.py": {
+      "value": "JSON_CMD READ_FILE: \"\"\"\nSMA Crossover Strategy Backtest Engine\nEngineer: ML Trading Bot Team\nDate: 2024\n\"\"\"\n\nimport pandas as pd\nimport numpy as np\nfrom typing import Tuple, Dict, Optional\nimport warnings\nwarnings.filterwarnings('ignore')\n\nclass SMABacktestEngine:\n    \"\"\"Backtest engine for SMA cros",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:43:34.039778"
+    },
+    "task_22_Auto-Fix: calculate_features.p": {
+      "value": "JSON_CMD READ_FILE: import pandas as pd\nimport numpy as np\nfrom datetime import datetime\nimport warnings\nwarnings.filterwarnings('ignore')\n\ndef calculate_sma(data, window):\n    \"\"\"Calculate Simple Moving Average\"\"\"\n    return data['Close'].rolling(window=window, min_periods=1).mean()\n\ndef calculate_",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:44:39.827940"
+    },
+    "task_23_Auto-Fix: calculate_sma.py": {
+      "value": "JSON_CMD READ_FILE: def calculate_sma(data, window=3):\n    ",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:45:35.219951"
+    },
+    "task_24_Auto-Fix: health_check.py": {
+      "value": "JSON_CMD READ_FILE: #!/usr/bin/env python3\n\"\"\"\nHealth Check Script for ML Trading Bot System\nChecks: Disk space, memory usage, data freshness, log files count\nOutputs: JSON report with metrics and status\n\"\"\"\n\nimport os\nimport sys\nimport json\nimport psutil\nimport datetime\nfrom pathlib import Path\nfro",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:46:01.553284"
+<<<<<<< HEAD
+>>>>>>> cycle-11
+=======
+    },
+    "task_25_Auto-Fix: backtest_sma.py": {
+      "value": "JSON_CMD READ_FILE: \"\"\"\nSMA Crossover Strategy Backtest Engine\nEngineer: ML Trading Bot Team\nDate: 2024\n\"\"\"\n\nimport pandas as pd\nimport numpy as np\nfrom typing import Tuple, Dict, Optional\nimport warnings\nwarnings.filterwarnings('ignore')\n\nclass SMABacktestEngine:\n    \"\"\"Backtest engine for SMA cros",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:51:03.016968"
+    },
+    "task_26_Auto-Fix: calculate_features.p": {
+      "value": "JSON_CMD READ_FILE: import pandas as pd\nimport numpy as np\nfrom datetime import datetime\nimport warnings\nwarnings.filterwarnings('ignore')\n\ndef calculate_sma(data, window):\n    \"\"\"Calculate Simple Moving Average\"\"\"\n    return data['Close'].rolling(window=window, min_periods=1).mean()\n\ndef calculate_",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:51:50.922821"
+    },
+    "task_27_Auto-Fix: calculate_features_o": {
+      "value": "JSON_CMD READ_FILE: import pandas as pd\nimport numpy as np\nfrom datetime import datetime\nimport logging\nimport warnings\nfrom typing import Tuple, Optional\nwarnings.filterwarnings('ignore')\n\n# Setup logging\nlogging.basicConfig(\n    level=logging.INFO,\n    format='%(asctime)s - %(name)s - %(levelname)",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:53:04.100190"
+    },
+    "task_28_Auto-Fix: calculate_sma.py": {
+      "value": "JSON_CMD READ_FILE: def calculate_sma(data, window=3):\n    ",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:53:36.859942"
+    },
+    "task_29_Auto-Fix: health_check.py": {
+      "value": "JSON_CMD READ_FILE: #!/usr/bin/env python3\n\"\"\"\nHealth Check Script for ML Trading Bot System\nChecks: Disk space, memory usage, data freshness, log files count\nOutputs: JSON report with metrics and status\n\"\"\"\n\nimport os\nimport sys\nimport json\nimport psutil\nimport datetime\nfrom pathlib import Path\nfro",
+      "author": "engineer",
+      "timestamp": "2026-02-11T14:54:11.013822"
+>>>>>>> cycle-12
     }
   },
   "patterns": [],

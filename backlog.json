@@ -2,268 +2,37 @@
   "tasks": [
     {
       "id": 1,
-      "title": "Integrate multiple forex pairs data pipeline",
-      "description": "Extend the current EUR/USD data pipeline to download, clean, and feature-engineer at least 3 more major forex pairs (e.g., GBP/USD, USD/JPY, AUD/USD). Update 'download_multiple_forex_pairs.py' and 'calculate_features_optimized_fixed.py' to handle multiple pairs, ensuring data is stored in separate directories (data/raw/gbpusd, etc.) and features are calculated per pair with consistent columns. Test with EXECUTE to verify no errors.",
-      "assigned_to": "data_scientist",
-      "status": "done",
-      "priority": "high",
+      "title": "Auto-Fix: advanced_risk_management.py",
+      "description": "Fix issues found in code review of advanced_risk_management.py:\n**QUALITY SCORE: 6/10**\n\n**BUGS hoặc ISSUES:**\n1. Phương thức `calculate_atr_position_size` bị thiếu phần thân hoàn chỉnh (dừng đột ngột ở dòng comment về Kelly criterion)\n2. Không có xử lý ngoại lệ cho các tham số đầu vào không hợp lệ (ví dụ: giá âm, ATR âm)\n3. Biến `position_sizes` được khai báo nhưng không được sử dụng\n4. Thiếu validation cho các tham số khởi tạo (ví dụ: `risk_per_trade > 1` sẽ gây vấn đề)\n\n**SUGGESTIONS cải tiến:**\n1. Hoàn thiện phương thức `calculate_atr_position_size` với ",
+      "assigned_to": "engineer",
+      "status": "todo",
+      "priority": 2,
       "depends_on": null,
-      "created_at": "2026-02-12T10:30:16.374675",
-      "completed_at": "2026-02-12T10:32:58.797404"
+      "created_at": "2026-02-12T11:14:44.886838",
+      "completed_at": null
     },
     {
       "id": 2,
-      "title": "Enhance SMA strategy with ML filter signals",
-      "description": "Improve the existing 'sma_crossover_strategy.py' by integrating a machine learning filter from 'sma_crossover_ml_filter.py'. Create a new strategy file that uses SMA crossover as primary signal but adds an ML model (e.g., RandomForest classifier trained on historical features) as a confirmation filter. Backtest this enhanced strategy using the existing backtest engine and compare performance metrics (Sharpe, max drawdown) against the pure SMA version.",
-      "assigned_to": "quant_analyst",
-      "status": "done",
-      "priority": "high",
+      "title": "Auto-Fix: alert_manager.py",
+      "description": "Fix issues found in code review of alert_manager.py:\n**QUALITY SCORE: 6/10**\n\n**BUGS hoặc ISSUES:**\n1. File code bị cắt ngang (thiếu phần đóng hàm `_send_email_alert` và các phương thức khác)\n2. Thiếu xử lý ngoại lệ trong `send_alert` - nếu một kênh thất bại, toàn bộ quá trình có thể dừng lại\n3. Mật khẩu email lưu dưới dạng plaintext trong config file\n4. Không có cơ chế rate limiting cho alerts, có thể gây spam\n\n**GỢI Ý CẢI THIỆN:**\n1. Hoàn thiện các phương thức còn thiếu (`_send_email_alert`, `_send_slack_alert`)\n2. Thêm xử lý lỗi riêng biệt cho ",
+      "assigned_to": "engineer",
+      "status": "todo",
+      "priority": 2,
       "depends_on": null,
-      "created_at": "2026-02-12T10:30:16.391153",
-      "completed_at": "2026-02-12T10:33:32.245808"
+      "created_at": "2026-02-12T11:14:56.927219",
+      "completed_at": null
     },
     {
       "id": 3,
-      "title": "Optimize backtest engine for multi-asset and speed",
-      "description": "Profile the current backtest engine using 'profile_backtest.py' and refactor 'core.py' or 'backtest_sma.py' to support multi-asset portfolio backtesting (e.g., running strategies on multiple forex pairs simultaneously). Implement vectorized operations where possible to reduce runtime. Ensure the engine outputs aggregated portfolio metrics and per-asset breakdown. Validate by backtesting the enhanced SMA strategy on at least two currency pairs.",
-      "assigned_to": "engineer",
-      "status": "done",
-      "priority": "medium",
-      "depends_on": null,
-      "created_at": "2026-02-12T10:30:16.409918",
-      "completed_at": "2026-02-12T10:34:02.502657"
-    },
-    {
-      "id": 4,
-      "title": "Set up real-time performance dashboard with alerts",
-      "description": "Integrate the existing 'backtest_dashboard.py' with 'alert_manager.py' to create a live monitoring dashboard. The dashboard should display key metrics (PnL, drawdown, open positions) and trigger alerts based on 'alert_triggers.py' (e.g., excessive drawdown). Use 'websocket_server.py' or 'streaming_producer.py' to stream simulated live trade data. Deploy the dashboard locally and ensure it updates every few seconds. Document the setup in 'architecture.md'.",
-      "assigned_to": "devops",
-      "status": "done",
-      "priority": "medium",
-      "depends_on": null,
-      "created_at": "2026-02-12T10:30:16.433977",
-      "completed_at": "2026-02-12T10:39:20.836989"
-    },
-    {
-      "id": 5,
-      "title": "Implement walk-forward analysis for strategy validation",
-      "description": "Develop a walk-forward analysis module that splits historical data into in-sample (training) and out-of-sample (testing) periods, rolling forward in time. Use this to validate the robustness of the enhanced SMA+ML strategy. The module should output performance consistency metrics and detect overfitting. Save results to a CSV in workspace/ and update the strategy documentation with findings.",
-      "assigned_to": "quant_analyst",
-      "status": "done",
-      "priority": "medium",
-      "depends_on": null,
-      "created_at": "2026-02-12T10:30:16.455423",
-      "completed_at": "2026-02-12T10:39:48.786878"
-    },
-    {
-      "id": 6,
-      "title": "Auto-Fix: advanced_risk_management.py",
-      "description": "Fix issues found in code review of advanced_risk_management.py:\n**QUALITY SCORE**: 7/10\n\n**BUGS hoặc ISSUES**:\n1. Hàm `calculate_atr_position_size` bị cắt đột ngột tại dòng `# Calculate Kelly criterion ad` (chưa hoàn thành)\n2. Thiếu xử lý trường hợp `entry_price = 0` khi tính `atr_pct = atr / entry_price` (sẽ gây lỗi chia cho 0)\n3. Không có kiểm tra giá trị đầu vào: `initial_capital`, `risk_per_trade`, `max_portfolio_risk` có thể nhận giá trị âm hoặc không hợp lý\n4. Chưa xử lý làm tròn `position_size_in_units` (hiện trả về số float thay vì số nguyên)\n\n**GỢI ",
-      "assigned_to": "engineer",
-      "status": "done",
-      "priority": 2,
-      "depends_on": null,
-      "created_at": "2026-02-12T10:41:15.833427",
-      "completed_at": "2026-02-12T10:45:11.774521"
-    },
-    {
-      "id": 7,
-      "title": "Auto-Fix: alert_manager.py",
-      "description": "Fix issues found in code review of alert_manager.py:\n**QUALITY SCORE: 6/10**\n\n**BUGS hoặc ISSUES:**\n1. File code bị cắt ngang, thiếu phần đóng hàm `_send_email_alert` và toàn bộ hàm `_send_slack_alert`.\n2. Trong `_load_config`, khi merge config người dùng vào default, chỉ update dict con cấp 1, có thể ghi đè nhầm cấu hình nested (ví dụ: nếu user_config[\"email\"] là string thay vì dict).\n3. Trong `send_alert`, `data` mặc định là `None`, nhưng sau đó gán `data or {}` - nếu `data` là `0` hoặc `False` (dù hiếm) sẽ bị thay bằng `{}`.\n4. Không xử lý ngoạ",
-      "assigned_to": "engineer",
-      "status": "done",
-      "priority": 2,
-      "depends_on": null,
-      "created_at": "2026-02-12T10:41:32.936974",
-      "completed_at": "2026-02-12T10:45:35.581804"
-    },
-    {
-      "id": 8,
-      "title": "Auto-Fix: alert_triggers.py",
-      "description": "Fix issues found in code review of alert_triggers.py:\n1. **ĐIỂM CHẤT LƯỢNG (6/10):** Code có cấu trúc cơ bản nhưng thiếu hoàn thiện và error handling đầy đủ.\n\n2. **LỖI/ VẤN ĐỀ:**\n   - Hàm `trigger_health_check()` thiếu câu lệnh `return` và không gửi alerts đã thu thập\n   - Hardcode số lượng agent (5) - nên là config parameter\n   - Thiếu timeout cho health check, có thể block nếu có nhiều processes\n   - Không handle trường hợp `alert_manager.check_health_metrics()` trả về None\n\n3. **ĐỀ XUẤT CẢI THIỆN:**\n   - Thêm `return alerts` hoặc `return len(ale",
-      "assigned_to": "engineer",
-      "status": "done",
-      "priority": 2,
-      "depends_on": null,
-      "created_at": "2026-02-12T10:42:06.238467",
-      "completed_at": "2026-02-12T10:47:59.628856"
-    },
-    {
-      "id": 9,
       "title": "Auto-Fix: aws_kinesis_consumer.py",
-      "description": "Fix issues found in code review of aws_kinesis_consumer.py:\n**1. ĐIỂM CHẤT LƯỢNG: 5/10**\n\n**2. LỖI/ VẤN ĐỀ:**\n- Không xử lý `NextShardIterator` có thể `None` khi shard đóng\n- Không giới hạn vòng lặp vô hạn, có thể gây treo hệ thống\n- Thiếu xử lý `ClientError` từ AWS SDK\n- Không có cơ chế dừng/ tạm dừng consumer\n- Hardcode `ShardId` và `region_name`\n- Không xử lý backpressure khi xử lý chậm\n\n**3. ĐỀ XUẤT CẢI THIỆN:**\n- Thêm tham số `region_name` vào constructor\n- Sử dụng `ShardIteratorType='TRIM_HORIZON'` hoặc `'AT_TIMESTAMP'` cho recovery\n- Tách logic xử",
+      "description": "Fix issues found in code review of aws_kinesis_consumer.py:\n**1. ĐIỂM CHẤT LƯỢNG: 5/10**\n\n**2. LỖI/ VẤN ĐỀ:**\n- Không xử lý `NextShardIterator` khi hết hạn (sau 5 phút)\n- Không giới hạn vòng lặp vô hạn, có thể gây treo hệ thống\n- Không xử lý trường hợp không có record (`Records` rỗng)\n- Thiếu cơ chế dừng/ tái khởi động khi gặp lỗi nghiêm trọng\n- In log trực tiếp ra console thay vì dùng logging module\n\n**3. ĐỀ XUẤT CẢI THIỆN:**\n- Thêm timeout và retry logic cho `get_records()`\n- Sử dụng `TRIM_HORIZON` hoặc `AT_TIMESTAMP` cho ShardIteratorType\n- Tách phần ",
       "assigned_to": "engineer",
-      "status": "done",
+      "status": "todo",
       "priority": 2,
       "depends_on": null,
-      "created_at": "2026-02-12T10:42:41.570436",
-      "completed_at": "2026-02-12T10:48:34.187808"
-    },
-    {
-      "id": 10,
-      "title": "Integrate live paper trading system",
-      "description": "Connect the SMA crossover strategy with ML filter to a paper trading system using Alpaca or Interactive Brokers API. Implement order execution logic, position management, and real-time P&L tracking in workspace/paper_trading_system.py. Test with EUR/USD data in simulated environment.",
-      "assigned_to": "quant_analyst",
-      "status": "done",
-      "priority": "high",
-      "depends_on": [
-        2,
-        3
-      ],
-      "created_at": "2026-02-12T10:50:05.245480",
-      "completed_at": "2026-02-12T10:52:41.316109"
-    },
-    {
-      "id": 11,
-      "title": "Optimize backtest engine latency for multi-asset parallel testing",
-      "description": "Profile current backtest engine (backtest_sma.py) using latency_benchmark.py results. Implement vectorized operations or multiprocessing to run backtests on 10+ forex pairs simultaneously. Target 50% reduction in backtest time while maintaining accuracy.",
-      "assigned_to": "engineer",
-      "status": "done",
-      "priority": "medium",
-      "depends_on": [
-        3
-      ],
-      "created_at": "2026-02-12T10:50:05.264834",
-      "completed_at": "2026-02-12T10:55:43.704516"
-    },
-    {
-      "id": 12,
-      "title": "Enhance ML signal filtering with additional features",
-      "description": "Add 3-5 new technical features (RSI, Bollinger Bands, Volume indicators) to calculate_features_optimized_fixed.py. Retrain the ML filter model in sma_crossover_ml_filter.py with expanded feature set and evaluate improvement in strategy Sharpe ratio.",
-      "assigned_to": "data_scientist",
-      "status": "done",
-      "priority": "medium",
-      "depends_on": [
-        1,
-        2
-      ],
-      "created_at": "2026-02-12T10:50:05.281793",
-      "completed_at": "2026-02-12T10:52:05.020629"
-    },
-    {
-      "id": 13,
-      "title": "Setup CI/CD pipeline for automated strategy deployment",
-      "description": "Extend existing cicd_pipeline.yml to automatically deploy strategy updates to paper trading environment when backtest results exceed threshold (Sharpe > 1.5, max drawdown < 15%). Integrate with GitHub Actions and add rollback mechanism.",
-      "assigned_to": "devops",
-      "status": "done",
-      "priority": "medium",
-      "depends_on": [
-        4
-      ],
-      "created_at": "2026-02-12T10:50:05.298451",
-      "completed_at": "2026-02-12T10:56:08.103116"
-    },
-    {
-      "id": 14,
-      "title": "Implement feature importance analysis for ML filter",
-      "description": "Data Scientist cần phân tích importance của các features đang dùng trong ML filter (từ task #12). Sử dụng SHAP hoặc permutation importance để xác định top 5-10 features quan trọng nhất cho tín hiệu giao dịch. Lưu kết quả vào file report, và đề xuất loại bỏ features dư thừa để tối ưu hóa pipeline.",
-      "assigned_to": "data_scientist",
-      "status": "done",
-      "priority": "high",
-      "depends_on": 12,
-      "created_at": "2026-02-12T10:58:01.804119",
-      "completed_at": "2026-02-12T11:00:02.719566"
-    },
-    {
-      "id": 15,
-      "title": "Develop dynamic risk management based on market volatility",
-      "description": "Quant Analyst phát triển module risk management động, điều chỉnh position size và stop-loss dựa trên volatility index (ATR, VIX proxy). Tích hợp vào advanced_risk_management.py (từ task #6) và kiểm thử với walk-forward analysis (task #5) trong paper trading (task #10).",
-      "assigned_to": "quant_analyst",
-      "status": "done",
-      "priority": "high",
-      "depends_on": "5,6,10",
-      "created_at": "2026-02-12T10:58:01.821779",
-      "completed_at": "2026-02-12T11:02:03.782225"
-    },
-    {
-      "id": 16,
-      "title": "Refactor and consolidate backtest engine modules",
-      "description": "Engineer cần refactor các file backtest (optimized_backtest_engine.py, backtest_sma.py, sma_crossover_ml_filter.py) thành một module thống nhất, có cấu trúc rõ ràng, dễ maintain. Đảm bảo hỗ trợ multi-asset, low latency (từ task #11) và tích hợp dễ dàng với risk management mới.",
-      "assigned_to": "engineer",
-      "status": "done",
-      "priority": "medium",
-      "depends_on": "3,11",
-      "created_at": "2026-02-12T10:58:01.838300",
-      "completed_at": "2026-02-12T11:04:14.836107"
-    },
-    {
-      "id": 17,
-      "title": "Build advanced monitoring for ML model drift and data quality",
-      "description": "DevOps mở rộng dashboard (task #4) với monitoring cho ML model performance drift và data quality metrics (missing values, outliers). Tích hợp cảnh báo tự động qua alert_manager.py (task #7) khi phát hiện drift hoặc data anomaly, đảm bảo hệ thống CI/CD (task #13) có thể trigger retraining nếu cần.",
-      "assigned_to": "devops",
-      "status": "done",
-      "priority": "medium",
-      "depends_on": "4,7,13",
-      "created_at": "2026-02-12T10:58:01.856339",
-      "completed_at": "2026-02-12T11:05:10.611106"
-    },
-    {
-      "id": 18,
-      "title": "Upgrade ML filter to ensemble or deep learning model",
-      "description": "Hiện tại ML filter có thể dùng model đơn giản. Nâng cấp lên ensemble model (Random Forest, Gradient Boosting) hoặc deep learning (LSTM) để cải thiện độ chính xác của tín hiệu. Thực hiện training, evaluation và tích hợp vào strategy.",
-      "assigned_to": "data_scientist",
-      "status": "todo",
-      "priority": "high",
-      "depends_on": [
-        12,
-        14
-      ],
-      "created_at": "2026-02-12T11:08:36.853553",
-      "completed_at": null
-    },
-    {
-      "id": 19,
-      "title": "Integrate live trading with real broker API",
-      "description": "Kết nối paper trading system với broker thật (ví dụ Oanda) để thực hiện giao dịch thực. Implement order execution, position management, và real-time P&L calculation. Đảm bảo risk management rules được áp dụng.",
-      "assigned_to": "quant_analyst",
-      "status": "todo",
-      "priority": "high",
-      "depends_on": [
-        10
-      ],
-      "created_at": "2026-02-12T11:08:36.872221",
-      "completed_at": null
-    },
-    {
-      "id": 20,
-      "title": "Implement automatic hyperparameter tuning for strategy and ML model",
-      "description": "Xây dựng hệ thống tự động tuning tham số cho strategy (như SMA periods, stop loss) và cho ML model (nếu có) sử dụng techniques như grid search hoặc Bayesian optimization kết hợp với walk-forward analysis để tránh overfitting.",
-      "assigned_to": "quant_analyst",
-      "status": "todo",
-      "priority": "high",
-      "depends_on": [
-        5
-      ],
-      "created_at": "2026-02-12T11:08:36.895560",
-      "completed_at": null
-    },
-    {
-      "id": 21,
-      "title": "Enhance monitoring with advanced alerts for drawdown and volatility spikes",
-      "description": "Mở rộng monitoring system để phát hiện các sự kiện rủi ro như drawdown vượt ngưỡng, biến động đột ngột (volatility spikes), và correlation breaks. Tích hợp alerts qua email/SMS/Telegram.",
-      "assigned_to": "devops",
-      "status": "todo",
-      "priority": "high",
-      "depends_on": [
-        4,
-        17
-      ],
-      "created_at": "2026-02-12T11:08:36.913320",
-      "completed_at": null
-    },
-    {
-      "id": 22,
-      "title": "Optimize data pipeline for real-time streaming processing",
-      "description": "Cải thiện data pipeline hiện tại (batch) để xử lý streaming data từ nguồn real-time (ví dụ: Kafka, WebSocket). Đảm bảo low latency và high throughput cho multiple forex pairs.",
-      "assigned_to": "data_scientist",
-      "status": "todo",
-      "priority": "high",
-      "depends_on": [
-        1
-      ],
-      "created_at": "2026-02-12T11:08:36.931996",
+      "created_at": "2026-02-12T11:15:46.388233",
       "completed_at": null
     }
   ],
-  "next_id": 23
+  "next_id": 4
 }

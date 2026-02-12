@@ -2,439 +2,392 @@
   "tasks": [
     {
       "id": 1,
-<<<<<<< HEAD
-      "title": "Download EURUSD market data",
-      "description": "Download 3 months of EURUSD daily data using yfinance. Save as CSV in workspace/. Report row count and date range.",
-      "assigned_to": "data_scientist",
-      "status": "done",
-      "priority": "critical",
+      "title": "Optimize backtest engine for multi-asset support",
+      "description": "Modify the optimized_backtest_engine.py to support simultaneous backtesting across multiple forex pairs (e.g., EUR/USD, GBP/USD, USD/JPY) using the data from download_multiple_forex_pairs.py. Ensure the engine can handle different timeframes and calculate aggregated portfolio metrics.",
+      "assigned_to": "engineer",
+      "status": "todo",
+      "priority": "high",
       "depends_on": null,
-      "created_at": "2026-02-12T09:39:17.471351",
-      "completed_at": "2026-02-12T09:39:45.156112"
+      "created_at": "2026-02-12T11:12:36.194013",
+      "completed_at": null
     },
     {
       "id": 2,
-      "title": "Calculate technical indicators",
-      "description": "Write a Python script (calculate_features.py) that reads the EURUSD CSV and calculates: SMA(20), SMA(50), RSI(14), MACD. Save results to eurusd_features.csv in workspace/.",
+      "title": "Integrate ML model into trading strategy",
+      "description": "Enhance the sma_crossover_ml_filter.py strategy by training a simple classifier (e.g., Random Forest) using features from calculate_features_optimized_fixed.py to filter trade signals. Save the model and integrate it into the strategy's entry logic.",
       "assigned_to": "data_scientist",
-      "status": "done",
+      "status": "todo",
       "priority": "high",
-      "depends_on": 1,
-      "created_at": "2026-02-12T09:39:17.483042",
-      "completed_at": "2026-02-12T09:43:30.431186"
+      "depends_on": null,
+      "created_at": "2026-02-12T11:12:36.211542",
+      "completed_at": null
     },
     {
       "id": 3,
-      "title": "Design SMA crossover strategy",
-      "description": "Write a trading strategy (strategy_sma_crossover.py) in workspace/: entry when SMA20 crosses above SMA50, exit when crosses below. Define position sizing (1% risk), stop loss (ATR-based), expected Sharpe ratio.",
-      "assigned_to": "quant_analyst",
-      "status": "done",
+      "title": "Implement real-time alerting system",
+      "description": "Extend the alert_manager.py and alert_triggers.py to connect with the paper_trading_system.py. Set up alerts for key events: strategy signals, drawdown thresholds, and system errors. Ensure alerts are logged and can notify via console or file.",
+      "assigned_to": "devops",
+      "status": "todo",
       "priority": "high",
-      "depends_on": 2,
-      "created_at": "2026-02-12T09:39:17.489198",
-      "completed_at": "2026-02-12T09:44:41.892346"
-=======
-      "title": "Auto-Fix: backtest_sma.py",
-      "description": "Fix issues found in code review of backtest_sma.py:\n**CHẤM ĐIỂM CHẤT LƯỢNG: 6/10**\n\n**LỖI VÀ VẤN ĐỀ:**\n1. Hàm `_create_sample_data()` bị thiếu phần đóng ngoặc và logic hoàn chỉnh\n2. Thiếu validation cho tham số SMA (fast_period phải < slow_period)\n3. Không kiểm tra dữ liệu input có đủ dài cho SMA chậm hay không\n4. Sử dụng `warnings.filterwarnings('ignore')` che giấu cảnh báo quan trọng\n\n**ĐỀ XUẤT CẢI THIỆN:**\n1. Thêm parameter validation trong `__init__`:\n```python\nif fast_period >= slow_period:\n    raise ValueError(\"fast_period phải nhỏ hơn slow",
-      "assigned_to": "engineer",
-      "status": "done",
-      "priority": 2,
       "depends_on": null,
-      "created_at": "2026-02-11T13:07:34.298717",
-      "completed_at": "2026-02-11T13:11:48.078874"
-    },
-    {
-      "id": 2,
-      "title": "Auto-Fix: calculate_features.py",
-      "description": "Fix issues found in code review of calculate_features.py:\n**1. ĐIỂM CHẤT LƯỢNG: 6/10**\n\n**2. LỖI HOẶC VẤN ĐỀ:**\n- **Lỗi cú pháp**: Hàm `calculate_features` bị thiếu dấu ngoặc đóng `)` ở dòng cuối (`df.to_csv(output_file, ind`).\n- **Xử lý giá trị NaN**: Các chỉ báo kỹ thuật (RSI, MACD) tạo ra giá trị NaN trong giai đoạn đầu (do cửa sổ rolling), nhưng không được xử lý hoặc làm sạch.\n- **Lỗi tiềm ẩn với RSI**: Khi `loss = 0`, phép chia `gain / loss` gây lỗi chia cho 0 (mặc dù Pandas trả về `inf`, nhưng cần xử lý rõ ràng).\n- **Sắp xếp dữ liệu**: Sắp xếp th",
-      "assigned_to": "engineer",
-      "status": "done",
-      "priority": 2,
-      "depends_on": null,
-      "created_at": "2026-02-11T13:07:58.921772",
-      "completed_at": "2026-02-11T13:12:44.812248"
-    },
-    {
-      "id": 3,
-      "title": "Auto-Fix: calculate_features_optimized.py",
-      "description": "Fix issues found in code review of calculate_features_optimized.py:\n**QUALITY SCORE: 4/10**\n\n**BUGS hoặc ISSUES:**\n1. Hàm `calculate_macd_optimized` bị cắt đột ngột và không hoàn chỉnh, có lỗi cú pháp (biến `d` chưa được định nghĩa).\n2. Trong `calculate_rsi_optimized`, có thể xảy ra lỗi chia cho 0 nếu `avg_loss` bằng 0.\n3. Hàm `setup_data_quality_checks` xử lý missing values bằng forward/backward fill có thể làm méo dữ liệu nếu có nhiều giá trị thiếu liên tiếp.\n4. Không xử lý trường hợp cột giá không tồn tại trong DataFrame khi gọi hàm.\n\n**SUGGESTIONS for improv",
-      "assigned_to": "engineer",
-      "status": "done",
-      "priority": 2,
-      "depends_on": null,
-      "created_at": "2026-02-11T13:09:02.519461",
-      "completed_at": "2026-02-11T13:13:36.432384"
->>>>>>> cycle-5
+      "created_at": "2026-02-12T11:12:36.229240",
+      "completed_at": null
     },
     {
       "id": 4,
-      "title": "Write backtest engine",
-      "description": "Write backtest_sma.py in workspace/ that reads eurusd_features.csv and tests the SMA crossover strategy. Output: total trades, win rate, profit factor, max drawdown.",
-      "assigned_to": "engineer",
-      "status": "done",
 <<<<<<< HEAD
-      "priority": "high",
-      "depends_on": 3,
-      "created_at": "2026-02-12T09:39:17.498006",
-      "completed_at": "2026-02-12T09:46:57.733390"
-=======
-      "priority": 2,
-      "depends_on": null,
-      "created_at": "2026-02-11T13:09:23.006781",
-      "completed_at": "2026-02-11T13:14:03.043045"
->>>>>>> cycle-5
-    },
-    {
-      "id": 5,
-      "title": "Create system health monitor",
-      "description": "Write health_check.py in workspace/ that checks: disk space, memory usage, data freshness, log files count. Output a JSON report.",
-      "assigned_to": "devops",
-      "status": "done",
-      "priority": "medium",
-      "depends_on": null,
-      "created_at": "2026-02-12T09:39:17.508368",
-      "completed_at": "2026-02-12T09:41:54.270829"
-    },
-    {
-      "id": 6,
-      "title": "Auto-Fix: advanced_risk_management.py",
-      "description": "Fix issues found in code review of advanced_risk_management.py:\n1. **ĐIỂM CHẤT LƯỢNG: 6/10**\n   - Có cấu trúc rõ ràng và sử dụng type hints\n   - Thiếu xử lý ngoại lệ và validation đầu vào đầy đủ\n   - Code bị cắt đứt đột ngột (thiếu phần kết thúc hàm)\n\n2. **LỖI VÀ VẤN ĐỀ:**\n   - Hàm `calculate_atr_position_size` bị cắt ở giữa, thiếu phần kết thúc và return statement\n   - Không có validation cho các tham số đầu vào (ví dụ: `initial_capital > 0`)\n   - Sử dụng `abs(entry_price - stop_loss)` có thể che lấp lỗi logic khi stop_loss > entry_price\n   - Biến `position",
-      "assigned_to": "engineer",
-      "status": "done",
-      "priority": 2,
-      "depends_on": null,
-<<<<<<< HEAD
-      "created_at": "2026-02-12T09:48:10.204110",
-      "completed_at": "2026-02-12T09:51:38.021133"
-    },
-    {
-      "id": 7,
-      "title": "Auto-Fix: alert_manager.py",
-      "description": "Fix issues found in code review of alert_manager.py:\n**QUALITY SCORE: 6/10**\n\n**BUGS hoặc ISSUES:**\n1. File code bị cắt ngang (thiếu phần đóng hàm `_send_email_alert` và các phương thức khác)\n2. Không xử lý ngoại lệ đầy đủ trong `_load_config` (chỉ bắt `FileNotFoundError`)\n3. Mật khẩu email lưu dưới dạng plaintext trong config file\n4. Thiếu validation cho cấu hình (ví dụ: kiểm tra định dạng email, URL webhook)\n5. Không có cơ chế rate limiting cho alerts\n\n**GỢI Ý CẢI THIỆN:**\n1. Hoàn thiện các phương thức còn thiếu (`_send_email_alert`, `_send_slac",
-      "assigned_to": "engineer",
-      "status": "done",
-      "priority": 2,
-      "depends_on": null,
-      "created_at": "2026-02-12T09:48:22.716435",
-      "completed_at": "2026-02-12T09:52:22.492978"
-    },
-    {
-      "id": 8,
-      "title": "Auto-Fix: alert_triggers.py",
-      "description": "Fix issues found in code review of alert_triggers.py:\n**QUALITY SCORE:** 6/10\n\n**BUGS HOẶC ISSUES:**\n1. Hàm `trigger_health_check()` không có lệnh `return` ở cuối\n2. Phần gửi alert trong `trigger_health_check()` bị thiếu - có comment `# Send alerts` nhưng không có code thực thi\n3. Hardcode số 5 cho agent count (`metrics[\"agents_running\"] < 5`) - nên là configurable\n4. Không xử lý trường hợp `backtest_file` không tồn tại hoặc format JSON không hợp lệ\n\n**GỢI Ý CẢI THIỆN:**\n1. Thêm return statement cho `trigger_health_check()` (có thể trả về số lượng ",
-      "assigned_to": "engineer",
-      "status": "done",
-      "priority": 2,
-      "depends_on": null,
-      "created_at": "2026-02-12T09:48:58.449692",
-      "completed_at": "2026-02-12T09:52:45.659821"
-    },
-    {
-      "id": 9,
-      "title": "Auto-Fix: aws_kinesis_consumer.py",
-      "description": "Fix issues found in code review of aws_kinesis_consumer.py:\n**1. ĐIỂM CHẤT LƯỢNG: 5/10**\n\n**2. LỖI/ VẤN ĐỀ:**\n- Không xử lý trường hợp `NextShardIterator` bị thiếu (có thể gây crash)\n- Không giới hạn vòng lặp vô hạn, không có cơ chế dừng\n- Không xử lý trường hợp `Records` rỗng\n- Không validate dữ liệu JSON trước khi parse\n- Không xử lý exception cụ thể, dùng `Exception` chung chung\n- Không xử lý trường hợp stream/shard không tồn tại\n\n**3. ĐỀ XUẤT CẢI THIỆN:**\n- Thêm cơ chế dừng (stop flag/event)\n- Sử dụng async boto3 client (boto3 không hỗ trợ async nati",
-      "assigned_to": "engineer",
-      "status": "done",
-      "priority": 2,
-      "depends_on": null,
-      "created_at": "2026-02-12T09:49:36.091405",
-      "completed_at": "2026-02-12T09:53:01.545970"
-    },
-    {
-      "id": 10,
-      "title": "Optimize backtest engine for multi-currency and longer historical data",
-      "description": "Cải tiến backtest engine hiện tại để xử lý nhiều cặp tiền tệ cùng lúc và dữ liệu lịch sử dài hơn (ví dụ 5 năm). Tập trung vào performance optimization, memory management, và parallel processing. Test với EURUSD và thêm 1-2 cặp khác (ví dụ GBPUSD, USDJPY).",
-      "assigned_to": "engineer",
-      "status": "done",
-      "priority": "high",
-      "depends_on": [
-        4
-      ],
-      "created_at": "2026-02-12T09:54:23.377442",
-      "completed_at": "2026-02-12T10:03:01.823755"
-    },
-    {
-      "id": 11,
-      "title": "Develop paper trading simulation with real-time market data feed",
-      "description": "Xây dựng hệ thống paper trading sử dụng dữ liệu thị trường real-time (hoặc delayed) để mô phỏng giao dịch thực tế. Tích hợp với strategy SMA crossover đã có. Lưu log các lệnh, PnL, và drawdown. Đảm bảo có thể chạy độc lập với backtest engine.",
-      "assigned_to": "quant_analyst",
-      "status": "done",
-      "priority": "high",
-      "depends_on": [
-        3
-      ],
-      "created_at": "2026-02-12T09:54:23.403229",
-      "completed_at": "2026-02-12T10:00:55.374800"
-    },
-    {
-      "id": 12,
-      "title": "Enhance monitoring dashboard with strategy performance metrics and alerts",
-      "description": "Mở rộng dashboard hiện có để hiển thị chi tiết hiệu suất chiến lược (sharpe ratio, max drawdown, win rate, v.v.) và real-time PnL của paper trading. Thêm alert system cho các sự kiện quan trọng (ví dụ: drawdown vượt ngưỡng, lỗi kết nối data).",
-      "assigned_to": "devops",
-      "status": "done",
-      "priority": "medium",
-      "depends_on": [
-        5
-      ],
-      "created_at": "2026-02-12T09:54:23.420876",
-      "completed_at": "2026-02-12T10:04:26.087947"
-    },
-    {
-      "id": 13,
-      "title": "Expand data pipeline to download and preprocess multiple forex pairs automatically",
-      "description": "Phát triển data pipeline tự động download nhiều cặp forex (ít nhất 5 cặp chính) từ nguồn reliable (ví dụ: OANDA, Alpha Vantage). Tự động tính toán features (technical indicators) cho tất cả các cặp và lưu vào structured database (SQLite hoặc PostgreSQL).",
-      "assigned_to": "data_scientist",
-      "status": "done",
-      "priority": "medium",
-      "depends_on": [
-        1,
-        2
-      ],
-      "created_at": "2026-02-12T09:54:23.458137",
-      "completed_at": "2026-02-12T09:59:49.127637"
-    },
-    {
-      "id": 14,
-      "title": "Enhance SMA strategy with ML-based signal confirmation",
-      "description": "Develop a machine learning model (e.g., Random Forest or LightGBM) to filter SMA crossover signals. Use engineered features from task #2 to predict profitable trades. Train on historical EURUSD data, validate out-of-sample, and integrate into strategy logic. Save model to workspace/.",
-      "assigned_to": "data_scientist",
-      "status": "done",
-      "priority": "high",
-      "depends_on": [
-        2,
-        3
-      ],
-      "created_at": "2026-02-12T10:06:29.139964",
-      "completed_at": "2026-02-12T10:11:13.164600"
-    },
-    {
-      "id": 15,
-      "title": "Implement advanced risk management with position sizing and stop-loss",
-      "description": "Extend the existing risk management module to include dynamic position sizing based on volatility (ATR) and account equity. Add trailing stop-loss logic and maximum drawdown limits. Integrate with the backtest engine and paper trading system.",
-      "assigned_to": "quant_analyst",
-      "status": "done",
-      "priority": "high",
-      "depends_on": [
-        3,
-        4,
-        11
-      ],
-      "created_at": "2026-02-12T10:06:29.157781",
-      "completed_at": "2026-02-12T10:11:59.670871"
-    },
-    {
-      "id": 16,
-      "title": "Build CI/CD pipeline for automated testing and deployment",
-      "description": "Create a GitHub Actions workflow (or extend existing YAML) to run unit tests, backtest regression tests, and deploy the trading bot to a staging environment on AWS. Include notifications for failures. Ensure it integrates with the monitoring dashboard.",
-      "assigned_to": "devops",
-      "status": "done",
-      "priority": "medium",
-      "depends_on": [
-        5,
-        12
-      ],
-      "created_at": "2026-02-12T10:06:29.174056",
-      "completed_at": "2026-02-12T10:16:10.720099"
-    },
-    {
-      "id": 17,
-      "title": "Optimize backtest engine for multi-asset portfolio simulation",
-      "description": "Modify the backtest engine to handle multiple forex pairs simultaneously with correlation-aware risk. Add portfolio rebalancing logic and performance attribution. Ensure it works efficiently with the expanded data pipeline from task #13.",
-      "assigned_to": "engineer",
-      "status": "done",
-      "priority": "medium",
-      "depends_on": [
-        4,
-        10,
-        13
-      ],
-      "created_at": "2026-02-12T10:06:29.191006",
-      "completed_at": "2026-02-12T10:12:34.782790"
-    },
-    {
-      "id": 18,
-      "title": "Integrate paper trading system with live market data stream",
-      "description": "Connect the existing paper trading simulation to a real-time market data feed (e.g., Yahoo Finance, Alpha Vantage websocket). Implement order execution simulation with realistic latency and slippage. Test with EURUSD and other forex pairs from our data pipeline.",
-      "assigned_to": "engineer",
-      "status": "done",
-      "priority": "high",
-      "depends_on": 11,
-      "created_at": "2026-02-12T10:19:39.894338",
-      "completed_at": "2026-02-12T10:22:05.252009"
-    },
-    {
-      "id": 19,
-      "title": "Integrate advanced risk management into backtest engine",
-      "description": "Modify the backtest engine to incorporate position sizing, dynamic stop-loss/take-profit, and maximum drawdown limits from advanced_risk_management.py. Ensure risk metrics are calculated and reported in backtest results.",
-      "assigned_to": "quant_analyst",
-      "status": "done",
-      "priority": "high",
-      "depends_on": 15,
-      "created_at": "2026-02-12T10:19:39.911360",
-      "completed_at": "2026-02-12T10:21:48.227045"
-    },
-    {
-      "id": 20,
-      "title": "Backtest ML-enhanced strategy versus baseline SMA crossover",
-      "description": "Run comparative backtests on multiple forex pairs comparing performance of: 1) Standard SMA crossover strategy, 2) ML-enhanced strategy with signal confirmation. Analyze Sharpe ratio, max drawdown, win rate differences.",
-      "assigned_to": "data_scientist",
-      "status": "done",
-      "priority": "medium",
-      "depends_on": 14,
-      "created_at": "2026-02-12T10:19:39.929599",
-      "completed_at": "2026-02-12T10:21:14.482816"
-    },
-    {
-      "id": 21,
-      "title": "Implement automated deployment pipeline for trading bot updates",
-      "description": "Extend CI/CD pipeline to automatically deploy new strategy versions to paper trading environment when tests pass. Include rollback mechanism and version tagging. Integrate with existing monitoring dashboard.",
-      "assigned_to": "devops",
-      "status": "done",
-      "priority": "medium",
-      "depends_on": 16,
-      "created_at": "2026-02-12T10:19:39.946264",
-      "completed_at": "2026-02-12T10:22:50.710044"
-    },
-    {
-      "id": 22,
-      "title": "Stress test multi-asset portfolio simulation with realistic constraints",
-      "description": "Test the optimized backtest engine with a portfolio of 5+ forex pairs simultaneously, applying correlation analysis, capital allocation constraints, and transaction cost modeling. Identify performance bottlenecks.",
-      "assigned_to": "engineer",
-      "status": "done",
-      "priority": "medium",
-      "depends_on": 17,
-      "created_at": "2026-02-12T10:19:39.961671",
-      "completed_at": "2026-02-12T10:25:53.324358"
-    },
-    {
-      "id": 23,
-      "title": "Monitor ML strategy performance with real-time alerts",
-      "description": "Integrate ML-enhanced SMA strategy metrics into monitoring dashboard, create real-time performance alerts when strategy deviates from expected returns or risk thresholds.",
-      "assigned_to": "devops",
-      "status": "todo",
-      "priority": "high",
-      "depends_on": [
-        12,
-        14
-      ],
-      "created_at": "2026-02-12T10:28:08.580968",
-      "completed_at": null
-    },
-    {
-      "id": 24,
-      "title": "Optimize multi-asset data pipeline for crypto and indices",
-      "description": "Extend download_multiple_forex_pairs.py to support crypto (BTCUSD, ETHUSD) and major indices (S&P500, NASDAQ) with unified preprocessing pipeline.",
-      "assigned_to": "data_scientist",
-      "status": "todo",
-      "priority": "medium",
-      "depends_on": [
-        13
-      ],
-      "created_at": "2026-02-12T10:28:08.599224",
-      "completed_at": null
-    },
-    {
-      "id": 25,
-      "title": "Develop multi-timeframe strategy with RSI confirmation",
-      "description": "Create new trading strategy combining SMA crossover on 1H timeframe with RSI confirmation on 15M timeframe, backtest against multiple currency pairs.",
+      "title": "Design a multi-timeframe risk management strategy",
+      "description": "Create a new strategy that uses advanced_risk_management.py to adjust position sizes based on volatility (e.g., ATR) across different timeframes (1H, 4H, Daily). Integrate this into the backtest engine and validate with EUR/USD data.",
       "assigned_to": "quant_analyst",
       "status": "todo",
-      "priority": "medium",
+      "priority": "high",
       "depends_on": null,
-      "created_at": "2026-02-12T10:28:08.616115",
-      "completed_at": null
-    },
-    {
-      "id": 26,
-      "title": "Stress test paper trading system with high-frequency data",
-      "description": "Load test paper_trading_system.py with simulated tick data (1-second intervals) to identify latency bottlenecks and memory leaks under high load.",
-      "assigned_to": "engineer",
-      "status": "todo",
-      "priority": "high",
-      "depends_on": [
-        11,
-        18
-      ],
-      "created_at": "2026-02-12T10:28:08.631286",
-      "completed_at": null
-    },
-    {
-      "id": 27,
-      "title": "Automate end-to-end pipeline from data download to trading signal generation",
-      "description": "Create master pipeline script that orchestrates: data download → feature calculation → strategy execution → signal generation → alert triggering, with error handling and logging.",
-      "assigned_to": "devops",
-      "status": "todo",
-      "priority": "high",
-      "depends_on": [
-        13,
-        15,
-        16
-      ],
-      "created_at": "2026-02-12T10:28:08.647972",
+      "created_at": "2026-02-12T11:12:36.247747",
       "completed_at": null
     }
   ],
-  "next_id": 28
+  "next_id": 5
 =======
-      "created_at": "2026-02-11T13:09:56.307591",
-      "completed_at": "2026-02-11T13:14:23.876426"
+      "title": "Auto-Fix: calculate_sma.py",
+      "description": "Fix issues found in code review of calculate_sma.py:\n**CHẤT LƯỢNG CODE: 2/10**\n\n**LỖI/ VẤN ĐỀ:**\n1. Hàm không có phần thân, chỉ có khai báo\n2. Thiếu xử lý dữ liệu đầu vào (data validation)\n3. Không có xử lý ngoại lệ (exception handling)\n4. Thiếu docstring và type hints\n\n**ĐỀ XUẤT CẢI THIỆN:**\n1. Thêm phần thân hàm tính SMA\n2. Thêm validation cho dữ liệu đầu vào\n3. Thêm docstring và type hints\n4. Xử lý trường hợp window lớn hơn độ dài data\n\n**VẤN ĐỀ BẢO MẬT:**\n1. Không có kiểm tra kiểu dữ liệu đầu vào\n2. Có thể gây lỗi nếu data không phải list/nump",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T14:03:04.333925",
+      "completed_at": "2026-02-11T14:07:50.995992"
+    },
+    {
+      "id": 5,
+      "title": "Auto-Fix: health_check.py",
+      "description": "Fix issues found in code review of health_check.py:\n**ĐÁNH GIÁ MÃ NGUỒN**\n\n**1. ĐIỂM CHẤT LƯỢNG: 6/10**\n- Cấu trúc rõ ràng, có docstring và type hints\n- Xử lý lỗi cơ bản với try-except\n- Thiếu hoàn thiện (hàm `check_data_freshness()` bị cắt ngang)\n\n**2. LỖI/ VẤN ĐỀ:**\n- **Lỗi nghiêm trọng**: Hàm `check_data_freshness()` không hoàn chỉnh (thiếu phần thân hàm và return)\n- **Lỗi logic**: Đường dẫn `self.project_root = Path(__file__).parent.parent` có thể sai nếu script không nằm đúng vị trí dự kiến\n- **Thiếu xử lý**: Không kiểm tra sự tồn tại của th",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T14:03:24.593563",
+      "completed_at": "2026-02-11T14:08:13.076655"
     },
     {
       "id": 6,
       "title": "Auto-Fix: backtest_sma.py",
-      "description": "Fix issues found in code review of backtest_sma.py:\n**1. ĐIỂM CHẤT LƯỢNG: 5/10**\n\n**2. LỖI và VẤN ĐỀ:**\n- Phương thức `_create_sample_data` không hoàn chỉnh (thiếu phần tạo DataFrame và gán vào `self.data`)\n- Sử dụng `warnings.filterwarnings('ignore')` che toàn bộ cảnh báo - rất nguy hiểm trong production\n- Thiếu xử lý lỗi khi file CSV không đúng định dạng hoặc thiếu cột cần thiết\n- Không kiểm tra dữ liệu đầu vào (cột 'Close' có tồn tại không)\n- Code không hoàn chỉnh (file bị cắt giữa chừng)\n\n**3. ĐỀ XUẤT CẢI THIỆN:**\n- Hoàn thiện phương thức `_c",
+      "description": "Fix issues found in code review of backtest_sma.py:\n**1. QUALITY SCORE: 5/10**  \nCode mới chỉ là khung sườn, thiếu phần quan trọng nhất (backtest logic, metrics, v.v.). Cấu trúc cơ bản rõ ràng nhưng chưa hoàn chỉnh.\n\n**2. BUGS hoặc ISSUES:**\n- Hàm `_create_sample_data()` chưa hoàn thành (thiếu return DataFrame).\n- Thiếu validation cho `fast_period < slow_period`.\n- Khi tạo sample data, không kiểm tra xem `self.data` đã được gán đúng chưa.\n- Dùng `warnings.filterwarnings('ignore')` có thể che lỗi tiềm ẩn.\n\n**3. SUGGESTIONS for improvement:**\n- Hoà",
       "assigned_to": "engineer",
-      "status": "todo",
+      "status": "done",
       "priority": 2,
       "depends_on": null,
-      "created_at": "2026-02-11T13:22:59.794366",
-      "completed_at": null
+      "created_at": "2026-02-11T14:10:02.465755",
+      "completed_at": "2026-02-11T14:13:49.018168"
     },
     {
       "id": 7,
       "title": "Auto-Fix: calculate_features.py",
-      "description": "Fix issues found in code review of calculate_features.py:\n**1. ĐIỂM CHẤT LƯỢNG: 6/10**\n\n**2. LỖI HOẶC VẤN ĐỀ:**\n- **Lỗi cú pháp**: Hàm `calculate_features` bị thiếu dấu ngoặc đóng `)` ở dòng cuối (`df.to_csv(output_file, ind`).\n- **Xử lý giá trị NaN**: Các chỉ báo kỹ thuật (RSI, MACD) tạo ra giá trị NaN trong giai đoạn đầu do cửa sổ tính toán, nhưng không được xử lý.\n- **Lỗi tiềm ẩn với RSI**: Khi `loss = 0`, phép chia `rs = gain / loss` gây lỗi chia cho 0.\n- **Thiếu kiểm tra dữ liệu đầu vào**: Không kiểm tra xem các cột bắt buộc ('Date', 'Close') có t",
+      "description": "Fix issues found in code review of calculate_features.py:\n**1. ĐIỂM CHẤT LƯỢNG: 6/10**\n\n**2. LỖI HOẶC VẤN ĐỀ:**\n- **Lỗi cú pháp**: Hàm `calculate_features` bị thiếu dấu ngoặc đóng `)` ở dòng cuối (`df.to_csv(output_file, ind`).\n- **Xử lý giá trị NaN**: Các chỉ báo kỹ thuật (RSI, MACD) tạo ra giá trị NaN trong giai đoạn đầu (do cửa sổ rolling), nhưng không được xử lý, có thể gây lỗi khi sử dụng cho mô hình ML.\n- **Thiếu kiểm tra dữ liệu đầu vào**: Không kiểm tra xem các cột bắt buộc ('Date', 'Close') có tồn tại trong file CSV không.\n- **Sử dụng `min_per",
       "assigned_to": "engineer",
-      "status": "todo",
+      "status": "done",
       "priority": 2,
       "depends_on": null,
-      "created_at": "2026-02-11T13:23:33.450831",
-      "completed_at": null
+      "created_at": "2026-02-11T14:10:33.905665",
+      "completed_at": "2026-02-11T14:14:52.441456"
     },
     {
       "id": 8,
       "title": "Auto-Fix: calculate_features_optimized.py",
-      "description": "Fix issues found in code review of calculate_features_optimized.py:\n**1. CHẤT LƯỢNG CODE: 6/10**  \nCode có cấu trúc tương đối rõ ràng, sử dụng type hints và logging, nhưng thiếu xử lý ngoại lệ, có lỗi syntax và chưa hoàn thiện.\n\n**2. LỖI/ VẤN ĐỀ:**  \n- **Lỗi nghiêm trọng:** Hàm `calculate_macd_optimized` bị cắt ngang (`exp2 = d` không hợp lệ, thiếu code hoàn chỉnh).  \n- **Thiếu kiểm tra:** Không xác thực tham số đầu vào (ví dụ: window ≤ 0).  \n- **Data leakage tiềm ẩn:** Trong `calculate_rsi_optimized`, việc dùng `ewm(adjust=False)` có thể gây rò rỉ dữ liệu (sử d",
+      "description": "Fix issues found in code review of calculate_features_optimized.py:\n**QUALITY SCORE: 6/10**\n\n**BUGS HOẶC VẤN ĐỀ:**\n1. Hàm `calculate_macd_optimized` bị thiếu code (chỉ có một phần và có lỗi cú pháp `exp2 = d`)\n2. Trong `calculate_sma_optimized`, việc sử dụng `min_periods=max(1, window//2)` có thể tạo ra SMA với quá ít dữ liệu, làm giảm độ tin cậy\n3. Trong `setup_data_quality_checks`, forward/backward fill cho price columns có thể tạo ra dữ liệu không thực tế nếu có nhiều missing values liên tiếp\n4. Thiếu xử lý outliers và validation cho giá trị âm trong price co",
       "assigned_to": "engineer",
-      "status": "todo",
+      "status": "done",
       "priority": 2,
       "depends_on": null,
-      "created_at": "2026-02-11T13:24:26.802029",
-      "completed_at": null
+      "created_at": "2026-02-11T14:11:23.841301",
+      "completed_at": "2026-02-11T14:15:59.529789"
     },
     {
       "id": 9,
       "title": "Auto-Fix: calculate_sma.py",
-      "description": "Fix issues found in code review of calculate_sma.py:\n**CHẤT LƯỢNG CODE: 2/10**\n\n**LỖI/ VẤN ĐỀ:**\n1. Hàm không có nội dung, chỉ có khai báo\n2. Thiếu xử lý dữ liệu đầu vào (data validation)\n3. Thiếu xử lý trường hợp window lớn hơn độ dài data\n4. Không có docstring/documentation\n5. Không có kiểm tra kiểu dữ liệu\n\n**ĐỀ XUẤT CẢI THIỆN:**\n1. Thêm logic tính SMA (Simple Moving Average)\n2. Thêm docstring mô tả hàm\n3. Thêm validation cho tham số đầu vào\n4. Xử lý edge cases (window size, data rỗng)\n5. Thêm type hints\n\n**VẤN ĐỀ BẢO MẬT:**\n1. Không có - nhưng",
+      "description": "Fix issues found in code review of calculate_sma.py:\n**CHẤT LƯỢNG:** 2/10  \n**LỖI/THIẾU SÓT:**  \n1. Hàm không có nội dung (chỉ có signature)  \n2. Thiếu xử lý dữ liệu đầu vào (data validation)  \n3. Không xử lý trường hợp window lớn hơn độ dài data  \n\n**GỢI Ý CẢI THIỆN:**  \n1. Thêm logic tính SMA: `sum(data[-window:])/window`  \n2. Kiểm tra kiểu dữ liệu đầu vào (list/array)  \n3. Thêm docstring mô tả hàm  \n4. Xử lý lỗi (try-except) cho phép chia  \n\n**VẤN ĐỀ BẢO MẬT:**  \n1. Không có - nhưng thiếu validation có thể gây crash hệ thống  \n2. Cần kiểm tra i",
       "assigned_to": "engineer",
-      "status": "todo",
+      "status": "done",
       "priority": 2,
       "depends_on": null,
-      "created_at": "2026-02-11T13:24:43.363000",
-      "completed_at": null
+      "created_at": "2026-02-11T14:11:35.767073",
+      "completed_at": "2026-02-11T14:16:49.831469"
     },
     {
       "id": 10,
       "title": "Auto-Fix: health_check.py",
-      "description": "Fix issues found in code review of health_check.py:\n**ĐÁNH GIÁ MÃ NGUỒN**\n\n**1. ĐIỂM CHẤT LƯỢNG: 6/10**\n- Cấu trúc rõ ràng, có docstring và type hints\n- Xử lý lỗi cơ bản với try-except\n- Thiếu hoàn thiện (method `check_data_freshness` chưa viết xong)\n\n**2. LỖI/ VẤN ĐỀ:**\n- **Lỗi nghiêm trọng**: Method `check_data_freshness()` bị thiếu hoàn toàn (chỉ có `try` block và kiểm tra thư mục)\n- **Lỗi logic**: Các ngưỡng cảnh báo disk (80%, 90%) và memory (85%, 95%) không thống nhất\n- **Thiếu xử lý**: Không kiểm tra sự tồn tại của `logs_dir` và `workspace",
+      "description": "Fix issues found in code review of health_check.py:\n**ĐÁNH GIÁ MÃ NGUỒN**\n\n**1. ĐIỂM CHẤT LƯỢNG: 6/10**\n\n**2. LỖI/ VẤN ĐỀ:**\n- **Lỗi cú pháp**: Hàm `check_data_freshness()` bị thiếu phần thân (không có `return` và đóng ngoặc)\n- **Thiếu xử lý ngoại lệ**: Các hàm không có `try-except` đầy đủ cho tất cả trường hợp lỗi\n- **Magic numbers**: Ngưỡng 80%, 85%, 90%, 95% nên được định nghĩa thành hằng số\n- **Thiếu kiểm tra thư mục**: Không xác minh `data_dir`, `logs_dir`, `workspace_dir` tồn tại trước khi sử dụng\n\n**3. ĐỀ XUẤT CẢI THIỆN:**\n- Hoàn thiện hàm",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T14:11:54.442018",
+      "completed_at": "2026-02-11T14:17:17.301400"
+    },
+    {
+      "id": 11,
+      "title": "Auto-Fix: backtest_sma.py",
+      "description": "Fix issues found in code review of backtest_sma.py:\n**1. ĐIỂM CHẤT LƯỢNG: 5/10**\n\n**2. LỖI & VẤN ĐỀ:**\n- File mã nguồn bị cắt đứt giữa chừng (method `_create_sample_data` chưa hoàn thiện)\n- Không xử lý cấu trúc dữ liệu đầu vào (thiếu validation column như 'Close')\n- Dùng `print()` thay vì logging module chuyên nghiệp\n- `warnings.filterwarnings('ignore')` che giấu cảnh báo quan trọng\n- Thiếu xử lý ngày tháng khi đọc CSV (không parse dates)\n- Không có logic backtest thực tế (chỉ mới có phần load data)\n\n**3. ĐỀ XUẤT CẢI THIỆN:**\n- Hoàn thiện method ",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T14:18:42.904971",
+      "completed_at": "2026-02-11T14:23:19.343140"
+    },
+    {
+      "id": 12,
+      "title": "Auto-Fix: calculate_features.py",
+      "description": "Fix issues found in code review of calculate_features.py:\n**1. CHẤT LƯỢNG: 7/10**  \nCode có cấu trúc rõ ràng, hàm được đặt tên tốt, xử lý lỗi cơ bản. Tuy nhiên thiếu một số kiểm tra quan trọng.\n\n**2. LỖI/ VẤN ĐỀ:**  \n- **Lỗi cú pháp**: Dòng cuối `df.to_csv(output_file, ind` bị thiếu `ex=False` và dấu ngoặc đóng.\n- **NaN values**: Các chỉ báo (RSI, MACD, SMA) tạo ra giá trị NaN ở đầu chuỗi, có thể gây lỗi khi training model.\n- **Không kiểm tra cột bắt buộc**: Chưa xác minh input CSV có cột `Date`, `Close`.\n- **Không xử lý dữ liệu trống**: Nếu `df.empty ",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T14:19:01.041148",
+      "completed_at": "2026-02-11T14:24:47.611631"
+    },
+    {
+      "id": 13,
+      "title": "Auto-Fix: calculate_features_optimized.py",
+      "description": "Fix issues found in code review of calculate_features_optimized.py:\n**ĐÁNH GIÁ CHẤT LƯỢNG MÃ NGUỒN**\n\n**1. ĐIỂM CHẤT LƯỢNG: 6/10**\n\n**2. LỖI/VẤN ĐỀ:**\n- Lỗi cú pháp ở hàm `calculate_macd_optimized`: dòng `exp2 = d` không hợp lệ (biến `d` chưa định nghĩa)\n- Hàm `calculate_macd_optimized` bị thiếu phần return statement\n- Trong `setup_data_quality_checks`: nếu cột `Close` không tồn tại, hàm sẽ gây lỗi khi gọi `dropna(subset=essential_cols)`\n- Không xử lý trường hợp tất cả giá trị trong cột đều là NaN (ffill/bfill sẽ không hoạt động)\n\n**3. ĐỀ XUẤT CẢI THIỆN:**\n- Hoà",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T14:20:00.776952",
+      "completed_at": "2026-02-11T14:25:26.761539"
+    },
+    {
+      "id": 14,
+      "title": "Auto-Fix: calculate_sma.py",
+      "description": "Fix issues found in code review of calculate_sma.py:\n**1. ĐIỂM CHẤT LƯỢNG: 2/10**  \nChỉ có khai báo hàm không có nội dung, không thể đánh giá chức năng.\n\n**2. LỖI/ VẤN ĐỀ:**  \n- Hàm trống hoàn toàn, không xử lý dữ liệu đầu vào\n- Thiếu xử lý ngoại lệ (exception handling)\n- Không có kiểm tra kiểu dữ liệu (data validation)\n- Thiếu docstring và type hints\n\n**3. ĐỀ XUẤT CẢI THIỆN:**  \n```python\nfrom typing import List, Union\nimport numpy as np\n\ndef calculate_sma(data: Union[List[float], np.ndarray], window: int = 3) -> np.ndarray:\n    \"\"\"\n    Tính Simp",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T14:20:18.309742",
+      "completed_at": "2026-02-11T14:26:31.572778"
+    },
+    {
+      "id": 15,
+      "title": "Auto-Fix: health_check.py",
+      "description": "Fix issues found in code review of health_check.py:\n**ĐÁNH GIÁ MÃ NGUỒN: health_check.py**\n\n---\n\n### 1. **ĐIỂM CHẤT LƯỢNG: 6/10**\n- Cấu trúc rõ ràng, có docstring và type hints.\n- Xử lý lỗi cơ bản với try-except.\n- Thiếu hoàn thiện một số phương thức quan trọng.\n\n---\n\n### 2. **LỖI HOẶC VẤN ĐỀ:**\n- **Lỗi nghiêm trọng**: Phương thức `check_data_freshness()` bị thiếu hoàn toàn phần thân sau `if not self.data_dir.exists():` (không có mã xử lý tiếp theo).\n- **Lỗi tiềm ẩn**: Không kiểm tra sự tồn tại của thư mục `logs_dir` và `workspace_dir` trước khi ",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T14:20:43.744368",
+      "completed_at": "2026-02-11T14:27:25.618734"
+    },
+    {
+      "id": 16,
+      "title": "Auto-Fix: backtest_sma.py",
+      "description": "Fix issues found in code review of backtest_sma.py:\n**QUALITY SCORE: 5/10**  \nCode có cấu trúc rõ ràng, sử dụng type hints và docstring đầy đủ. Tuy nhiên còn một số vấn đề nghiêm trọng về logic và hoàn thiện code.\n\n**BUGS hoặc ISSUES:**  \n1. Hàm `_create_sample_data()` bị dở dang - chỉ tạo biến nhưng không tạo DataFrame cho `self.data`, gây lỗi khi gọi các hàm khác.\n2. Thiếu validation dữ liệu sau khi load (kiểm tra cột bắt buộc như `Close`, `Date`).\n3. Không có xử lý khi `self.data` rỗng hoặc có giá trị NaN.\n\n**SUGGESTIONS cải tiến:**  \n1. Hoàn ",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T14:28:43.956993",
+      "completed_at": "2026-02-11T14:32:29.247227"
+    },
+    {
+      "id": 17,
+      "title": "Auto-Fix: calculate_features.py",
+      "description": "Fix issues found in code review of calculate_features.py:\n**1. ĐIỂM CHẤT LƯỢNG: 6/10**\n\n**2. LỖI/ VẤN ĐỀ:**\n- Lỗi cú pháp: Hàm `calculate_features` bị thiếu dấu ngoặc đóng `)` ở dòng cuối (`df.to_csv(output_file, ind`).\n- Không xử lý dữ liệu thiếu (NaN) sau khi tính toán các chỉ báo (RSI, MACD, SMA...).\n- Không kiểm tra cấu trúc dữ liệu đầu vào (có cột 'Close', 'Date' không?).\n- `min_periods=1` trong SMA có thể tạo giá trị SMA không đáng tin cậy cho những phiên đầu tiên.\n- Cảnh báo bị tắt hoàn toàn (`warnings.filterwarnings('ignore')`) có thể che giấu ",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T14:29:02.718276",
+      "completed_at": "2026-02-11T14:33:45.133722"
+    },
+    {
+      "id": 18,
+      "title": "Auto-Fix: calculate_features_optimized.py",
+      "description": "Fix issues found in code review of calculate_features_optimized.py:\n**ĐÁNH GIÁ MÃ NGUỒN**\n\n**1. CHẤT LƯỢNG: 5/10**\n- Mã có cấu trúc tương đối rõ ràng với docstring và logging\n- **Nghiêm trọng**: Hàm `calculate_macd_optimized` bị cắt đột ngột, không hoàn chỉnh (dừng ở `exp2 = d`)\n- Thiếu xử lý ngoại lệ và validation đầu vào\n- Type hints chưa đầy đủ\n\n**2. LỖI VÀ VẤN ĐỀ:**\n- **Lỗi nghiêm trọng**: Hàm `calculate_macd_optimized` không hoàn chỉnh, không trả về giá trị\n- Trong `calculate_rsi_optimized`: Khi `avg_loss = 0` sẽ gây lỗi chia cho 0\n- `setup_data_quality_che",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T14:30:05.921693",
+      "completed_at": "2026-02-11T14:36:24.323950"
+    },
+    {
+      "id": 19,
+      "title": "Auto-Fix: calculate_sma.py",
+      "description": "Fix issues found in code review of calculate_sma.py:\n**CHẤT LƯỢNG:** 2/10  \n**LỖI:**  \n- Hàm không có nội dung, chỉ khai báo tên và tham số  \n- Thiếu xử lý dữ liệu đầu vào và logic tính SMA  \n\n**GỢI Ý CẢI THIỆN:**  \n1. Thêm kiểm tra dữ liệu đầu vào (list/array, độ dài tối thiểu)  \n2. Triển khai công thức SMA: tổng giá trị trong cửa sổ / window  \n3. Xử lý trường hợp window > len(data)  \n4. Thêm docstring mô tả hàm và ví dụ sử dụng  \n\n**VẤN ĐỀ BẢO MẬT:**  \n- Không có xử lý dữ liệu độc hại đầu vào  \n- Thiếu validation tham số window (phải là số nguyê",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T14:30:18.044797",
+      "completed_at": "2026-02-11T14:36:56.240456"
+    },
+    {
+      "id": 20,
+      "title": "Auto-Fix: health_check.py",
+      "description": "Fix issues found in code review of health_check.py:\n**ĐÁNH GIÁ MÃ NGUỒN: health_check.py**\n\n---\n\n### 1. **ĐIỂM CHẤT LƯỢNG: 6/10**\n- Cấu trúc rõ ràng, có docstring và type hints.\n- Xử lý lỗi cơ bản với try-except.\n- Thiếu hoàn thiện một số phương thức và xử lý edge cases.\n\n---\n\n### 2. **LỖI/ VẤN ĐỀ:**\n- **Lỗi nghiêm trọng**: Phương thức `check_data_freshness()` bị thiếu hoàn toàn (chỉ có `try` block và thiếu phần thân).\n- **Lỗi logic**: Trong `check_disk_space()` và `check_memory_usage()`, cảnh báo được thêm vào `alerts` ngay cả khi `status` là \"E",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T14:30:40.850637",
+      "completed_at": "2026-02-11T14:37:29.106745"
+    },
+    {
+      "id": 21,
+      "title": "Auto-Fix: backtest_sma.py",
+      "description": "Fix issues found in code review of backtest_sma.py:\n**1. QUALITY SCORE: 6/10**  \nCode có cấu trúc rõ ràng, sử dụng type hints và xử lý lỗi cơ bản, nhưng chưa hoàn chỉnh (hàm `_create_sample_data()` bị thiếu phần tạo DataFrame).\n\n**2. BUGS hoặc ISSUES:**  \n- Hàm `_create_sample_data()` chưa tạo DataFrame `self.data` từ dữ liệu tổng hợp (thiếu ghép dữ liệu và cột bắt buộc như 'Close').  \n- Không kiểm tra cột dữ liệu đầu vào (ví dụ: cần cột 'Close' để tính SMA).  \n- Dùng `print()` thay vì logging module, khó kiểm soát output trong production.  \n- `w",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T14:39:25.684901",
+      "completed_at": "2026-02-11T14:43:34.029875"
+    },
+    {
+      "id": 22,
+      "title": "Auto-Fix: calculate_features.py",
+      "description": "Fix issues found in code review of calculate_features.py:\n**1. ĐIỂM CHẤT LƯỢNG: 6/10**\n\n**2. LỖI/ VẤN ĐỀ:**\n- **Lỗi cú pháp**: Dòng cuối thiếu `ex=False` trong `df.to_csv(output_file, index=False)`.\n- **Xử lý NaN**: Các chỉ báo kỹ thuật (RSI, MACD) tạo ra giá trị NaN trong khoảng thời gian đầu, không được xử lý.\n- **Không kiểm tra cột bắt buộc**: Hàm không kiểm tra xem tệp CSV có cột `Date` và `Close` không.\n- **Cảnh báo bị tắt**: `warnings.filterwarnings('ignore')` có thể che giấu vấn đề tiềm ẩn.\n- **SMA với min_periods=1**: `calculate_sma` dùng `min_",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T14:39:46.189290",
+      "completed_at": "2026-02-11T14:44:39.812151"
+    },
+    {
+      "id": 23,
+      "title": "Auto-Fix: calculate_sma.py",
+      "description": "Fix issues found in code review of calculate_sma.py:\n**1. CHẤT LƯỢNG CODE: 2/10**  \n- Chỉ có khai báo hàm, không có thân hàm → không hoạt động được.\n- Thiếu docstring, type hints, xử lý lỗi.\n\n**2. LỖI/ VẤN ĐỀ:**  \n- Hàm không có nội dung, trả về `None` mặc định.\n- Không kiểm tra đầu vào (data có phải list/array? window có hợp lệ?).\n- Không xử lý trường hợp dữ liệu ít hơn window.\n\n**3. ĐỀ XUẤT CẢI THIỆN:**  \n- Thêm logic tính SMA (v.d. dùng pandas/numpy).\n- Thêm docstring mô tả hàm, tham số, giá trị trả về.\n- Thêm type hints (data: list[float], win",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T14:40:58.043190",
+      "completed_at": "2026-02-11T14:45:35.208564"
+    },
+    {
+      "id": 24,
+      "title": "Auto-Fix: health_check.py",
+      "description": "Fix issues found in code review of health_check.py:\n**ĐIỂM CHẤT LƯỢNG: 6/10**\n\n**LỖI HOẶC VẤN ĐỀ:**\n1. File code bị cắt ngang ở hàm `check_data_freshness()` - thiếu phần thân hàm hoàn chỉnh và câu lệnh `return`\n2. Thiếu xử lý ngoại lệ cụ thể (chỉ dùng `Exception` chung chung)\n3. Không có logging để ghi lại quá trình kiểm tra\n4. Các ngưỡng cảnh báo (80%, 85%, 90%, 95%) là hard-coded, không linh hoạt\n\n**ĐỀ XUẤT CẢI THIỆN:**\n1. Hoàn thiện hàm `check_data_freshness()` với logic kiểm tra timestamp file\n2. Thêm cấu hình ngưỡng cảnh báo từ file config h",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T14:41:16.112986",
+      "completed_at": "2026-02-11T14:46:01.543433"
+    },
+    {
+      "id": 25,
+      "title": "Auto-Fix: backtest_sma.py",
+      "description": "Fix issues found in code review of backtest_sma.py:\n**QUALITY SCORE: 5/10**\n\n**BUGS hoặc ISSUES:**\n1. Phương thức `_create_sample_data()` không hoàn chỉnh - thiếu phần tạo DataFrame và gán cho `self.data`\n2. Dòng 84 chỉ chứa `#` không có nội dung (comment trống)\n3. Không validate dữ liệu sau khi load (kiểm tra các cột bắt buộc như 'Close')\n4. Thiếu xử lý khi `self.data` là None trong các phương thức khác\n\n**GỢI Ý CẢI THIỆN:**\n1. Hoàn thiện `_create_sample_data()`:\n```python\nprices = base_price + trend + noise\nself.data = pd.DataFrame({\n    'Date'",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T14:47:08.719420",
+      "completed_at": "2026-02-11T14:51:03.006578"
+    },
+    {
+      "id": 26,
+      "title": "Auto-Fix: calculate_features.py",
+      "description": "Fix issues found in code review of calculate_features.py:\n**1. ĐIỂM CHẤT LƯỢNG: 6/10**\n\n**2. LỖI/ VẤN ĐỀ:**\n- Lỗi cú pháp: Dòng cuối `df.to_csv(output_file, ind` bị thiếu `ex=False)` và dấu ngoặc đóng.\n- Không xử lý dữ liệu thiếu (NaN) sau khi tính toán các chỉ báo (RSI, MACD, SMA), có thể gây lỗi khi sử dụng.\n- Hàm `calculate_sma` dùng `min_periods=1` làm SMA không có ý nghĩa khi cửa sổ chưa đủ dữ liệu.\n- Không kiểm tra cột bắt buộc (ví dụ: 'Close', 'Date') trước khi tính toán.\n- Cảnh báo bị tắt hoàn toàn (`warnings.filterwarnings('ignore')`) có thể c",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T14:47:31.421832",
+      "completed_at": "2026-02-11T14:51:50.901680"
+    },
+    {
+      "id": 27,
+      "title": "Auto-Fix: calculate_features_optimized.py",
+      "description": "Fix issues found in code review of calculate_features_optimized.py:\n**QUALITY SCORE: 6/10**\n\n**BUGS hoặc ISSUES:**\n1. Hàm `calculate_macd_optimized` bị cắt đột ngột ở dòng `exp2 = d` (thiếu code và có lỗi cú pháp)\n2. Không xử lý trường hợp cột giá trị bị thiếu toàn bộ (ffill/bfill sẽ không hoạt động)\n3. SMA sử dụng `min_periods=max(1, window//2)` có thể tạo giá trị không chính xác với window nhỏ\n4. RSI có thể gặp lỗi chia cho 0 khi `avg_loss = 0`\n\n**SUGGESTIONS cải thiện:**\n1. Thêm validation cho input parameters (ví dụ: window > 0)\n2. Sử dụng `pd.Series.interpo",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T14:48:18.566020",
+      "completed_at": "2026-02-11T14:53:04.090104"
+    },
+    {
+      "id": 28,
+      "title": "Auto-Fix: calculate_sma.py",
+      "description": "Fix issues found in code review of calculate_sma.py:\n**CHẤT LƯỢNG:** 2/10  \n**LỖI/THIẾU SÓT:**  \n1. Hàm chỉ có khai báo mà không có nội dung  \n2. Thiếu xử lý dữ liệu đầu vào (data rỗng, window không hợp lệ)  \n3. Không có xử lý ngoại lệ  \n\n**ĐỀ XUẤT CẢI THIỆN:**  \n1. Thêm logic tính SMA:  \n```python\ndef calculate_sma(data, window=3):\n    if not data or window <= 0 or window > len(data):\n        return []\n    return [sum(data[i:i+window])/window for i in range(len(data)-window+1)]\n```  \n2. Thêm kiểm tra kiểu dữ liệu (list/array)  \n3. Thêm docstring ",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T14:48:29.286398",
+      "completed_at": "2026-02-11T14:53:36.849580"
+    },
+    {
+      "id": 29,
+      "title": "Auto-Fix: health_check.py",
+      "description": "Fix issues found in code review of health_check.py:\n**ĐIỂM CHẤT LƯỢNG: 7/10**\n\n**LỖI HOẶC VẤN ĐỀ:**\n1. **Thiếu phần kết thúc hàm `check_data_freshness()`** - Hàm bị cắt ngang ở `if not self.data_dir.exists():` không có phần xử lý tiếp theo.\n2. **Thiếu các hàm kiểm tra khác** - Code không hoàn chỉnh, thiếu các hàm được đề cập trong docstring như `check_log_files_count()`.\n3. **Không xử lý đường dẫn không tồn tại** - Các thư mục `data_dir`, `logs_dir`, `workspace_dir` có thể không tồn tại nhưng không có xử lý dự phòng.\n4. **Thiếu phương thức `run()",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T14:48:51.123981",
+      "completed_at": "2026-02-11T14:54:11.003177"
+    },
+    {
+      "id": 30,
+      "title": "Auto-Fix: backtest_sma.py",
+      "description": "Fix issues found in code review of backtest_sma.py:\n**ĐÁNH GIÁ MÃ NGUỒN backtest_sma.py**\n\n**1. ĐIỂM CHẤT LƯỢNG: 5/10**\n- Cấu trúc cơ bản đúng, có type hints và error handling\n- Thiếu phần xử lý chính (backtest, tính toán SMA, tín hiệu)\n- Code chỉ hiển thị phần khởi tạo chưa đầy đủ\n\n**2. LỖI PHÁT HIỆN:**\n- Phương thức `_create_sample_data()` chưa hoàn chỉnh (thiếu tạo DataFrame và gán vào `self.data`)\n- Không có validation cho `fast_period` và `slow_period` (cần đảm bảo fast_period < slow_period)\n- Thiếu xử lý khi dữ liệu không có cột 'Close' hoặ",
       "assigned_to": "engineer",
       "status": "todo",
       "priority": 2,
       "depends_on": null,
-      "created_at": "2026-02-11T13:25:04.255502",
+      "created_at": "2026-02-11T14:55:26.414919",
+      "completed_at": null
+    },
+    {
+      "id": 31,
+      "title": "Auto-Fix: calculate_features.py",
+      "description": "Fix issues found in code review of calculate_features.py:\n**1. ĐIỂM CHẤT LƯỢNG: 6/10**\n\n**2. LỖI HOẶC VẤN ĐỀ:**\n- Lỗi cú pháp: Hàm `calculate_features` bị thiếu dấu ngoặc đóng `)` ở dòng cuối (`df.to_csv(output_file, ind`).\n- Xử lý giá trị NaN: Các chỉ báo kỹ thuật (RSI, MACD) tạo ra giá trị NaN trong giai đoạn đầu (do cửa sổ rolling). Không có xử lý làm sạch hoặc điền giá trị.\n- `min_periods=1` trong SMA có thể tạo giá trị trung bình không chính xác khi dữ liệu ít hơn cửa sổ.\n- Không kiểm tra cột bắt buộc: Hàm giả định CSV có cột 'Date' và 'Close', nh",
+      "assigned_to": "engineer",
+      "status": "todo",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T14:55:50.899984",
+      "completed_at": null
+    },
+    {
+      "id": 32,
+      "title": "Auto-Fix: calculate_features_optimized.py",
+      "description": "Fix issues found in code review of calculate_features_optimized.py:\n**QUALITY SCORE: 6/10**\n\n**BUGS HOẶC VẤN ĐỀ:**\n1. Hàm `calculate_macd_optimized` không hoàn chỉnh (chỉ tính exp1) và có lỗi cú pháp: `exp2 = d` (biến `d` không xác định)\n2. Hàm `calculate_sma_optimized` có thể trả về NaN không nhất quán với min_periods = max(1, window//2)\n3. Trong `setup_data_quality_checks`, việc loại bỏ hàng chỉ dựa trên 'Close' có thể không đủ với dữ liệu đa chiều\n\n**ĐỀ XUẤT CẢI THIỆN:**\n1. Hoàn thiện hàm `calculate_macd_optimized`:\n   ```python\n   def calculate_macd_optimize",
+      "assigned_to": "engineer",
+      "status": "todo",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T14:57:06.820592",
+      "completed_at": null
+    },
+    {
+      "id": 33,
+      "title": "Auto-Fix: calculate_sma.py",
+      "description": "Fix issues found in code review of calculate_sma.py:\n**CHẤT LƯỢNG:** 2/10  \n**LỖI/ VẤN ĐỀ:**  \n1. Hàm không có nội dung (chỉ có signature)  \n2. Thiếu xử lý đầu vào (data rỗng, window không hợp lệ)  \n3. Không có docstring/type hints  \n\n**ĐỀ XUẤT CẢI THIỆN:**  \n1. Thêm logic tính SMA:  \n```python\ndef calculate_sma(data, window=3):\n    if not data or window <= 0:\n        return []\n    return [sum(data[i:i+window])/window for i in range(len(data)-window+1)]\n```  \n2. Thêm docstring, type hints, validation  \n3. Xử lý edge cases (window > len(data))  \n\n*",
+      "assigned_to": "engineer",
+      "status": "todo",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T14:57:17.179554",
+      "completed_at": null
+    },
+    {
+      "id": 34,
+      "title": "Auto-Fix: health_check.py",
+      "description": "Fix issues found in code review of health_check.py:\n**ĐÁNH GIÁ MÃ NGUỒN: health_check.py**\n\n---\n\n### 1. **ĐIỂM CHẤT LƯỢNG: 6/10**\n- Cấu trúc rõ ràng, có docstring và type hints.\n- Xử lý lỗi cơ bản với try-except.\n- Thiếu hoàn thiện một số phương thức và xử lý edge cases.\n\n---\n\n### 2. **LỖI/ VẤN ĐỀ:**\n- **Lỗi cú pháp**: Phương thức `check_data_freshness()` bị thiếu hoàn chỉnh (không có `return` và thiếu logic kiểm tra file).\n- **Lỗi tiềm ẩn**: Không kiểm tra sự tồn tại của thư mục `logs_dir` và `workspace_dir` trước khi sử dụng.\n- **Ngưỡng cảnh bá",
+      "assigned_to": "engineer",
+      "status": "todo",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-11T14:57:39.256440",
       "completed_at": null
     }
   ],
-  "next_id": 11
->>>>>>> cycle-5
+  "next_id": 35
+>>>>>>> cycle-12
 }
