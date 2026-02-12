@@ -27,11 +27,11 @@
       "title": "Auto-Fix: aws_kinesis_consumer.py",
       "description": "Fix issues found in code review of aws_kinesis_consumer.py:\n**1. ĐIỂM CHẤT LƯỢNG: 5/10**\n\n**2. LỖI/ VẤN ĐỀ:**\n- Không xử lý `NextShardIterator` khi hết hạn (sau 5 phút)\n- Không giới hạn vòng lặp vô hạn, có thể gây treo hệ thống\n- Không xử lý trường hợp không có record (`Records` rỗng)\n- Thiếu cơ chế dừng/ tái khởi động khi gặp lỗi nghiêm trọng\n- In log trực tiếp ra console thay vì dùng logging module\n\n**3. ĐỀ XUẤT CẢI THIỆN:**\n- Thêm timeout và retry logic cho `get_records()`\n- Sử dụng `TRIM_HORIZON` hoặc `AT_TIMESTAMP` cho ShardIteratorType\n- Tách phần ",
       "assigned_to": "engineer",
-      "status": "todo",
+      "status": "done",
       "priority": 2,
       "depends_on": null,
       "created_at": "2026-02-12T11:15:46.388233",
-      "completed_at": null
+      "completed_at": "2026-02-12T11:19:21.590717"
     }
   ],
   "next_id": 4
