@@ -5,11 +5,11 @@
       "title": "Auto-Fix: advanced_risk_management.py",
       "description": "Fix issues found in code review of advanced_risk_management.py:\n**QUALITY SCORE: 6/10**\n\n**BUGS hoặc ISSUES:**\n1. Phương thức `calculate_atr_position_size` bị thiếu phần thân hoàn chỉnh (dừng đột ngột ở dòng comment về Kelly criterion)\n2. Không có xử lý ngoại lệ cho các tham số đầu vào không hợp lệ (ví dụ: giá âm, ATR âm)\n3. Biến `position_sizes` được khai báo nhưng không được sử dụng\n4. Thiếu validation cho các tham số khởi tạo (ví dụ: `risk_per_trade > 1` sẽ gây vấn đề)\n\n**SUGGESTIONS cải tiến:**\n1. Hoàn thiện phương thức `calculate_atr_position_size` với ",
       "assigned_to": "engineer",
-      "status": "todo",
+      "status": "done",
       "priority": 2,
       "depends_on": null,
       "created_at": "2026-02-12T11:14:44.886838",
-      "completed_at": null
+      "completed_at": "2026-02-12T11:18:20.379681"
     },
     {
       "id": 2,
