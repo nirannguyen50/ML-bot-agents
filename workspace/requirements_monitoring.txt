@@ -1,0 +1,10 @@
+**
+```
+# Real-Time Dashboard Dependencies
+dash==2.14.0
+plotly==5.17.0
+websockets==12.0
+pandas==2.1.4
+numpy==1.24.3
+asyncio==3.4.3
+```

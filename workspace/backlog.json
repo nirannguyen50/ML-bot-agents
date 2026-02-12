@@ -1,0 +1,22 @@
+{
+  "tasks": [
+    {
+      "id": "CI-001",
+      "title": "Setup GitHub Actions CI/CD",
+      "description": "Create automated test workflow for pull requests",
+      "status": "in_progress",
+      "assigned_to": "devops",
+      "priority": "high",
+      "dependencies": [],
+      "created_at": "2024-01-15T10:00:00Z",
+      "updated_at": "2024-01-15T10:30:00Z"
+    }
+  ],
+  "pipeline_status": {
+    "data_download": "pending",
+    "feature_engineering": "pending",
+    "strategy_design": "pending",
+    "backtest_development": "pending",
+    "deployment": "in_progress"
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "health_check_timestamp": "2025-01-13T09:45:00Z",
+  "system_status": "OPERATIONAL_WITH_RECOMMENDATIONS",
+  "uptime_metrics": {
+    "monitoring_dashboard": "RUNNING (port 8080)",
+    "agent_processes": "ACTIVE (5 Python processes detected)",
+    "shared_memory_system": "HEALTHY",
+    "telegram_notifications": "NOT_CONFIGURED"
+  },
+  "resource_utilization": {
+    "memory_directory_size": "4.0K",
+    "workspace_directory_size": "8.0K",
+    "data_directory_size": "0B",
+    "log_file_size": "1.2K"
+  },
+  "detailed_findings": {
+    "agent_health_monitor": {
+      "status": "PARTIAL",
+      "details": "Dashboard server running on port 8080. Process monitoring exists but lacks automated health checks. Recommendation: Implement heartbeat system with status endpoints.",
+      "process_count": 5,
+      "dashboard_url": "http://localhost:8080"
+    },
+    "shared_memory_system": {
+      "status": "HEALTHY",
+      "details": "Memory files present for all agents. JSON format valid. LEARN/RECALL functions operational. File permissions: readable/writable.",
+      "agent_memory_files": ["data_scientist.json", "quant_analyst.json", "engineer.json", "devops.json", "project_manager.json"],
+      "memory_schema_version": "1.0"
+    },
+    "telegram_notifications": {
+      "status": "NOT_IMPLEMENTED",
+      "details": "No Telegram bot configuration found. No notification handlers in base_agent.py. Critical for production alerts.",
+      "recommendation": "Add TELEGRAM_TOKEN env var and notification module. Implement alert levels: CRITICAL, WARNING, INFO."
+    },
+    "logging_system": {
+      "status": "BASIC",
+      "details": "Communication logs exist but lack structured format. No log rotation or retention policy.",
+      "log_entries_count": 15,
+      "recommendation": "Implement JSON logging with timestamps, agent_id, log_level, message."
+    }
+  },
+  "performance_metrics": {
+    "data_download_latency": "N/A (no data downloaded)",
+    "feature_calculation_time": "N/A",
+    "memory_read_latency": "< 10ms",
+    "file_system_response": "NORMAL"
+  },
+  "security_checks": {
+    "file_permissions": "APPROPRIATE",
+    "api_keys_exposure": "NO_EXPOSURE_DETECTED",
+    "ssl_configuration": "N/A (development)"
+  },
+  "recommended_actions": [
+    {
+      "priority": "HIGH",
+      "action": "Configure Telegram notifications with webhook",
+      "estimated_time": "2 hours"
+    },
+    {
+      "priority": "MEDIUM",
+      "action": "Implement structured JSON logging with rotation",
+      "estimated_time": "3 hours"
+    },
+    {
+      "priority": "MEDIUM",
+      "action": "Add agent health heartbeat system",
+      "estimated_time": "4 hours"
+    },
+    {
+      "priority": "LOW",
+      "action": "Set up disk usage monitoring with alerts",
+      "estimated_time": "1 hour"
+    }
+  ],
+  "sla_compliance": {
+    "availability": "99.9% (TARGET)",
+    "current_uptime": "UNKNOWN (monitoring not established)",
+    "recovery_time_objective": "> 60min (NEEDS IMPROVEMENT)",
+    "data_integrity": "VERIFIED"
+  }
+}

@@ -539,7 +539,16 @@ class ProjectManager:
                     continue
                 
                 executed_any = True
-                await self._execute_agent_task(agent, agent_name, task, backlog)
+                try:
+                    await asyncio.wait_for(
+                        self._execute_agent_task(agent, agent_name, task, backlog),
+                        timeout=300  # 5 min max per task
+                    )
+                except asyncio.TimeoutError:
+                    logger.error(f"⏰ Task #{task['id']} ({task['title']}) timed out after 5 minutes! Marking as blocked.")
+                    backlog.update_status(task["id"], "blocked")
+                    if self.telegram:
+                        self.telegram.send_error(f"⏰ Task #{task['id']} timed out: {task['title']}")
                 await asyncio.sleep(self.config.get('pipeline', {}).get('pause_between_tasks', 3))
             
             if not executed_any:
@@ -856,21 +865,28 @@ Reply with: SKIP, REASSIGN, or SPLIT"""
                 if self.dashboard:
                     self.dashboard.add_log(f"🔍 Code review: {pyfile} ✅")
                 
-                # Feature 10: Auto-Fix from Code Review
+                # Feature 10: Auto-Fix from Code Review (with dedup)
                 review_text = review.get('review', '').lower()
-                has_bugs = any(word in review_text for word in ['bug', 'error', 'lỗi', 'fix', 'critical', 'security'])
+                has_bugs = any(word in review_text for word in ['bug', 'error', 'fix', 'critical', 'security'])
                 if has_bugs:
                     from utils.backlog_manager import BacklogManager
                     fix_backlog = BacklogManager()
-                    fix_backlog.add_task(
-                        title=f"Auto-Fix: {pyfile}",
-                        description=f"Fix issues found in code review of {pyfile}:\n{review['review'][:500]}",
-                        assigned_to="engineer",
-                        priority=2
-                    )
-                    logger.info(f"🔧 Feature 10: Auto-created fix task for {pyfile}")
-                    if self.telegram:
-                        self.telegram.send_message(f"🔧 Auto-Fix: Code review found issues in {pyfile}, fix task created")
+                    # DEDUP: Check if Auto-Fix task already exists for this file
+                    existing_tasks = fix_backlog.get_all_tasks()
+                    fix_title = f"Auto-Fix: {pyfile}"
+                    already_exists = any(t["title"] == fix_title for t in existing_tasks)
+                    if not already_exists:
+                        fix_backlog.add_task(
+                            title=fix_title,
+                            description=f"Fix issues found in code review of {pyfile}:\n{review['review'][:500]}",
+                            assigned_to="engineer",
+                            priority=2
+                        )
+                        logger.info(f"🔧 Feature 10: Auto-created fix task for {pyfile}")
+                        if self.telegram:
+                            self.telegram.send_message(f"🔧 Auto-Fix: Code review found issues in {pyfile}, fix task created")
+                    else:
+                        logger.info(f"⏭️ Feature 10: Skipping duplicate Auto-Fix for {pyfile} (task already exists)")
 
     async def _run_voting_phase(self, backlog):
         """Feature 8: QA proposes strategy and agents vote"""
@@ -941,6 +957,12 @@ Reply with: SKIP, REASSIGN, or SPLIT"""
         tasks = backlog.get_all_tasks()
         done_tasks = [t for t in tasks if t["status"] == "done"]
         pending_tasks = [t for t in tasks if t["status"] in ("todo", "in_progress")]
+        
+        # CAP: Don't auto-plan if backlog is already too large
+        MAX_TOTAL_TASKS = 50
+        if len(tasks) >= MAX_TOTAL_TASKS:
+            logger.info(f"Auto-plan skipped: backlog already has {len(tasks)} tasks (max {MAX_TOTAL_TASKS})")
+            return 0
         
         if pending_tasks:
             logger.info(f"Auto-plan skipped: {len(pending_tasks)} tasks still pending")
@@ -1187,11 +1209,14 @@ async def main():
                 project_manager.recovery.set_phase("pipeline")
             await project_manager.run_continuous_pipeline()
             
-            # ---- Phase 2: Code Review (Feature 4) ----
-            logger.info("📌 Phase 2: Code Review...")
-            if project_manager.recovery:
-                project_manager.recovery.set_phase("code_review")
-            await project_manager._run_code_reviews()
+            # ---- Phase 2: Code Review (Feature 4) — Only every 3 cycles ----
+            if cycle % 3 == 1:  # Run on cycle 1, 4, 7, etc.
+                logger.info("📌 Phase 2: Code Review...")
+                if project_manager.recovery:
+                    project_manager.recovery.set_phase("code_review")
+                await project_manager._run_code_reviews()
+            else:
+                logger.info(f"📌 Phase 2: Code Review skipped (runs every 3 cycles, next at cycle {((cycle // 3) + 1) * 3 + 1})")
             
             # ---- Phase 3: Voting (Feature 8) ----
             logger.info("📌 Phase 3: Voting Phase...")

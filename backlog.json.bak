@@ -1,0 +1,741 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+<<<<<<< HEAD
+      "title": "Setup automated backtest performance monitoring",
+      "description": "Xây dựng hệ thống monitor tự động chạy backtest hàng ngày, lưu metrics (Sharpe ratio, max drawdown, win rate) vào database/tệp JSON, tạo dashboard đơn giản để theo dõi hiệu suất chiến lược SMA theo thời gian",
+      "assigned_to": "devops",
+      "status": "done",
+      "priority": "high",
+      "depends_on": null,
+      "created_at": "2026-02-12T01:29:22.762064",
+      "completed_at": "2026-02-12T01:34:43.077622"
+    },
+    {
+      "id": 2,
+      "title": "Optimize backtest engine for multi-asset support",
+      "description": "Cải tiến engine backtest hiện tại để hỗ trợ backtest nhiều cặp tiền đồng thời (EUR/USD, GBP/USD, USD/JPY), tối ưu hóa tốc độ xử lý, thêm tính năng phân bổ vốn (capital allocation) giữa các cặp",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": "high",
+      "depends_on": null,
+      "created_at": "2026-02-12T01:29:22.777848",
+      "completed_at": "2026-02-12T01:33:54.884588"
+    },
+    {
+      "id": 3,
+      "title": "Develop advanced momentum-based trading strategy",
+      "description": "Nghiên cứu và implement chiến lược trading mới dựa trên momentum indicators (RSI, MACD) kết hợp với volatility filter (ATR). Backtest so sánh hiệu suất với SMA crossover hiện tại, document kết quả",
+      "assigned_to": "quant_analyst",
+      "status": "done",
+      "priority": "medium",
+      "depends_on": null,
+      "created_at": "2026-02-12T01:29:22.794508",
+      "completed_at": "2026-02-12T01:33:09.693251"
+    },
+    {
+      "id": 4,
+      "title": "Create ML-based feature importance analysis",
+      "description": "Sử dụng Random Forest/XGBoost để phân tích importance của các technical features đã tạo (SMA, RSI, etc.) trong việc dự đoán price movement. Identify top 5 most predictive features cho model tiếp theo",
+      "assigned_to": "data_scientist",
+      "status": "done",
+      "priority": "medium",
+      "depends_on": null,
+      "created_at": "2026-02-12T01:29:22.809061",
+      "completed_at": "2026-02-12T01:31:40.018259"
+    },
+    {
+      "id": 5,
+      "title": "Setup CI/CD pipeline for strategy deployment",
+      "description": "Thiết lập GitHub Actions workflow tự động test các chiến lược mới trước khi merge, auto-deploy code lên staging environment khi có thay đổi, tích hợp với monitoring system",
+      "assigned_to": "devops",
+      "status": "done",
+      "priority": "medium",
+      "depends_on": "Setup automated backtest performance monitoring",
+      "created_at": "2026-02-12T01:29:22.830875",
+      "completed_at": "2026-02-12T01:35:05.318871"
+    },
+    {
+      "id": 6,
+      "title": "Auto-Fix: analyze_eurusd.py",
+      "description": "Fix issues found in code review of analyze_eurusd.py:\n**1. ĐIỂM CHẤT LƯỢNG: 7/10**\n\n**2. LỖI HOẶC VẤN ĐỀ:**\n- **Lỗi cú pháp (Syntax Error)**: Dòng cuối cùng `print(f\"   \\n📊 DATA QUALITY CHECK\")` bị thiếu dấu ngoặc kép đóng và có ký tự xuống dòng không hợp lệ.\n- **Xử lý dữ liệu thiếu**: Không kiểm tra file CSV tồn tại trước khi đọc, có thể gây crash.\n- **Xử lý giá trị NaN**: Không xử lý giá trị thiếu trong cột `Daily_Return` (dòng đầu tiên sẽ là NaN sau khi tính `pct_change`).\n- **Định dạng số**: Sau khi format các cột trong `stats_df` thành chuỗi, ",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-12T01:35:49.062465",
+      "completed_at": "2026-02-12T01:40:56.875404"
+=======
+      "title": "Download EURUSD historical data",
+      "description": "Use yfinance to download 6 months of EURUSD=X daily OHLCV data. Save as workspace/eurusd_data.csv. Include columns: Date, Open, High, Low, Close, Volume. Report basic statistics (mean, std, min, max).",
+      "assigned_to": "data_scientist",
+      "status": "done",
+      "priority": "high",
+      "depends_on": null,
+      "created_at": "2026-02-11T22:30:00.000000",
+      "completed_at": "2026-02-11T22:36:19.415236"
+    },
+    {
+      "id": 2,
+      "title": "Calculate trading features",
+      "description": "Read workspace/eurusd_data.csv and calculate: SMA(10), SMA(30), RSI(14), MACD(12,26,9), Bollinger Bands(20,2), ATR(14). Save result as workspace/eurusd_features.csv. Handle NaN values by dropping initial rows.",
+      "assigned_to": "data_scientist",
+      "status": "done",
+      "priority": "high",
+      "depends_on": 1,
+      "created_at": "2026-02-11T22:30:00.000000",
+      "completed_at": "2026-02-12T01:02:51.421166"
+    },
+    {
+      "id": 3,
+      "title": "Design SMA crossover strategy",
+      "description": "Write workspace/strategy_sma_crossover.py: implement buy when SMA(10) crosses above SMA(30) with RSI < 70, sell when SMA(10) crosses below SMA(30) with RSI > 30. Include position sizing (2% risk per trade) and stop-loss at 1.5x ATR.",
+      "assigned_to": "quant_analyst",
+      "status": "done",
+      "priority": "high",
+      "depends_on": 2,
+      "created_at": "2026-02-11T22:30:00.000000",
+      "completed_at": "2026-02-12T01:05:08.740227"
+    },
+    {
+      "id": 4,
+      "title": "Backtest SMA strategy",
+      "description": "Run the SMA crossover strategy on eurusd_features.csv. Calculate: total return, Sharpe ratio, max drawdown, win rate, profit factor. Save results as workspace/backtest_results.json.",
+      "assigned_to": "quant_analyst",
+      "status": "done",
+      "priority": "high",
+      "depends_on": 3,
+      "created_at": "2026-02-11T22:30:00.000000",
+      "completed_at": "2026-02-12T01:05:56.812334"
+    },
+    {
+      "id": 5,
+      "title": "Run paper trading simulation",
+      "description": "Use the paper trading module to simulate live trading with the SMA crossover strategy on real-time yfinance data. Run for at least 5 simulated trades and report P&L summary.",
+      "assigned_to": "quant_analyst",
+      "status": "done",
+      "priority": "medium",
+      "depends_on": 4,
+      "created_at": "2026-02-11T22:30:00.000000",
+      "completed_at": "2026-02-12T01:09:27.231293"
+    },
+    {
+      "id": 6,
+      "title": "Setup monitoring and health checks",
+      "description": "Verify all monitoring systems are working: agent health monitor, shared memory, telegram notifications. Write a health check report to workspace/system_health.json.",
+      "assigned_to": "devops",
+      "status": "in_progress",
+      "priority": "medium",
+      "depends_on": null,
+      "created_at": "2026-02-11T22:30:00.000000",
+      "completed_at": null
+>>>>>>> cycle-59
+    },
+    {
+      "id": 7,
+      "title": "Auto-Fix: backtest_sma.py",
+<<<<<<< HEAD
+      "description": "Fix issues found in code review of backtest_sma.py:\n**QUALITY SCORE: 5/10**\n\n**BUGS or ISSUES:**\n1. Phương thức `_create_sample_data` chưa hoàn thiện - thiếu tạo DataFrame cho `self.data`\n2. Không validate dữ liệu sau khi load (thiếu các cột bắt buộc như 'close', 'date')\n3. Không xử lý missing values trong dữ liệu\n4. Seed cố định (`np.random.seed(42)`) trong sản xuất có thể ảnh hưởng đến tính ngẫu nhiên\n\n**SUGGESTIONS for improvement:**\n1. Hoàn thiện `_create_sample_data` để tạo DataFrame với cấu trúc đầy đủ\n2. Thêm phương thức `validate_data()` ",
+=======
+      "description": "Fix issues found in code review of backtest_sma.py:\n**ĐÁNH GIÁ CODE: backtest_sma.py**\n\n**1. CHẤT LƯỢNG: 6/10**\n- Ưu điểm: Cấu trúc lớp rõ ràng, có docstring, xử lý lỗi cơ bản\n- Nhược điểm: Code không hoàn chỉnh, thiếu phần quan trọng\n\n**2. LỖI/ VẤN ĐỀ:**\n- **Code không hoàn chỉnh**: Phương thức `_create_sample_data()` chỉ tạo biến mà không tạo DataFrame\n- **Logic lỗi**: Trong `load_data()`, dù không tìm thấy file vẫn trả về `True` khi tạo dữ liệu mẫu\n- **Thiếu validation**: Không kiểm tra cấu trúc dữ liệu (cột 'Close' bắt buộc)\n- **Seed cố định*",
+>>>>>>> cycle-59
+      "assigned_to": "engineer",
+      "status": "todo",
+      "priority": 2,
+      "depends_on": null,
+<<<<<<< HEAD
+      "created_at": "2026-02-12T01:36:17.428425",
+      "completed_at": "2026-02-12T01:41:33.213059"
+=======
+      "created_at": "2026-02-12T01:12:32.468416",
+      "completed_at": null
+>>>>>>> cycle-59
+    },
+    {
+      "id": 8,
+      "title": "Auto-Fix: calculate_features.py",
+<<<<<<< HEAD
+      "description": "Fix issues found in code review of calculate_features.py:\n**1. QUALITY SCORE: 7/10**\n\n**2. BUGS or ISSUES:**\n- File bị cắt ngang ở phương thức `calculate_macd`, không rõ phần còn lại của code.\n- Trong `calculate_rsi`, khi `avg_loss = 0` sẽ gây lỗi chia cho 0 ở dòng `rs = avg_gain / avg_loss`.\n- `warnings.filterwarnings('ignore')` có thể che giấu cảnh báo quan trọng.\n- Thiếu xử lý giá trị NaN trong dữ liệu đầu vào.\n\n**3. SUGGESTIONS for improvement:**\n- Hoàn thiện phương thức `calculate_macd` và thêm các chỉ báo kỹ thuật phổ biến khác (Bollinger Bands, ",
+=======
+      "description": "Fix issues found in code review of calculate_features.py:\n**QUALITY SCORE: 7/10**\n\n**BUGS HOẶC VẤN ĐỀ:**\n1. **Lỗi chia cho 0 trong RSI**: Dòng `rs = avg_gain / avg_loss` có thể gây lỗi khi `avg_loss = 0`\n2. **Thiếu xử lý NaN trong MACD**: Hàm `calculate_macd` bị cắt ngang, không rõ cách xử lý dữ liệu không đủ\n3. **Cảnh báo bị tắt hoàn toàn**: `warnings.filterwarnings('ignore')` có thể che giấu vấn đề quan trọng\n4. **Không validate tham số đầu vào**: Không kiểm tra `window <= 0` hoặc `price_col` có tồn tại trong DataFrame\n\n**ĐỀ XUẤT CẢI THIỆN:**\n1. **Th",
+>>>>>>> cycle-59
+      "assigned_to": "engineer",
+      "status": "todo",
+      "priority": 2,
+      "depends_on": null,
+<<<<<<< HEAD
+      "created_at": "2026-02-12T01:36:28.646296",
+      "completed_at": "2026-02-12T01:42:20.897608"
+=======
+      "created_at": "2026-02-12T01:12:46.731372",
+      "completed_at": null
+>>>>>>> cycle-59
+    },
+    {
+      "id": 9,
+      "title": "Auto-Fix: calculate_features_optimized.py",
+<<<<<<< HEAD
+      "description": "Fix issues found in code review of calculate_features_optimized.py:\n**QUALITY SCORE: 6/10**\n\n**BUGS hoặc ISSUES:**\n1. Hàm `calculate_macd_optimized` bị thiếu code: dòng cuối `exp2 = d` không hợp lệ (thiếu `data` và phần còn lại của hàm).\n2. Trong `setup_data_quality_checks`, việc forward/backward fill giá có thể tạo ra giá trị không thực tế nếu có khoảng trống dữ liệu lớn.\n3. `warnings.filterwarnings('ignore')` có thể che giấu cảnh báo quan trọng.\n\n**GỢI Ý CẢI THIỆN:**\n1. Hoàn thành hàm `calculate_macd_optimized` với đầy đủ logic tính MACD, signal line và histog",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-12T01:37:02.344982",
+      "completed_at": "2026-02-12T01:43:03.685895"
+    },
+    {
+      "id": 10,
+      "title": "Download và preprocess dữ liệu cho multiple currency pairs",
+      "description": "Mở rộng data pipeline để tải dữ liệu cho ít nhất 3 cặp tiền tệ chính (ví dụ: GBP/USD, USD/JPY, AUD/USD) từ nguồn miễn phí như Yahoo Finance hoặc Alpha Vantage. Lưu dữ liệu raw vào data/raw/. Sau đó, áp dụng các feature engineering đã có (từ calculate_features_optimized_fixed.py) để tạo features cho các cặp tiền tệ mới. Đảm bảo code xử lý được nhiều symbols và lưu thành các file CSV riêng biệt.",
+      "assigned_to": "data_scientist",
+      "status": "done",
+      "priority": "high",
+      "depends_on": null,
+      "created_at": "2026-02-12T01:45:33.496013",
+      "completed_at": "2026-02-12T01:49:33.866699"
+    },
+    {
+      "id": 11,
+      "title": "Tích hợp và backtest chiến lược momentum với dữ liệu đa tài sản",
+      "description": "Lấy chiến lược momentum-based đã phát triển (task #3) và tích hợp vào backtest engine đã được optimize (task #2). Chạy backtest trên dữ liệu EUR/USD hiện có và các cặp tiền tệ mới từ task của Data Scientist. So sánh hiệu suất với chiến lược SMA crossover đã có. Xuất báo cáo backtest chi tiết với các metrics: Sharpe ratio, max drawdown, total return.",
+      "assigned_to": "quant_analyst",
+      "status": "done",
+      "priority": "high",
+      "depends_on": [
+        2,
+        3
+      ],
+      "created_at": "2026-02-12T01:45:33.513027",
+      "completed_at": "2026-02-12T01:50:26.816400"
+    },
+    {
+      "id": 12,
+      "title": "Phát triển module quản lý vốn và risk cơ bản",
+      "description": "Tạo một module Python trong workspace/ để quản lý vốn (position sizing) và rủi ro. Module cần tính toán position size dựa trên stop-loss và risk per trade (ví dụ: 1% tài khoản). Tích hợp module này vào backtest engine để tự động tính toán lot size cho mỗi giao dịch. Viết unit tests cho module.",
+      "assigned_to": "quant_analyst",
+      "status": "done",
+      "priority": "medium",
+      "depends_on": [
+        2,
+        3
+      ],
+      "created_at": "2026-02-12T01:45:33.527086",
+      "completed_at": "2026-02-12T01:55:45.472741"
+    },
+    {
+      "id": 13,
+      "title": "Xây dựng paper trading simulation với data feed real-time",
+      "description": "Sử dụng backtest engine đã có và dữ liệu historical để mô phỏng giao dịch thực (paper trading). Tạo một script chạy liên tục, giả lập nhận dữ liệu mới mỗi giờ (từ file CSV) và đưa ra quyết định giao dịch dựa trên chiến lược momentum. Log tất cả các lệnh và kết quả. Đảm bảo simulation có thể chạy độc lập và dễ dàng tích hợp với deployment sau này.",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": "medium",
+      "depends_on": [
+        2,
+        5
+      ],
+      "created_at": "2026-02-12T01:45:33.545519",
+      "completed_at": "2026-02-12T01:51:29.742141"
+    },
+    {
+      "id": 14,
+      "title": "Thiết lập alerting cho performance degradation và system failures",
+      "description": "Mở rộng hệ thống monitoring hiện có (từ task #1) để gửi cảnh báo qua email hoặc Slack khi: backtest có Sharpe ratio dưới ngưỡng, drawdown vượt quá giới hạn, hoặc health check fail. Tích hợp alerting vào CI/CD pipeline (task #5). Viết script alert đơn giản và cấu hình triggers.",
+      "assigned_to": "devops",
+      "status": "done",
+      "priority": "low",
+      "depends_on": [
+        1,
+        5
+      ],
+      "created_at": "2026-02-12T01:45:33.562816",
+      "completed_at": "2026-02-12T01:54:52.067078"
+    },
+    {
+      "id": 15,
+      "title": "Phát triển chiến lược kết hợp momentum và mean reversion",
+      "description": "Tạo chiến lược trading mới kết hợp tín hiệu momentum (đã có) với mean reversion (Bollinger Bands/RSI) để giảm drawdown. Backtest trên dữ liệu multiple currency pairs và so sánh performance với chiến lược momentum thuần túy.",
+      "assigned_to": "quant_analyst",
+      "status": "done",
+      "priority": "high",
+      "depends_on": 11,
+      "created_at": "2026-02-12T01:58:05.169054",
+      "completed_at": "2026-02-12T02:01:19.717038"
+    },
+    {
+      "id": 16,
+      "title": "Xây dựng pipeline training model dự đoán giá ngắn hạn",
+      "description": "Sử dụng features đã engineering (từ task #4) để train mô hình XGBoost/LSTM dự đoán biến động giá 1-4 giờ. Đánh giá feature importance và integrate predictions vào chiến lược trading như một signal filter.",
+      "assigned_to": "data_scientist",
+      "status": "done",
+      "priority": "high",
+      "depends_on": 4,
+      "created_at": "2026-02-12T01:58:05.188754",
+      "completed_at": "2026-02-12T02:00:17.825341"
+    },
+    {
+      "id": 17,
+      "title": "Tích hợp risk management nâng cao vào backtest engine",
+      "description": "Mở rộng module quản lý vốn (task #12) với Kelly Criterion, volatility targeting và drawdown limits. Cập nhật backtest engine để hỗ trợ các rules này và validate với paper trading simulation.",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": "medium",
+      "depends_on": 12,
+      "created_at": "2026-02-12T01:58:05.205318",
+      "completed_at": "2026-02-12T02:01:29.851792"
+    },
+    {
+      "id": 18,
+      "title": "Thiết lập automated strategy deployment với versioning",
+      "description": "Mở rộng CI/CD pipeline (task #5) để tự động deploy strategies mới sau khi pass backtest. Triển khai version control cho strategies và rollback tự động khi performance degradation detected.",
+      "assigned_to": "devops",
+      "status": "done",
+      "priority": "medium",
+      "depends_on": 5,
+      "created_at": "2026-02-12T01:58:05.224730",
+      "completed_at": "2026-02-12T02:02:48.128137"
+    },
+    {
+      "id": 19,
+      "title": "Optimize data pipeline cho real-time feature calculation",
+      "description": "Cải thiện calculate_features_optimized.py để xử lý real-time data feed hiệu quả hơn, giảm latency cho paper trading. Thêm caching và parallel processing cho multi-asset feature calculation.",
+      "assigned_to": "data_scientist",
+      "status": "done",
+      "priority": "medium",
+      "depends_on": 13,
+      "created_at": "2026-02-12T01:58:05.242015",
+      "completed_at": "2026-02-12T02:03:55.083664"
+    },
+    {
+      "id": 20,
+      "title": "Auto-Fix: alert_manager.py",
+      "description": "Fix issues found in code review of alert_manager.py:\n**QUALITY SCORE: 6/10**\n\n**BUGS hoặc ISSUES:**\n1. **Thiếu phần đóng file/method**: Code bị cắt ngang ở `_send_email_alert`, thiếu phần thân hàm hoàn chỉnh.\n2. **Lỗi logic merge config**: Trong `_load_config`, khi merge config người dùng vào default, nếu config người dùng có key con khác (ví dụ `\"email\": {\"enabled\": true}`), nó sẽ ghi đè toàn bộ dict `email` thay vì merge từng field.\n3. **Insecure logging**: Ghi password email vào log nếu có lỗi (tuy chưa thấy code nhưng cần cảnh báo).\n4. **Không",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-12T02:05:00.135606",
+      "completed_at": "2026-02-12T02:09:12.825787"
+    },
+    {
+      "id": 21,
+      "title": "Auto-Fix: alert_triggers.py",
+      "description": "Fix issues found in code review of alert_triggers.py:\n**1. CHẤT LƯỢNG: 6/10**  \n- Thiết cấu trúc cơ bản nhưng thiếu xử lý lỗi toàn diện, hard-coded giá trị, và một số phần chưa hoàn chỉnh.\n\n**2. LỖI/ VẤN ĐỀ:**  \n- **Dòng 78**: Hàm `trigger_health_check()` thiếu câu lệnh `return` (không xác định giá trị trả về).  \n- **Dòng 65-66**: Hard-coded số agent (5) → khó bảo trì, nên dùng biến cấu hình.  \n- **Dòng 56-60**: Duyệt toàn bộ process gây tốn hiệu suất khi hệ thống lớn.  \n- **Dòng 29**: Xử lý ngoại lệ chung `Exception` quá rộng, nên bắt cụ thể (JSON",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-12T02:05:51.587007",
+      "completed_at": "2026-02-12T02:09:46.516599"
+    },
+    {
+      "id": 22,
+      "title": "Optimize multi-asset backtest execution speed",
+      "description": "Profile current backtest engine (especially backtest_sma.py) for performance bottlenecks when running with multiple currency pairs. Implement optimizations such as vectorized operations, parallel processing, or caching to reduce runtime. Validate improvements by comparing execution times before/after.",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": "high",
+      "depends_on": [
+        2,
+        11
+      ],
+      "created_at": "2026-02-12T02:11:15.342883",
+      "completed_at": "2026-02-12T02:19:38.095373"
+    },
+    {
+      "id": 23,
+      "title": "Implement real-time feature calculation pipeline",
+      "description": "Extend the optimized data pipeline to support real-time streaming data. Create a service that calculates ML features (from calculate_features_optimized.py) incrementally as new tick data arrives, ensuring low latency for paper trading simulation integration.",
+      "assigned_to": "data_scientist",
+      "status": "done",
+      "priority": "high",
+      "depends_on": [
+        19,
+        13
+      ],
+      "created_at": "2026-02-12T02:11:15.366093",
+      "completed_at": "2026-02-12T02:14:18.028037"
+    },
+    {
+      "id": 24,
+      "title": "Enhance risk management with dynamic position sizing",
+      "description": "Upgrade the basic risk management module to include dynamic position sizing based on volatility (ATR) and account equity. Integrate this into the combined momentum-mean reversion strategy and validate through backtesting with improved risk-adjusted returns (Sharpe, max drawdown).",
+      "assigned_to": "quant_analyst",
+      "status": "done",
+      "priority": "medium",
+      "depends_on": [
+        12,
+        15,
+        17
+      ],
+      "created_at": "2026-02-12T02:11:15.387007",
+      "completed_at": "2026-02-12T02:18:50.609911"
+    },
+    {
+      "id": 25,
+      "title": "Develop automated strategy validation test suite",
+      "description": "Create a comprehensive test suite that automatically validates new trading strategies before deployment. Tests should include data quality checks, strategy logic verification, backtest integrity, and performance metric thresholds. Integrate into CI/CD pipeline.",
+      "assigned_to": "devops",
+      "status": "done",
+      "priority": "medium",
+      "depends_on": [
+        5,
+        18
+      ],
+      "created_at": "2026-02-12T02:11:15.405123",
+      "completed_at": "2026-02-12T02:21:38.340878"
+    },
+    {
+      "id": 26,
+      "title": "Refine short-term price prediction model with ensemble methods",
+      "description": "Improve the existing ML prediction pipeline by experimenting with ensemble methods (e.g., Random Forest, Gradient Boosting) and hyperparameter tuning. Evaluate model performance on out-of-sample data and document feature importance shifts compared to previous analysis.",
+      "assigned_to": "data_scientist",
+      "status": "done",
+      "priority": "medium",
+      "depends_on": [
+        4,
+        16
+      ],
+      "created_at": "2026-02-12T02:11:15.421882",
+      "completed_at": "2026-02-12T02:22:06.081830"
+    },
+    {
+      "id": 27,
+      "title": "Integrate ML prediction signals into live trading strategy",
+      "description": "Sử dụng model dự đoán giá ngắn hạn từ task #26 để tạo tín hiệu trading kết hợp với chiến lược momentum/mean reversion hiện có. Thực hiện backtest tích hợp và so sánh hiệu suất với baseline.",
+      "assigned_to": "quant_analyst",
+      "status": "done",
+      "priority": "high",
+      "depends_on": [
+        15,
+        26
+      ],
+      "created_at": "2026-02-12T02:24:10.486271",
+      "completed_at": "2026-02-12T02:26:28.750896"
+    },
+    {
+      "id": 28,
+      "title": "Deploy real-time trading bot to cloud with paper trading",
+      "description": "Triển khai hệ thống paper trading (task #13) lên cloud environment (AWS/GCP) với cấu hình auto-scaling. Thiết lập data feed real-time và kết nối với monitoring system hiện có.",
+      "assigned_to": "devops",
+      "status": "done",
+      "priority": "high",
+      "depends_on": [
+        13,
+        18
+      ],
+      "created_at": "2026-02-12T02:24:10.503652",
+      "completed_at": "2026-02-12T02:31:27.523453"
+    },
+    {
+      "id": 29,
+      "title": "Implement ensemble model for signal confidence scoring",
+      "description": "Phát triển ensemble model kết hợp multiple ML models để tính toán confidence score cho tín hiệu trading. Thêm feature importance visualization và threshold optimization.",
+      "assigned_to": "data_scientist",
+      "status": "done",
+      "priority": "medium",
+      "depends_on": [
+        26
+      ],
+      "created_at": "2026-02-12T02:24:10.523573",
+      "completed_at": "2026-02-12T02:26:15.279178"
+    },
+    {
+      "id": 30,
+      "title": "Optimize backtest engine for parallel execution of multiple strategies",
+      "description": "Nâng cấp backtest engine hỗ trợ chạy parallel nhiều chiến lược cùng lúc với resource management. Thêm tính năng so sánh performance metrics giữa các chiến lược.",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": "medium",
+      "depends_on": [
+        2,
+        22
+      ],
+      "created_at": "2026-02-12T02:24:10.540806",
+      "completed_at": "2026-02-12T02:27:03.470005"
+    },
+    {
+      "id": 31,
+      "title": "Create automated strategy performance review dashboard",
+      "description": "Xây dựng dashboard real-time hiển thị performance metrics của các chiến lược đang chạy, drawdown analysis, và alert khi performance degradation vượt ngưỡng. Kết nối với monitoring system hiện có.",
+      "assigned_to": "devops",
+      "status": "done",
+      "priority": "medium",
+      "depends_on": [
+        1,
+        14
+      ],
+      "created_at": "2026-02-12T02:24:10.557183",
+      "completed_at": "2026-02-12T02:33:51.651900"
+    },
+    {
+      "id": 32,
+      "title": "Auto-Fix: advanced_risk_management.py",
+      "description": "Fix issues found in code review of advanced_risk_management.py:\n1. **QUALITY SCORE (1-10): 6/10**\n   - Cấu trúc rõ ràng, sử dụng type hints và logging đúng cách\n   - Code bị cắt đứt ở giữa hàm calculate_atr_position_size (thiếu phần kết thúc)\n   - Thiếu xử lý lỗi và validation chi tiết\n\n2. **BUGS hoặc ISSUES:**\n   - Hàm `calculate_atr_position_size` không hoàn chỉnh, thiếu return statement cuối cùng\n   - Không xử lý trường hợp `entry_price = 0` (gây lỗi chia cho 0 ở `atr_pct = atr / entry_price`)\n   - Biến `current_capital` có thể trở thành âm nếu không có c",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-12T02:35:30.096794",
+      "completed_at": "2026-02-12T02:38:59.104430"
+    },
+    {
+      "id": 33,
+      "title": "Optimize backtest engine with caching for strategy parameter optimization",
+      "description": "Implement caching mechanism in backtest engine to store intermediate results when testing multiple parameter combinations for the momentum-mean reversion hybrid strategy. This should significantly reduce computation time during strategy optimization loops.",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": "high",
+      "depends_on": 30,
+      "created_at": "2026-02-12T02:40:26.931226",
+      "completed_at": "2026-02-12T02:42:28.379562"
+    },
+    {
+      "id": 34,
+      "title": "Integrate ML prediction signals with dynamic confidence thresholds",
+      "description": "Modify the live trading strategy to dynamically adjust position sizing based on ML prediction confidence scores from the ensemble model. Implement logic that increases position size when confidence > 0.8 and reduces when confidence < 0.5, with proper risk management safeguards.",
+      "assigned_to": "quant_analyst",
+      "status": "done",
+      "priority": "high",
+      "depends_on": 27,
+      "created_at": "2026-02-12T02:40:26.948848",
+      "completed_at": "2026-02-12T02:42:03.912273"
+    },
+    {
+      "id": 35,
+      "title": "Implement automated A/B testing framework for strategy versions",
+      "description": "Build a system that can simultaneously run paper trading with two different strategy versions (e.g., pure momentum vs momentum-ML hybrid) and compare performance metrics. This should integrate with the existing monitoring dashboard and provide statistical significance testing.",
+      "assigned_to": "devops",
+      "status": "done",
+      "priority": "medium",
+      "depends_on": 31,
+      "created_at": "2026-02-12T02:40:26.970179",
+      "completed_at": "2026-02-12T02:43:35.134720"
+    },
+    {
+      "id": 36,
+      "title": "Develop automated portfolio rebalancing module",
+      "description": "Create a module that monitors performance across multiple currency pairs and automatically rebalances portfolio allocation based on recent Sharpe ratios and correlation analysis. This should work with the existing risk management system.",
+      "assigned_to": "quant_analyst",
+      "status": "done",
+      "priority": "medium",
+      "depends_on": 24,
+      "created_at": "2026-02-12T02:40:26.985401",
+      "completed_at": "2026-02-12T02:44:38.034828"
+    },
+    {
+      "id": 37,
+      "title": "Optimize real-time feature pipeline for high-frequency data",
+      "description": "Refactor the real-time feature calculation pipeline to handle tick-level data efficiently. Implement streaming window calculations and optimize memory usage for continuous operation with multiple currency pairs.",
+      "assigned_to": "data_scientist",
+      "status": "done",
+      "priority": "high",
+      "depends_on": 23,
+      "created_at": "2026-02-12T02:40:27.002737",
+      "completed_at": "2026-02-12T02:41:53.213196"
+    },
+    {
+      "id": 38,
+      "title": "Optimize real-time feature pipeline for ultra-low latency",
+      "description": "Cải thiện hiệu suất của real-time feature pipeline để giảm độ trễ khi xử lý high-frequency data. Tập trung vào việc tối ưu hóa tính toán features sử dụng parallel processing và caching, đảm bảo pipeline có thể xử lý dữ liệu trong vòng milliseconds. Kiểm tra hiệu suất hiện tại và đề xuất các cải tiến code/architecture.",
+      "assigned_to": "data_scientist",
+      "status": "done",
+      "priority": "high",
+      "depends_on": 37,
+      "created_at": "2026-02-12T02:47:03.623860",
+      "completed_at": "2026-02-12T02:49:29.606767"
+    },
+    {
+      "id": 39,
+      "title": "Develop multi-timeframe strategy fusion module",
+      "description": "Xây dựng module kết hợp tín hiệu từ nhiều chiến lược trading (momentum, mean reversion) và nhiều khung thời gian (e.g., 1h, 4h, daily) để tạo tín hiệu giao dịch tổng hợp mạnh hơn. Module này sẽ áp dụng kỹ thuật ensemble (weighted voting, meta-learning) để cải thiện Sharpe ratio và giảm drawdown.",
+      "assigned_to": "quant_analyst",
+      "status": "done",
+      "priority": "high",
+      "depends_on": null,
+      "created_at": "2026-02-12T02:47:03.642233",
+      "completed_at": "2026-02-12T02:50:15.249838"
+    },
+    {
+      "id": 40,
+      "title": "Implement centralized logging and audit trail for trading bot",
+      "description": "Thiết lập hệ thống logging tập trung (sử dụng ELK stack hoặc tương tự) để ghi lại tất cả hành động của trading bot: tín hiệu giao dịch, order execution, lỗi hệ thống, và performance metrics. Tạo audit trail đầy đủ để phục vụ debugging, compliance và performance analysis.",
+      "assigned_to": "devops",
+      "status": "done",
+      "priority": "medium",
+      "depends_on": 31,
+      "created_at": "2026-02-12T02:47:03.663546",
+      "completed_at": "2026-02-12T02:52:42.987108"
+    },
+    {
+      "id": 41,
+      "title": "Build automated strategy parameter optimization framework",
+      "description": "Phát triển framework tự động tìm kiếm tham số tối ưu cho các chiến lược trading sử dụng kỹ thuật như Grid Search, Bayesian Optimization. Framework phải tích hợp với backtest engine đã được cache (task #33) để chạy nhanh, và xuất ra bộ tham số tốt nhất cùng với performance report.",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": "high",
+      "depends_on": 33,
+      "created_at": "2026-02-12T02:47:03.684903",
+      "completed_at": "2026-02-12T02:51:59.872746"
+    },
+    {
+      "id": 42,
+      "title": "Enhance risk management with volatility-based dynamic stop-loss",
+      "description": "Nâng cao module risk management bằng cách tích hợp stop-loss động dựa trên biến động thị trường (ATR, volatility bands). Stop-loss sẽ tự động điều chỉnh theo điều kiện thị trường, bảo vệ lợi nhuận trong xu hướng mạnh và hạn chế thua lỗ khi biến động cao. Test kỹ trong backtest và paper trading.",
+      "assigned_to": "quant_analyst",
+      "status": "done",
+      "priority": "high",
+      "depends_on": 24,
+      "created_at": "2026-02-12T02:47:03.704864",
+      "completed_at": "2026-02-12T02:54:26.634991"
+    },
+    {
+      "id": 43,
+      "title": "Auto-Fix: aws_kinesis_consumer.py",
+      "description": "Fix issues found in code review of aws_kinesis_consumer.py:\n**CHẤM ĐIỂM CHẤT LƯỢNG: 6/10**\n\n**LỖI HOẶC VẤN ĐỀ:**\n1. **Không xử lý hết shard iterator**: Chỉ sử dụng một shard cố định (`shardId-000000000000`), không phù hợp với stream có nhiều shard.\n2. **Không kiểm tra `NextShardIterator`**: Có thể bị `None` khi shard đóng, gây lỗi.\n3. **Xử lý lỗi chung chung**: Bắt `Exception` quá rộng, khó debug.\n4. **Không có cơ chế dừng**: Vòng lặp `while True` không có điều kiện thoát.\n5. **Sleep cố định**: `await asyncio.sleep(0.1)` có thể gây trễ không cần thiết.\n\n",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-12T02:57:30.063705",
+      "completed_at": "2026-02-12T03:00:33.887694"
+    },
+    {
+      "id": 44,
+      "title": "Tối ưu hóa latency cho toàn bộ pipeline real-time",
+      "description": "Phân tích và giảm latency từ data ingestion -> feature calculation -> strategy execution -> order placement. Đo latency hiện tại, xác định bottlenecks, và tối ưu bằng caching, parallel processing, và code optimization.",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": "high",
+      "depends_on": null,
+      "created_at": "2026-02-12T03:02:40.086543",
+      "completed_at": "2026-02-12T03:07:39.450905"
+    },
+    {
+      "id": 45,
+      "title": "Phát triển adaptive strategy switching framework",
+      "description": "Xây dựng cơ chế tự động chuyển đổi giữa các chiến lược (momentum, mean reversion, ML-based) dựa trên market regime detection và recent performance. Tích hợp với existing strategies và risk management.",
+      "assigned_to": "quant_analyst",
+      "status": "done",
+      "priority": "high",
+      "depends_on": null,
+      "created_at": "2026-02-12T03:02:40.109419",
+      "completed_at": "2026-02-12T03:04:28.876345"
+    },
+    {
+      "id": 46,
+      "title": "Xây dựng real-time performance attribution dashboard",
+      "description": "Tạo dashboard chi tiết hiển thị real-time P&L, risk metrics, strategy performance breakdown, và market conditions. Kết nối với existing logging và monitoring system để tự động cập nhật.",
+      "assigned_to": "devops",
+      "status": "done",
+      "priority": "high",
+      "depends_on": null,
+      "created_at": "2026-02-12T03:02:40.125278",
+      "completed_at": "2026-02-12T03:08:53.983226"
+    },
+    {
+      "id": 47,
+      "title": "Implement robust error handling và fault tolerance cho live trading",
+      "description": "Thêm cơ chế tự động retry, fallback strategies, và circuit breakers khi data feed gián đoạn, model prediction fail, hoặc broker connection lỗi. Đảm bảo hệ thống có thể tự phục hồi mà không cần manual intervention.",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": "high",
+      "depends_on": null,
+      "created_at": "2026-02-12T03:02:40.141651",
+      "completed_at": "2026-02-12T03:12:26.188452"
+    },
+    {
+      "id": 48,
+      "title": "Phát triển và backtest market-making strategy cho forex pairs",
+      "description": "Thiết kế và backtest market-making strategy sử dụng order book dynamics và spread analysis. Tích hợp với existing risk management và multi-asset backtest engine.",
+      "assigned_to": "quant_analyst",
+      "status": "done",
+      "priority": "medium",
+      "depends_on": null,
+      "created_at": "2026-02-12T03:02:40.158560",
+      "completed_at": "2026-02-12T03:09:29.946552"
+    },
+    {
+      "id": 49,
+      "title": "Develop deep learning price prediction model using LSTM/Transformers",
+      "description": "Xây dựng mô hình deep learning (LSTM hoặc Transformer) để dự đoán giá forex ngắn hạn, cải thiện độ chính xác so với model ensemble hiện tại. Sử dụng dữ liệu đa khung thời gian và kết hợp các features đã tính toán. Lưu model vào workspace/ và tích hợp với real-time feature pipeline.",
+      "assigned_to": "data_scientist",
+      "status": "done",
+      "priority": "high",
+      "depends_on": [
+        16,
+        26
+      ],
+      "created_at": "2026-02-12T03:14:31.259917",
+      "completed_at": "2026-02-12T03:16:09.239519"
+    },
+    {
+      "id": 50,
+      "title": "Integrate news sentiment analysis into trading strategy",
+      "description": "Phát triển module phân tích sentiment từ tin tức tài chính (sử dụng API như Alpha Vantage hoặc NewsAPI) để tạo tín hiệu trading bổ sung. Tích hợp tín hiệu sentiment vào chiến lược momentum hiện có, điều chỉnh position sizing dựa trên độ mạnh sentiment. Backtest trên dữ liệu lịch sử có kèm tin tức.",
+      "assigned_to": "quant_analyst",
+      "status": "done",
+      "priority": "high",
+      "depends_on": [
+        27
+      ],
+      "created_at": "2026-02-12T03:14:31.279323",
+      "completed_at": "2026-02-12T03:17:01.920857"
+    },
+    {
+      "id": 51,
+      "title": "Build stress testing framework for trading strategies",
+      "description": "Tạo framework để kiểm tra chiến lược trading trong các điều kiện thị trường khắc nghiệt (flash crash, high volatility, low liquidity). Mô phỏng các sự kiện lịch sử và đo lường drawdown, risk metrics. Tích hợp framework vào backtest engine hiện có và xuất báo cáo chi tiết.",
+      "assigned_to": "engineer",
+      "status": "done",
+      "priority": "high",
+      "depends_on": [
+        17,
+        24
+      ],
+      "created_at": "2026-02-12T03:14:31.296057",
+      "completed_at": "2026-02-12T03:17:39.898859"
+    },
+    {
+      "id": 52,
+      "title": "Optimize real-time data pipeline with streaming technology",
+      "description": "Tối ưu hóa pipeline real-time hiện tại bằng cách triển khai streaming engine (Apache Kafka hoặc AWS Kinesis) để xử lý data feed hiệu quả hơn. Giảm latency xuống dưới 100ms cho toàn bộ quy trình từ data ingestion đến signal generation. Cập nhật monitoring dashboard để hiển thị latency metrics.",
+      "assigned_to": "devops",
+      "status": "done",
+      "priority": "high",
+      "depends_on": [
+        23,
+        38
+      ],
+      "created_at": "2026-02-12T03:14:31.315485",
+      "completed_at": "2026-02-12T03:20:56.002013"
+    },
+    {
+      "id": 53,
+      "title": "Implement AIOps for anomaly detection in trading performance",
+      "description": "Xây dựng hệ thống AIOps để tự động phát hiện bất thường trong hiệu suất trading (như lợi nhuận đột ngột giảm, drawdown bất thường, tăng số lượng lệnh thua). Sử dụng machine learning để học pattern bình thường và gửi alert khi có deviation. Tích hợp vào monitoring dashboard hiện có.",
+      "assigned_to": "devops",
+      "status": "done",
+      "priority": "high",
+      "depends_on": [
+        14,
+        31
+      ],
+      "created_at": "2026-02-12T03:14:31.334689",
+      "completed_at": "2026-02-12T03:21:24.539723"
+    }
+  ],
+  "next_id": 54
+=======
+      "description": "Fix issues found in code review of calculate_features_optimized.py:\n**1. QUALITY SCORE:** 6/10\n\n**2. BUGS hoặc ISSUES:**\n- Hàm `calculate_macd_optimized` bị thiếu code (chỉ có 2 dòng đầu, thiếu phần tính toán MACD và signal line)\n- Dòng `exp2 = d` bị lỗi (biến `d` không được định nghĩa, có lẽ là `data`)\n- Không xử lý missing values cho các cột không phải price/volume\n- `warnings.filterwarnings('ignore')` có thể che dấu vấn đề quan trọng\n\n**3. SUGGESTIONS cải thiện:**\n- Hoàn thiện hàm `calculate_macd_optimized` với đầy đủ logic tính MACD line, signal line và hist",
+      "assigned_to": "engineer",
+      "status": "todo",
+      "priority": 2,
+      "depends_on": null,
+      "created_at": "2026-02-12T01:13:40.096374",
+      "completed_at": null
+    }
+  ],
+  "next_id": 10
+>>>>>>> cycle-59
+}

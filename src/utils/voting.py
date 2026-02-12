@@ -26,12 +26,35 @@ class VotingSystem:
             self._save({"proposals": [], "next_id": 1})
     
     def _load(self) -> Dict:
-        with open(self.votes_path, 'r', encoding='utf-8') as f:
-            return json.load(f)
+        if not os.path.exists(self.votes_path):
+            return {"proposals": [], "next_id": 1}
+            
+        try:
+            with open(self.votes_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except json.JSONDecodeError as e:
+            logger.error(f"CORRUPTED VOTES FILE: {e}. Backing up and resetting.")
+            # Backup corrupted file
+            backup_path = self.votes_path + ".bak"
+            import shutil
+            try:
+                shutil.copy(self.votes_path, backup_path)
+                logger.info(f"Backed up corrupted votes to {backup_path}")
+            except Exception as backup_err:
+                logger.error(f"Failed to backup corrupted votes: {backup_err}")
+            
+            # Return empty state
+            return {"proposals": [], "next_id": 1}
+        except Exception as e:
+            logger.error(f"Error loading votes: {e}")
+            return {"proposals": [], "next_id": 1}
     
     def _save(self, data: Dict):
-        with open(self.votes_path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
+        try:
+            with open(self.votes_path, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
+        except Exception as e:
+            logger.error(f"Error saving votes: {e}")
     
     def propose(self, title: str, description: str, proposer: str, 
                 voters: List[str] = None) -> Dict:

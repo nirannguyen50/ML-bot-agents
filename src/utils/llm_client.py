@@ -98,7 +98,8 @@ class DeepSeekClient:
         else:
             self.client = OpenAI(
                 api_key=api_key,
-                base_url="https://api.deepseek.com"
+                base_url="https://api.deepseek.com",
+                timeout=120.0  # 120s timeout to prevent indefinite hangs
             )
             
         self.model = model
@@ -151,7 +152,8 @@ class DeepSeekClient:
                 messages=messages,
                 temperature=temperature,
                 max_tokens=4000,
-                stream=False
+                stream=False,
+                timeout=60.0  # Per-request timeout
             )
             
             # Track token usage

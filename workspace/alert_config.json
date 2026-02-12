@@ -1,0 +1,28 @@
+{
+    "email": {
+        "enabled": false,
+        "smtp_server": "smtp.gmail.com",
+        "smtp_port": 587,
+        "sender_email": "your-email@gmail.com",
+        "sender_password": "your-app-password",
+        "recipients": ["devops@tradingbot.com", "team@tradingbot.com"]
+    },
+    "slack": {
+        "enabled": true,
+        "webhook_url": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL",
+        "channel": "#trading-alerts"
+    },
+    "thresholds": {
+        "sharpe_ratio": 1.0,
+        "max_drawdown": 0.15,
+        "cpu_usage": 0.8,
+        "memory_usage": 0.85,
+        "disk_usage": 0.9,
+        "latency_ms": 100
+    },
+    "alert_schedule": {
+        "health_check_interval": 60,
+        "backtest_check_on_complete": true,
+        "ci_cd_notifications": ["failure", "success", "deployment"]
+    }
+}

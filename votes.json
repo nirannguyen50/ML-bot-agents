@@ -2,8 +2,8 @@
   "proposals": [
     {
       "id": 1,
-      "title": "Deploy strategy: Design SMA crossover strategy",
-      "description": "Should we deploy Design SMA crossover strategy?",
+      "title": "Deploy strategy: Build a strategy backtesting and comparison dashboard",
+      "description": "Should we deploy Build a strategy backtesting and comparison dashboard?",
       "proposer": "quant_analyst",
       "voters": [
         "data_scientist",
@@ -13,29 +13,29 @@
       "votes": {
         "data_scientist": {
           "decision": "reject",
-          "reason": "[JSON_CMD: {\"tool\": \"RECALL\", \"args\": {\"key\": \"SMA_crossover_strategy_data_quality\"}}]",
-          "voted_at": "2026-02-11T09:02:27.319257"
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T06:25:56.379205"
         },
         "engineer": {
           "decision": "reject",
-          "reason": "[JSON_CMD: {\"tool\": \"RECALL\", \"args\": {\"key\": \"SMA_crossover_strategy_status\"}}]",
-          "voted_at": "2026-02-11T09:02:29.508121"
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"src/monitoring/dashboard.py\"}}]\n\n[JSON_CMD: {\"t",
+          "voted_at": "2026-02-12T06:26:02.522295"
         },
         "devops": {
           "decision": "reject",
-          "reason": "[JSON_CMD: {\"tool\": \"RECALL\", \"args\": {\"key\": \"deployment_readiness_criteria\"}}]",
-          "voted_at": "2026-02-11T09:02:31.940986"
+          "reason": "reject",
+          "voted_at": "2026-02-12T06:26:26.801486"
         }
       },
       "status": "rejected",
-      "created_at": "2026-02-11T09:02:24.831638",
-      "closed_at": "2026-02-11T09:02:31.958444",
+      "created_at": "2026-02-12T06:25:52.818180",
+      "closed_at": "2026-02-12T06:26:26.819262",
       "result": "REJECTED"
     },
     {
       "id": 2,
-      "title": "Deploy strategy: Add risk management module to strategy",
-      "description": "Should we deploy Add risk management module to strategy?",
+      "title": "Deploy strategy: Build a strategy backtesting and comparison dashboard",
+      "description": "Should we deploy Build a strategy backtesting and comparison dashboard?",
       "proposer": "quant_analyst",
       "voters": [
         "data_scientist",
@@ -46,24 +46,728 @@
         "data_scientist": {
           "decision": "reject",
           "reason": "reject",
-          "voted_at": "2026-02-11T09:19:19.472204"
+          "voted_at": "2026-02-12T06:36:28.243950"
         },
         "engineer": {
           "decision": "reject",
           "reason": "",
-          "voted_at": "2026-02-11T09:19:24.459274"
+          "voted_at": "2026-02-12T06:36:31.610528"
         },
         "devops": {
           "decision": "reject",
           "reason": "reject",
-          "voted_at": "2026-02-11T09:19:48.631243"
+          "voted_at": "2026-02-12T06:36:50.927114"
         }
       },
       "status": "rejected",
-      "created_at": "2026-02-11T09:19:11.966213",
-      "closed_at": "2026-02-11T09:19:48.649859",
+      "created_at": "2026-02-12T06:35:59.563053",
+      "closed_at": "2026-02-12T06:36:50.947397",
+      "result": "REJECTED"
+    },
+    {
+      "id": 3,
+      "title": "Deploy strategy: Build a strategy backtesting and comparison dashboard",
+      "description": "Should we deploy Build a strategy backtesting and comparison dashboard?",
+      "proposer": "quant_analyst",
+      "voters": [
+        "data_scientist",
+        "engineer",
+        "devops"
+      ],
+      "votes": {
+        "data_scientist": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T06:43:48.512168"
+        },
+        "engineer": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T06:43:57.140864"
+        },
+        "devops": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"RECALL\", \"args\": {\"key\": \"deployment_status\"}}]\n\n[JSON_CMD: {\"tool\": \"READ_FILE",
+          "voted_at": "2026-02-12T06:44:07.788500"
+        }
+      },
+      "status": "rejected",
+      "created_at": "2026-02-12T06:43:40.344555",
+      "closed_at": "2026-02-12T06:44:07.806458",
+      "result": "REJECTED"
+    },
+    {
+      "id": 4,
+      "title": "Deploy strategy: Build a strategy backtesting and comparison dashboard",
+      "description": "Should we deploy Build a strategy backtesting and comparison dashboard?",
+      "proposer": "quant_analyst",
+      "voters": [
+        "data_scientist",
+        "engineer",
+        "devops"
+      ],
+      "votes": {
+        "data_scientist": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"RECALL\", \"args\": {\"key\": \"backtesting_framework_status\"}}]",
+          "voted_at": "2026-02-12T06:51:10.276842"
+        },
+        "engineer": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T06:51:16.220814"
+        },
+        "devops": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T06:51:40.114663"
+        }
+      },
+      "status": "rejected",
+      "created_at": "2026-02-12T06:51:06.157036",
+      "closed_at": "2026-02-12T06:51:40.133672",
+      "result": "REJECTED"
+    },
+    {
+      "id": 5,
+      "title": "Deploy strategy: Mở rộng distributed backtest engine cho multi-strategy portfolio",
+      "description": "Should we deploy Mở rộng distributed backtest engine cho multi-strategy portfolio?",
+      "proposer": "quant_analyst",
+      "voters": [
+        "data_scientist",
+        "engineer",
+        "devops"
+      ],
+      "votes": {
+        "data_scientist": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:00:34.891752"
+        },
+        "engineer": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"workspace/backtest_engine.py\"}}]",
+          "voted_at": "2026-02-12T07:00:41.097693"
+        },
+        "devops": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:01:06.353758"
+        }
+      },
+      "status": "rejected",
+      "created_at": "2026-02-12T07:00:02.595227",
+      "closed_at": "2026-02-12T07:01:06.371917",
+      "result": "REJECTED"
+    },
+    {
+      "id": 6,
+      "title": "Deploy strategy: Mở rộng distributed backtest engine cho multi-strategy portfolio",
+      "description": "Should we deploy Mở rộng distributed backtest engine cho multi-strategy portfolio?",
+      "proposer": "quant_analyst",
+      "voters": [
+        "data_scientist",
+        "engineer",
+        "devops"
+      ],
+      "votes": {
+        "data_scientist": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:09:50.974697"
+        },
+        "engineer": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"RECALL\", \"args\": {\"key\": \"distributed_backtest_engine\"}}]",
+          "voted_at": "2026-02-12T07:10:11.293082"
+        },
+        "devops": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:10:23.095357"
+        }
+      },
+      "status": "rejected",
+      "created_at": "2026-02-12T07:09:33.601533",
+      "closed_at": "2026-02-12T07:10:23.114439",
+      "result": "REJECTED"
+    },
+    {
+      "id": 7,
+      "title": "Deploy strategy: Develop automated strategy rebalancing module based on regime detection",
+      "description": "Should we deploy Develop automated strategy rebalancing module based on regime detection?",
+      "proposer": "quant_analyst",
+      "voters": [
+        "data_scientist",
+        "engineer",
+        "devops"
+      ],
+      "votes": {
+        "data_scientist": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"RECALL\", \"args\": {\"key\": \"regime_detection_strategy\"}}]",
+          "voted_at": "2026-02-12T07:17:58.775927"
+        },
+        "engineer": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:18:07.284638"
+        },
+        "devops": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:18:23.967846"
+        }
+      },
+      "status": "rejected",
+      "created_at": "2026-02-12T07:17:44.044807",
+      "closed_at": "2026-02-12T07:18:23.986970",
+      "result": "REJECTED"
+    },
+    {
+      "id": 8,
+      "title": "Deploy strategy: Develop automated strategy rebalancing module based on regime detection",
+      "description": "Should we deploy Develop automated strategy rebalancing module based on regime detection?",
+      "proposer": "quant_analyst",
+      "voters": [
+        "data_scientist",
+        "engineer",
+        "devops"
+      ],
+      "votes": {
+        "data_scientist": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"RECALL\", \"args\": {\"key\": \"regime_detection_model_status\"}}]",
+          "voted_at": "2026-02-12T07:21:51.617539"
+        },
+        "engineer": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:21:56.062656"
+        },
+        "devops": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:22:04.415275"
+        }
+      },
+      "status": "rejected",
+      "created_at": "2026-02-12T07:21:43.335110",
+      "closed_at": "2026-02-12T07:22:04.436066",
+      "result": "REJECTED"
+    },
+    {
+      "id": 9,
+      "title": "Deploy strategy: Develop automated strategy rebalancing module based on regime detection",
+      "description": "Should we deploy Develop automated strategy rebalancing module based on regime detection?",
+      "proposer": "quant_analyst",
+      "voters": [
+        "data_scientist",
+        "engineer",
+        "devops"
+      ],
+      "votes": {
+        "data_scientist": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"RECALL\", \"args\": {\"key\": \"regime_detection_models\"}}]",
+          "voted_at": "2026-02-12T07:24:32.433824"
+        },
+        "engineer": {
+          "decision": "reject",
+          "reason": "",
+          "voted_at": "2026-02-12T07:24:35.658451"
+        },
+        "devops": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:24:57.777758"
+        }
+      },
+      "status": "rejected",
+      "created_at": "2026-02-12T07:24:10.849913",
+      "closed_at": "2026-02-12T07:24:57.800042",
+      "result": "REJECTED"
+    },
+    {
+      "id": 10,
+      "title": "Deploy strategy: Develop automated strategy rebalancing module based on regime detection",
+      "description": "Should we deploy Develop automated strategy rebalancing module based on regime detection?",
+      "proposer": "quant_analyst",
+      "voters": [
+        "data_scientist",
+        "engineer",
+        "devops"
+      ],
+      "votes": {
+        "data_scientist": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:27:42.387198"
+        },
+        "engineer": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:27:47.009603"
+        },
+        "devops": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:28:01.174580"
+        }
+      },
+      "status": "rejected",
+      "created_at": "2026-02-12T07:27:21.900579",
+      "closed_at": "2026-02-12T07:28:01.196413",
+      "result": "REJECTED"
+    },
+    {
+      "id": 11,
+      "title": "Deploy strategy: Develop automated strategy rebalancing module based on regime detection",
+      "description": "Should we deploy Develop automated strategy rebalancing module based on regime detection?",
+      "proposer": "quant_analyst",
+      "voters": [
+        "data_scientist",
+        "engineer",
+        "devops"
+      ],
+      "votes": {
+        "data_scientist": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:31:45.582960"
+        },
+        "engineer": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:31:50.789823"
+        },
+        "devops": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:31:55.285533"
+        }
+      },
+      "status": "rejected",
+      "created_at": "2026-02-12T07:31:20.023025",
+      "closed_at": "2026-02-12T07:31:55.305365",
+      "result": "REJECTED"
+    },
+    {
+      "id": 12,
+      "title": "Deploy strategy: Develop automated strategy rebalancing module based on regime detection",
+      "description": "Should we deploy Develop automated strategy rebalancing module based on regime detection?",
+      "proposer": "quant_analyst",
+      "voters": [
+        "data_scientist",
+        "engineer",
+        "devops"
+      ],
+      "votes": {
+        "data_scientist": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"RECALL\", \"args\": {\"key\": \"automated_strategy_rebalancing\"}}]",
+          "voted_at": "2026-02-12T07:34:04.620149"
+        },
+        "engineer": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:34:10.262712"
+        },
+        "devops": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:34:19.517688"
+        }
+      },
+      "status": "rejected",
+      "created_at": "2026-02-12T07:33:51.533763",
+      "closed_at": "2026-02-12T07:34:19.538518",
+      "result": "REJECTED"
+    },
+    {
+      "id": 13,
+      "title": "Deploy strategy: Develop automated strategy rebalancing module based on regime detection",
+      "description": "Should we deploy Develop automated strategy rebalancing module based on regime detection?",
+      "proposer": "quant_analyst",
+      "voters": [
+        "data_scientist",
+        "engineer",
+        "devops"
+      ],
+      "votes": {
+        "data_scientist": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"RECALL\", \"args\": {\"key\": \"regime_detection_models\"}}]\n\n[JSON_CMD: {\"tool\": \"REA",
+          "voted_at": "2026-02-12T07:36:50.175829"
+        },
+        "engineer": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:36:54.621104"
+        },
+        "devops": {
+          "decision": "reject",
+          "reason": "reject",
+          "voted_at": "2026-02-12T07:37:14.606550"
+        }
+      },
+      "status": "rejected",
+      "created_at": "2026-02-12T07:36:39.328013",
+      "closed_at": "2026-02-12T07:37:14.626645",
+      "result": "REJECTED"
+    },
+    {
+      "id": 14,
+      "title": "Deploy strategy: Develop automated strategy rebalancing module based on regime detection",
+      "description": "Should we deploy Develop automated strategy rebalancing module based on regime detection?",
+      "proposer": "quant_analyst",
+      "voters": [
+        "data_scientist",
+        "engineer",
+        "devops"
+      ],
+      "votes": {
+        "data_scientist": {
+          "decision": "reject",
+          "reason": "reject",
+          "voted_at": "2026-02-12T07:41:26.437982"
+        },
+        "engineer": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"RECALL\", \"args\": {\"key\": \"strategy_rebalancing_module_status\"}}]\n\n[JSON_CMD: {\"",
+          "voted_at": "2026-02-12T07:41:38.336856"
+        },
+        "devops": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:41:56.610814"
+        }
+      },
+      "status": "rejected",
+      "created_at": "2026-02-12T07:41:19.667146",
+      "closed_at": "2026-02-12T07:41:56.632866",
+      "result": "REJECTED"
+    },
+    {
+      "id": 15,
+      "title": "Deploy strategy: Develop automated strategy rebalancing module based on regime detection",
+      "description": "Should we deploy Develop automated strategy rebalancing module based on regime detection?",
+      "proposer": "quant_analyst",
+      "voters": [
+        "data_scientist",
+        "engineer",
+        "devops"
+      ],
+      "votes": {
+        "data_scientist": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]\n\n[JSON_CMD: {\"tool\": \"READ_FIL",
+          "voted_at": "2026-02-12T07:43:54.800962"
+        },
+        "engineer": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:43:57.496188"
+        },
+        "devops": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\n  \"tool\": \"READ_FILE\",\n  \"args\": {\n    \"target\": \"backlog.json\"\n  }\n}]",
+          "voted_at": "2026-02-12T07:44:01.019864"
+        }
+      },
+      "status": "rejected",
+      "created_at": "2026-02-12T07:43:48.472744",
+      "closed_at": "2026-02-12T07:44:01.040603",
+      "result": "REJECTED"
+    },
+    {
+      "id": 16,
+      "title": "Deploy strategy: Develop automated strategy rebalancing module based on regime detection",
+      "description": "Should we deploy Develop automated strategy rebalancing module based on regime detection?",
+      "proposer": "quant_analyst",
+      "voters": [
+        "data_scientist",
+        "engineer",
+        "devops"
+      ],
+      "votes": {
+        "data_scientist": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"RECALL\", \"args\": {\"key\": \"regime_detection_implementation\"}}]",
+          "voted_at": "2026-02-12T07:45:46.589284"
+        },
+        "engineer": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:46:01.636440"
+        },
+        "devops": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:46:05.348696"
+        }
+      },
+      "status": "rejected",
+      "created_at": "2026-02-12T07:45:42.742355",
+      "closed_at": "2026-02-12T07:46:05.369305",
+      "result": "REJECTED"
+    },
+    {
+      "id": 17,
+      "title": "Deploy strategy: Develop automated strategy rebalancing module based on regime detection",
+      "description": "Should we deploy Develop automated strategy rebalancing module based on regime detection?",
+      "proposer": "quant_analyst",
+      "voters": [
+        "data_scientist",
+        "engineer",
+        "devops"
+      ],
+      "votes": {
+        "data_scientist": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"RECALL\", \"args\": {\"key\": \"regime_detection_status\"}}]",
+          "voted_at": "2026-02-12T07:49:50.728874"
+        },
+        "engineer": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:50:01.199440"
+        },
+        "devops": {
+          "decision": "reject",
+          "reason": "reject",
+          "voted_at": "2026-02-12T07:50:10.241699"
+        }
+      },
+      "status": "rejected",
+      "created_at": "2026-02-12T07:49:47.501855",
+      "closed_at": "2026-02-12T07:50:10.264159",
+      "result": "REJECTED"
+    },
+    {
+      "id": 18,
+      "title": "Deploy strategy: Develop automated strategy rebalancing module based on regime detection",
+      "description": "Should we deploy Develop automated strategy rebalancing module based on regime detection?",
+      "proposer": "quant_analyst",
+      "voters": [
+        "data_scientist",
+        "engineer",
+        "devops"
+      ],
+      "votes": {
+        "data_scientist": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"RECALL\", \"args\": {\"key\": \"strategy_rebalancing_regime_detection\"}}]",
+          "voted_at": "2026-02-12T07:51:58.859312"
+        },
+        "engineer": {
+          "decision": "reject",
+          "reason": "",
+          "voted_at": "2026-02-12T07:52:01.751752"
+        },
+        "devops": {
+          "decision": "approve",
+          "reason": "[JSON_CMD: {\"tool\": \"EXECUTE\", \"args\": {\"target\": \"top -bn1 | head -20\"}}]\n[JSON_CMD: {\"tool\": \"EXEC",
+          "voted_at": "2026-02-12T07:52:12.218027"
+        }
+      },
+      "status": "rejected",
+      "created_at": "2026-02-12T07:51:52.042821",
+      "closed_at": "2026-02-12T07:52:12.239077",
+      "result": "REJECTED"
+    },
+    {
+      "id": 19,
+      "title": "Deploy strategy: Develop automated strategy rebalancing module based on regime detection",
+      "description": "Should we deploy Develop automated strategy rebalancing module based on regime detection?",
+      "proposer": "quant_analyst",
+      "voters": [
+        "data_scientist",
+        "engineer",
+        "devops"
+      ],
+      "votes": {
+        "data_scientist": {
+          "decision": "approve",
+          "reason": "approve",
+          "voted_at": "2026-02-12T07:54:44.650141"
+        },
+        "engineer": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:54:49.176119"
+        },
+        "devops": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:55:00.692928"
+        }
+      },
+      "status": "rejected",
+      "created_at": "2026-02-12T07:54:07.176763",
+      "closed_at": "2026-02-12T07:55:00.715765",
+      "result": "REJECTED"
+    },
+    {
+      "id": 20,
+      "title": "Deploy strategy: Develop automated strategy rebalancing module based on regime detection",
+      "description": "Should we deploy Develop automated strategy rebalancing module based on regime detection?",
+      "proposer": "quant_analyst",
+      "voters": [
+        "data_scientist",
+        "engineer",
+        "devops"
+      ],
+      "votes": {
+        "data_scientist": {
+          "decision": "reject",
+          "reason": "reject",
+          "voted_at": "2026-02-12T07:58:59.918984"
+        },
+        "engineer": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:59:08.524427"
+        },
+        "devops": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T07:59:18.325330"
+        }
+      },
+      "status": "rejected",
+      "created_at": "2026-02-12T07:58:38.234293",
+      "closed_at": "2026-02-12T07:59:18.349396",
+      "result": "REJECTED"
+    },
+    {
+      "id": 21,
+      "title": "Deploy strategy: Develop automated strategy rebalancing module based on regime detection",
+      "description": "Should we deploy Develop automated strategy rebalancing module based on regime detection?",
+      "proposer": "quant_analyst",
+      "voters": [
+        "data_scientist",
+        "engineer",
+        "devops"
+      ],
+      "votes": {
+        "data_scientist": {
+          "decision": "reject",
+          "reason": "reject",
+          "voted_at": "2026-02-12T08:01:34.919929"
+        },
+        "engineer": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T08:01:47.048398"
+        },
+        "devops": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T08:01:56.049302"
+        }
+      },
+      "status": "rejected",
+      "created_at": "2026-02-12T08:01:28.837408",
+      "closed_at": "2026-02-12T08:01:56.074056",
+      "result": "REJECTED"
+    },
+    {
+      "id": 22,
+      "title": "Deploy strategy: Develop automated strategy rebalancing module based on regime detection",
+      "description": "Should we deploy Develop automated strategy rebalancing module based on regime detection?",
+      "proposer": "quant_analyst",
+      "voters": [
+        "data_scientist",
+        "engineer",
+        "devops"
+      ],
+      "votes": {
+        "data_scientist": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"RECALL\", \"args\": {\"key\": \"regime_detection_models\"}}]\n\n[JSON_CMD: {\"tool\": \"REA",
+          "voted_at": "2026-02-12T08:04:10.750724"
+        },
+        "engineer": {
+          "decision": "reject",
+          "reason": "",
+          "voted_at": "2026-02-12T08:04:18.090385"
+        },
+        "devops": {
+          "decision": "reject",
+          "reason": "reject",
+          "voted_at": "2026-02-12T08:04:43.379847"
+        }
+      },
+      "status": "rejected",
+      "created_at": "2026-02-12T08:04:01.415190",
+      "closed_at": "2026-02-12T08:04:43.402596",
+      "result": "REJECTED"
+    },
+    {
+      "id": 23,
+      "title": "Deploy strategy: Develop automated strategy rebalancing module based on regime detection",
+      "description": "Should we deploy Develop automated strategy rebalancing module based on regime detection?",
+      "proposer": "quant_analyst",
+      "voters": [
+        "data_scientist",
+        "engineer",
+        "devops"
+      ],
+      "votes": {
+        "data_scientist": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"RECALL\", \"args\": {\"key\": \"regime_detection_model_performance\"}}]",
+          "voted_at": "2026-02-12T08:08:21.365977"
+        },
+        "engineer": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T08:08:39.338062"
+        },
+        "devops": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T08:08:53.830217"
+        }
+      },
+      "status": "rejected",
+      "created_at": "2026-02-12T08:08:16.444554",
+      "closed_at": "2026-02-12T08:08:53.852626",
+      "result": "REJECTED"
+    },
+    {
+      "id": 24,
+      "title": "Deploy strategy: Develop automated strategy rebalancing module based on regime detection",
+      "description": "Should we deploy Develop automated strategy rebalancing module based on regime detection?",
+      "proposer": "quant_analyst",
+      "voters": [
+        "data_scientist",
+        "engineer",
+        "devops"
+      ],
+      "votes": {
+        "data_scientist": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"RECALL\", \"args\": {\"key\": \"regime_detection_module\"}}]",
+          "voted_at": "2026-02-12T08:11:01.501466"
+        },
+        "engineer": {
+          "decision": "reject",
+          "reason": "[JSON_CMD: {\"tool\": \"READ_FILE\", \"args\": {\"target\": \"backlog.json\"}}]",
+          "voted_at": "2026-02-12T08:11:10.134922"
+        },
+        "devops": {
+          "decision": "reject",
+          "reason": "Based on DevOps evaluation: CI/CD pipeline, monitoring systems, and rollback procedures are not conf",
+          "voted_at": "2026-02-12T08:11:31.826636"
+        }
+      },
+      "status": "rejected",
+      "created_at": "2026-02-12T08:10:54.460277",
+      "closed_at": "2026-02-12T08:11:31.848677",
       "result": "REJECTED"
     }
   ],
-  "next_id": 3
+  "next_id": 25
 }

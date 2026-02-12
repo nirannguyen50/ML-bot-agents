@@ -1,0 +1,35 @@
+metrics:
+  - namespace: TradingBot
+    dimensions:
+      - Service: PaperTrading
+    metrics_list:
+      - order_execution_latency
+      - active_positions
+      - pnl_daily
+      - api_error_rate
+
+alarms:
+  - alarm_name: "HighExecutionLatency"
+    metric_name: "order_execution_latency"
+    threshold: 100  # milliseconds
+    period: 60
+    evaluation_periods: 3
+    comparison_operator: "GreaterThanThreshold"
+    
+  - alarm_name: "HighErrorRate"
+    metric_name: "api_error_rate"
+    threshold: 5  # percentage
+    period: 300
+    evaluation_periods: 2
+    comparison_operator: "GreaterThanThreshold"
+
+dashboard:
+  name: "PaperTrading-Dashboard"
+  widgets:
+    - type: "line"
+      metrics: [["TradingBot", "order_execution_latency"]]
+      region: "ap-southeast-1"
+      
+    - type: "number"
+      metrics: [["TradingBot", "active_positions"]]
+      region: "ap-southeast-1"

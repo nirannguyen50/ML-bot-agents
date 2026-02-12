@@ -1,16 +1,15 @@
 {
-  "cycle": 1,
+  "cycle": 30,
   "phase": "planning",
-  "completed_tasks": [
-    {
-      "id": 8,
-      "title": "Add risk management module to strategy",
-      "completed_at": "2026-02-11T09:15:08.613139"
-    }
-  ],
+  "completed_tasks": [],
   "pending_task_ids": [],
-  "last_save": "2026-02-11T09:19:49.561793",
-  "crash_count": 0,
-  "last_crash": null,
+  "last_save": "2026-02-12T09:31:17.517096",
+  "crash_count": 2,
+  "last_crash": {
+    "time": "2026-02-11T11:41:54.294174",
+    "error": "Expecting property name enclosed in double quotes: line 80 column 1 (char 2489)",
+    "phase": "voting",
+    "cycle": 1
+  },
   "agent_states": {}
 }

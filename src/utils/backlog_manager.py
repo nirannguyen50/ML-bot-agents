@@ -27,8 +27,28 @@ class BacklogManager:
             self._save({"tasks": [], "next_id": 1})
     
     def _load(self) -> Dict:
-        with open(self.backlog_path, 'r', encoding='utf-8') as f:
-            return json.load(f)
+        if not os.path.exists(self.backlog_path):
+            return {"tasks": [], "next_id": 1}
+            
+        try:
+            with open(self.backlog_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except json.JSONDecodeError as e:
+            logger.error(f"CORRUPTED BACKLOG FILE: {e}. Backing up and resetting.")
+            # Backup corrupted file
+            backup_path = self.backlog_path + ".bak"
+            import shutil
+            try:
+                shutil.copy(self.backlog_path, backup_path)
+                logger.info(f"Backed up corrupted backlog to {backup_path}")
+            except Exception as backup_err:
+                logger.error(f"Failed to backup corrupted backlog: {backup_err}")
+            
+            # Return empty state to allow system to continue
+            return {"tasks": [], "next_id": 1}
+        except Exception as e:
+            logger.error(f"Error loading backlog: {e}")
+            return {"tasks": [], "next_id": 1}
     
     def _save(self, data: Dict):
         with open(self.backlog_path, 'w', encoding='utf-8') as f:

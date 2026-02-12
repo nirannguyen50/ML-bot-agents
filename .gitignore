@@ -23,12 +23,23 @@ reports/
 data/raw/*.csv
 data/processed/*.csv
 data/raw/*.parquet
+workspace/*.csv
+workspace/*.parquet
+workspace/*.pkl
+workspace/*.h5
+workspace/*.png
 
 # Memory (agent state - regenerated at runtime)
 memory/*.json
 
 # Workspace (agent-generated files)
-workspace/
+# workspace/  <-- Commented out to allow tracking selected workspace files if needed, but usually we want to ignore generated artifacts unless crucial
+workspace/tmp/
+
+# Node.js
+node_modules/
+dashboard/node_modules/
+npm-debug.log
 
 # Sensitive
 .env
