@@ -1,0 +1,4 @@
+dashboard/node_modules/** filter=lfs diff=lfs merge=lfs -text
+*.csv filter=lfs diff=lfs merge=lfs -text
+*.json filter=lfs diff=lfs merge=lfs -text
+workspace/*.py filter=lfs diff=lfs merge=lfs -text
