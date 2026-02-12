@@ -16,11 +16,11 @@
       "title": "Auto-Fix: alert_manager.py",
       "description": "Fix issues found in code review of alert_manager.py:\n**QUALITY SCORE: 6/10**\n\n**BUGS hoặc ISSUES:**\n1. File code bị cắt ngang (thiếu phần đóng hàm `_send_email_alert` và các phương thức khác)\n2. Thiếu xử lý ngoại lệ trong `send_alert` - nếu một kênh thất bại, toàn bộ quá trình có thể dừng lại\n3. Mật khẩu email lưu dưới dạng plaintext trong config file\n4. Không có cơ chế rate limiting cho alerts, có thể gây spam\n\n**GỢI Ý CẢI THIỆN:**\n1. Hoàn thiện các phương thức còn thiếu (`_send_email_alert`, `_send_slack_alert`)\n2. Thêm xử lý lỗi riêng biệt cho ",
       "assigned_to": "engineer",
-      "status": "todo",
+      "status": "done",
       "priority": 2,
       "depends_on": null,
       "created_at": "2026-02-12T11:14:56.927219",
-      "completed_at": null
+      "completed_at": "2026-02-12T11:18:42.675544"
     },
     {
       "id": 3,
